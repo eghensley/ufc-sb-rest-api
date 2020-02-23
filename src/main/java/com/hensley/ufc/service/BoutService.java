@@ -1,0 +1,411 @@
+package com.hensley.ufc.service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.gargoylesoftware.htmlunit.html.DomAttr;
+import com.gargoylesoftware.htmlunit.html.DomText;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.html.HtmlItalic;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.hensley.ufc.domain.BoutData;
+import com.hensley.ufc.domain.FightData;
+import com.hensley.ufc.domain.FighterBoutXRefData;
+import com.hensley.ufc.enums.BoutOutcomeEnum;
+import com.hensley.ufc.enums.FightMethodEnum;
+import com.hensley.ufc.enums.ParseTargetEnum;
+import com.hensley.ufc.enums.WeightClassEnum;
+import com.hensley.ufc.pojo.dto.BoutDto;
+import com.hensley.ufc.pojo.request.ParseRequest;
+import com.hensley.ufc.pojo.response.GetResponse;
+import com.hensley.ufc.pojo.response.ParseResponse;
+import com.hensley.ufc.pojo.response.UrlParseRequest;
+import com.hensley.ufc.repository.BoutRepository;
+import com.hensley.ufc.repository.FightRepository;
+import com.hensley.ufc.util.MappingUtils;
+import com.hensley.ufc.util.UrlUtils;
+
+@Service
+public class BoutService {
+
+	private static final Logger LOG = Logger.getLogger(BoutService.class.toString());
+	private static final String COMPLETION_MESSAGE = "Completed parsing request.  Found %s bouts and parsed %s bouts";
+	private static final String SUCCESSFUL_SAVE_MESSAGE = "Completed save of bout %s.";
+	private static final String FIGHT_URL = "http://www.ufcstats.com/event-details/%s";
+
+	private static final String NO_BOUTS_FOUND = "No fight available for id %s";
+	private static final String FIGHT_LOAD_ERROR = "Fight %s could not be loaded from DB.";
+
+	private static final String ERROR_ADDING_BOUTS = "Error adding bouts to fight %s.";
+
+	private static final String BOUT_ALREADY_INCLUDED = "Bout %s already included with fight %s";
+	private static final String BOUT_ADDED = "Bout %s added to fight %s";
+	private static final String BOUT_ADD_FAIL = "Bout %s failed to be added to fight %s";
+	private static final String START_BASIC_PARSE = "Begin basic parsing for BOUT_ID: %s";
+
+	private static final String FIGHT_DETAIL_URL = "http://www.ufcstats.com/fight-details/";
+	private static final String FIGHT_DETAIL_URL_FORMAT = FIGHT_DETAIL_URL + "%s";
+
+	private static final String FIGHTER_DETAIL_URL = "http://www.ufcstats.com/fighter-details/";
+
+	private static final String ITEMS_FOUND = "%s item found";
+
+	private static final String BOUT_HTML_XPATH = "/html/body/section/div/div/table/tbody/tr";
+
+	private final UrlUtils urlUtils;
+	private final BoutRepository boutRepo;
+	private final FightRepository fightRepo;
+	private final MappingUtils mappingUtils;
+	private final FighterService fighterService;
+	private final ErrorService errorService;
+
+	@Autowired
+	BoutService(UrlUtils urlUtils, BoutRepository boutRepo, FightRepository fightRepo, MappingUtils mappingUtils,
+			FighterService fighterService, ErrorService errorService) {
+		this.urlUtils = urlUtils;
+		this.boutRepo = boutRepo;
+		this.fightRepo = fightRepo;
+		this.mappingUtils = mappingUtils;
+		this.fighterService = fighterService;
+		this.errorService = errorService;
+	}
+
+	@Transactional
+	public List<String> getBoutsFromFight(String fightId){
+		List<String> boutList = boutRepo.findBoutIdByFightId(fightId);
+		return boutList;
+	}
+	
+	@Transactional
+	public GetResponse getBoutDto(String boutId) {
+		Optional<BoutData> boutDataOpt;
+		BoutData boutData;
+		BoutDto boutDto;
+		String errorString = null;
+
+		try {
+			boutDataOpt = boutRepo.findByBoutId(boutId);
+			if (boutDataOpt.isPresent()) {
+				boutData = boutDataOpt.get();
+				boutDto = (BoutDto) mappingUtils.mapToDto(boutData, BoutDto.class);
+				return new GetResponse(HttpStatus.ACCEPTED, errorString, boutDto);
+			} else {
+				errorString = String.format(NO_BOUTS_FOUND, boutId);
+				LOG.log(Level.WARNING, errorString);
+				return new GetResponse(HttpStatus.ACCEPTED, errorString, null);
+			}
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			LOG.log(Level.SEVERE, errorString);
+			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
+
+		}
+	}
+
+	@Transactional
+	public ParseResponse scrapeBoutsFromFightId(String fightId) {
+		String errorStr = null;
+		Optional<FightData> fightDataOpt;
+		FightData fightData;
+
+		ParseRequest request = new ParseRequest(ParseTargetEnum.FIGHTS, fightId, null, null);
+		ParseResponse response = new ParseResponse(request);
+
+		fightDataOpt = fightRepo.findByFightId(fightId);
+		if (!fightDataOpt.isPresent()) {
+			errorStr = String.format(FIGHT_LOAD_ERROR, fightId);
+			LOG.log(Level.WARNING, errorStr);
+			response.addResponseMsg(HttpStatus.NO_CONTENT, errorStr);
+			return response;
+		} else {
+			fightData = fightDataOpt.get();
+		}
+		try {
+			return addBoutData(fightData, response);
+		} catch (Exception e) {
+			errorStr = String.format(ERROR_ADDING_BOUTS, fightId);
+			return errorService.handleParseError(errorStr, e, response);
+		}
+	}
+
+	public ParseResponse addBoutData(FightData fightData, ParseResponse response) {
+		String url = String.format(FIGHT_URL, response.getRequest().getFightId()); // 8d04923f2db59b7f
+		UrlParseRequest urlParseRequest;
+		String errorStr;
+		HtmlPage page;
+		List<HtmlElement> boutHTML;
+		ParseResponse detailParseResponse;
+		
+		urlParseRequest = urlUtils.parse(url);
+		errorStr = urlParseRequest.getErrorStr();
+		if (urlParseRequest.getSuccess()) {
+
+			page = urlParseRequest.getPage();
+			LOG.info("Completed BOUT Parse");
+
+			boutHTML = page.getByXPath(BOUT_HTML_XPATH);
+			response.setItemsFound(boutHTML.size());
+			LOG.info(String.format(ITEMS_FOUND, response.getItemsFound()));
+
+			if (boutHTML.isEmpty()) {
+				errorStr = String.format(NO_BOUTS_FOUND, response.getRequest().getFightId());
+				return errorService.handleParseError(errorStr, response);
+			} else {
+
+				for (HtmlElement boutItem : boutHTML) {
+					detailParseResponse = parseBout(boutItem, fightData);
+					if (HttpStatus.OK.equals(detailParseResponse.getStatus())) {
+						response.setItemsCompleted(response.getItemsCompleted() + 1);
+					} else {
+						errorStr = detailParseResponse.getErrorMsg();
+						break;
+					}
+				}
+			}
+			LOG.log(Level.INFO,
+					String.format(COMPLETION_MESSAGE, response.getItemsFound(), response.getItemsCompleted()));
+			response.addResponseMsg(HttpStatus.OK, errorStr);
+			return response;
+		} else {
+			return errorService.handleParseError(errorStr, response);
+		}
+	}
+
+	public ParseResponse parseBout(HtmlElement boutItem, FightData fightData) {
+		BoutData boutData;
+		String boutId;
+		ParseResponse detailParseResponse;
+
+		ParseRequest boutDetailRequest = new ParseRequest(ParseTargetEnum.BOUTS, fightData.getFightId(), null, null);
+		ParseResponse boutDetailResponse = new ParseResponse(boutDetailRequest);
+		
+		try {
+			boutData = parseBoutBasic(boutItem);
+			boutId = boutData.getBoutId();
+			boutDetailResponse.getRequest().setBoutId(boutId);
+			if (fightData.ifBoutIdInc(boutId)) {
+				LOG.log(Level.INFO, String.format(BOUT_ALREADY_INCLUDED, boutId, boutDetailRequest.getFightId()));
+				boutDetailResponse.setStatus(HttpStatus.OK);
+				return boutDetailResponse;
+			}
+			detailParseResponse = parseBoutDetail(boutDetailResponse, boutData);
+			if (HttpStatus.OK.equals(detailParseResponse.getStatus())) {
+				fightData.addBout(boutData);
+				LOG.log(Level.INFO, String.format(BOUT_ADDED, boutId, boutDetailRequest.getFightId()));
+				boutRepo.save(boutData);
+				LOG.log(Level.INFO, String.format(SUCCESSFUL_SAVE_MESSAGE, boutId));
+				return detailParseResponse;
+
+			} else {
+				LOG.log(Level.WARNING, String.format(BOUT_ADD_FAIL, boutId, boutDetailRequest.getFighterId()));
+				return errorService.handleParseError(boutDetailResponse.getErrorMsg(), boutDetailResponse);
+			}
+		} catch (Exception e) {
+			return errorService.handleParseError(e.getLocalizedMessage(), e, boutDetailResponse);
+		}
+	}
+
+	public BoutData parseBoutBasic(HtmlElement boutItem) {
+		WeightClassEnum weightClass;
+		String boutId;
+		Boolean champBout = false;
+
+		String boutPath = boutItem.getCanonicalXPath();
+		boutId = parseBoutId(boutItem, boutPath);
+		weightClass = parseWeightClass(boutItem, boutPath);
+
+		List<HtmlImage> champBoutHtmlList = boutItem.getByXPath(boutPath + "/td[7]/p/img");
+		for (HtmlImage champBoutHtml : champBoutHtmlList) {
+			String imgSource = champBoutHtml.getSrcAttribute();
+			if ("http://1e49bc5171d173577ecd-1323f4090557a33db01577564f60846c.r80.cf1.rackcdn.com/fight.png".contentEquals(imgSource)) {
+				continue;
+			} else if ("http://1e49bc5171d173577ecd-1323f4090557a33db01577564f60846c.r80.cf1.rackcdn.com/perf.png".contentEquals(imgSource)) {
+				continue;
+			} else if ("http://1e49bc5171d173577ecd-1323f4090557a33db01577564f60846c.r80.cf1.rackcdn.com/ko.png".contentEquals(imgSource)){
+				continue;
+			} else if ("http://1e49bc5171d173577ecd-1323f4090557a33db01577564f60846c.r80.cf1.rackcdn.com/sub.png".contentEquals(imgSource)) {
+				continue;
+			} else if ("http://1e49bc5171d173577ecd-1323f4090557a33db01577564f60846c.r80.cf1.rackcdn.com/belt.png".contentEquals(imgSource)) {
+				champBout = true;
+			} else {
+			throw new IllegalArgumentException("Handle these!!!");
+			}
+		}
+
+		return new BoutData(boutId, weightClass, champBout);
+	}
+
+	private WeightClassEnum parseWeightClass(HtmlElement boutItem, String boutPath) {
+		WeightClassEnum weightClass;
+		HtmlElement boutWeightClassHTML = boutItem.getFirstByXPath(boutPath + "/td[7]/p");
+		weightClass = WeightClassEnum.valueOfDesc(boutWeightClassHTML.asText());
+		LOG.info(String.format("Weight class: %s", weightClass));
+		return weightClass;
+	}
+
+	private String parseBoutId(HtmlElement boutItem, String boutPath) {
+		String boutId;
+		DomAttr boutIdHtml = boutItem.getFirstByXPath(boutPath + "/@data-link");
+		boutId = boutIdHtml.getValue().replace(FIGHT_DETAIL_URL, "");
+		LOG.info(String.format(START_BASIC_PARSE, boutId));
+		return boutId;
+	}
+
+	public ParseResponse parseBoutDetail(ParseResponse boutDetailResponse, BoutData boutData) {
+		UrlParseRequest urlParseRequest;
+
+		String boutSummaryHeaderPath;
+		HtmlPage page;
+		HtmlElement boutDetailHTML;
+		String errorStr = null;
+
+		try {
+			urlParseRequest = urlUtils
+					.parse(String.format(FIGHT_DETAIL_URL_FORMAT, boutDetailResponse.getRequest().getBoutId()));
+			errorStr = urlParseRequest.getErrorStr();
+			if (urlParseRequest.getSuccess()) {
+				page = urlParseRequest.getPage();
+				LOG.info("Completed BOUT DETAIL Parse");
+
+				boutDetailHTML = page.getFirstByXPath("/html/body/section/div/div/div[2]");
+
+				if (boutDetailHTML == null) {
+					boutDetailResponse.setItemsFound(0);
+					String errorMsg = String.format(ITEMS_FOUND, boutDetailResponse.getItemsFound());
+					LOG.info(errorMsg);
+					boutDetailResponse.addResponseMsg(HttpStatus.INTERNAL_SERVER_ERROR,
+							String.format(ITEMS_FOUND, errorMsg));
+					return boutDetailResponse;
+				} else {
+					boutDetailResponse.setItemsFound(1);
+				}
+				LOG.info(String.format(ITEMS_FOUND, boutDetailResponse.getItemsFound()));
+				boutSummaryHeaderPath = boutDetailHTML.getCanonicalXPath();
+
+				parseMethod(boutDetailHTML, boutSummaryHeaderPath, boutData);
+				parseActTime(boutDetailHTML, boutSummaryHeaderPath, boutData);
+				parseSchedRounds(boutDetailHTML, boutSummaryHeaderPath, boutData);
+				parseReferee(boutDetailHTML, boutSummaryHeaderPath, boutData);
+				parseBoutDetails(boutDetailHTML, boutSummaryHeaderPath, boutData);
+				parseFighters(boutDetailHTML, boutData);
+
+				boutDetailResponse.addResponseMsg(HttpStatus.OK, errorStr);
+				return boutDetailResponse;
+			} else {
+				LOG.log(Level.WARNING, errorStr);
+				return errorService.handleParseError(errorStr, boutDetailResponse);
+			}
+		} catch (Exception e) {
+			return errorService.handleParseError(e.getMessage(), e, boutDetailResponse);
+		}
+
+	}
+
+	private void parseMethod(HtmlElement boutDetailHTML, String boutSummaryHeaderPath, BoutData boutData) {
+		DomText methodHtml = boutDetailHTML.getFirstByXPath(boutSummaryHeaderPath + "/div[2]/p[1]/i[1]/i[2]/text()");
+		FightMethodEnum method = FightMethodEnum.valueOfDesc(methodHtml.asText().trim());
+		LOG.info(String.format("Win method: %s", method));
+		if(method == null) {
+			throw new IllegalArgumentException("Bout finish method failed to parse");
+		}
+		boutData.setFinishMethod(method);
+	}
+
+	private void parseActTime(HtmlElement boutDetailHTML, String boutSummaryHeaderPath, BoutData boutData) {
+		Integer actRound;
+		Integer actTime;
+
+		HtmlItalic actRoundHtml = boutDetailHTML.getFirstByXPath(boutSummaryHeaderPath + "/div[2]/p[1]/i[2]");
+		actRound = Integer.valueOf(actRoundHtml.getChildNodes().get(2).asText().trim());
+		LOG.info(String.format("Actual rounds: %s", actRound));
+		if(actRound == null) {
+			throw new IllegalArgumentException("Bout finish rounds failed to parse");
+		}
+		boutData.setFinishRounds(actRound);
+
+		HtmlItalic actTimeHtml = boutDetailHTML.getFirstByXPath(boutSummaryHeaderPath + "/div[2]/p[1]/i[3]");
+		String[] actTimeString = actTimeHtml.getChildNodes().get(2).asText().trim().split(":");
+		Integer actTimeMin = Integer.valueOf(actTimeString[0]);
+		if (actRound > 1) {
+			actTimeMin += ((actRound - 1) * 5);
+		}
+
+		Integer actTimeSec = Integer.valueOf(actTimeString[1]);
+		actTime = (actTimeMin * 60) + actTimeSec;
+		if(actTime <= 0) {
+			throw new IllegalArgumentException("Bout finish time failed to parse");
+		}
+		LOG.info(String.format("Actual time: %s", actTime));
+		boutData.setFinishTime(actTime);
+	}
+
+	private void parseSchedRounds(HtmlElement boutDetailHTML, String boutSummaryHeaderPath, BoutData boutData) {
+		Integer schedRounds;
+		HtmlItalic schedRoundsHtml = boutDetailHTML.getFirstByXPath(boutSummaryHeaderPath + "/div[2]/p[1]/i[4]");
+		schedRounds = Integer.valueOf(schedRoundsHtml.getChildNodes().get(2).asText().trim().split(" ")[0]);
+		LOG.info(String.format("Scheduled rounds: %s", schedRounds));
+		if(schedRounds == null) {
+			throw new IllegalArgumentException("Bout scheduled rounds failed to parse");
+		}
+		boutData.setSchedRounds(schedRounds);
+	}
+
+	private void parseReferee(HtmlElement boutDetailHTML, String boutSummaryHeaderPath, BoutData boutData) {
+		String referee;
+		DomText refereeHtml = boutDetailHTML.getFirstByXPath(boutSummaryHeaderPath + "/div[2]/p[1]/i[5]/span/text()");
+		referee = refereeHtml.asText().trim();
+		if(referee == null) {
+			throw new IllegalArgumentException("Bout referee failed to parse");
+		}
+		LOG.info(String.format("Referee: %s", referee));
+		boutData.setReferee(referee);
+	}
+
+	private void parseBoutDetails(HtmlElement boutDetailHTML, String boutSummaryHeaderPath, BoutData boutData) {
+		String finishDetails;
+
+		HtmlElement finishDetailHtml = boutDetailHTML.getFirstByXPath(boutSummaryHeaderPath + "/div[2]/p[2]");
+		LOG.info(finishDetailHtml.asXml());
+		finishDetails = finishDetailHtml.asText().trim();
+		if(finishDetails == null) {
+			throw new IllegalArgumentException("Bout finish details failed to parse");
+		}
+		LOG.info(String.format("Finish details: %s", finishDetails));
+		boutData.setFinishDetails(finishDetails);
+	}
+
+	private void parseFighters(HtmlElement boutDetailHTML, BoutData boutData) {
+		List<HtmlElement> fightersHtmlList = boutDetailHTML.getByXPath("/html/body/section/div/div/div[1]/div");
+		for (HtmlElement fighterHtml : fightersHtmlList) {
+			String fighterHtmlPath = fighterHtml.getCanonicalXPath();
+			HtmlElement fighterOutcomeHtml = boutDetailHTML.getFirstByXPath(fighterHtmlPath + "/i");
+			
+			LOG.info(fighterOutcomeHtml.asXml());
+			BoutOutcomeEnum fighterOutcome = BoutOutcomeEnum.valueOf(fighterOutcomeHtml.asText().trim());
+			if(fighterOutcome == null) {
+				throw new IllegalArgumentException("Fighter outcome failed to parse");
+			}
+			
+			DomAttr fighterIdHtml = boutDetailHTML.getFirstByXPath(fighterHtmlPath + "/div/h3/a/@href");
+			LOG.info(fighterIdHtml.asXml());
+			String fighterId = fighterIdHtml.getValue().replace(FIGHTER_DETAIL_URL, "");
+			if(fighterId == null) {
+				throw new IllegalArgumentException("Fighter id failed to parse");
+			}
+			
+			FighterBoutXRefData fighterXref = fighterService.linkFighterToBout(fighterId, boutData.getBoutId(),
+					fighterOutcome);
+			boutData.addFighterBoutXRefs(fighterXref);
+
+			LOG.info(String.format("Fighter: %s", fighterXref.getFighter().getFighterName()));
+		}
+	}
+}

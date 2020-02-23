@@ -1,0 +1,9 @@
+com/hensley/ufc/repository/FightRepository.class
+com/hensley/ufc/App.class
+com/hensley/ufc/domain/BaseAuditEntity.class
+com/hensley/ufc/config/Swagger2Config.class
+com/hensley/ufc/service/FightService.class
+com/hensley/ufc/domain/FightData.class
+com/hensley/ufc/util/UrlUtils.class
+com/hensley/ufc/rest/ParseController.class
+com/hensley/ufc/service/BoutService.class

@@ -1,0 +1,14 @@
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/service/UfcStatsFights.java
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/domain/BaseAuditEntity.java
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/service/BoutService.java
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/repository/FightRepository.java
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/config/Swagger2Config.java
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/pojo/FightItem.java
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/util/UrlUtils.java
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/pojo/FighterBoutInfo.java
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/pojo/FighterRoundTotals.java
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/rest/ParseController.java
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/App.java
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/domain/FightData.java
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/service/FightService.java
+/Users/eric.hensleyibm.com/eclipse-workspace/ufc/src/main/java/com/hensley/ufc/pojo/FighterBonusItem.java
