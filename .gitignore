@@ -26,4 +26,18 @@ hs_err_pid*
 .project
 .settings/
 
-target/
+target/*
+bin/
+*target/
+*/target/**
+**/.recommenders
+**/.metadata
+**/.project
+**/.classpath
+**/.settings
+**/bin
+**/*.xar
+**/target
+/target/
+target/maven-status/
+/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
