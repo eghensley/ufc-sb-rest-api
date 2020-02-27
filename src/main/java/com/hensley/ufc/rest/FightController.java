@@ -36,10 +36,17 @@ public class FightController {
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 	
-	@ApiOperation(value = "Fetch all fight IDs")
+	@ApiOperation(value = "Fetch fights with score url")
 	@GetMapping("all/scoreUrl")
 	public ResponseEntity<GetResponse> getFightIdsWithScoreUrl() {
 		GetResponse response = fightService.getFightsWithScore(); 
+		return new ResponseEntity<>(response, response.getStatus());
+	}
+	
+	@ApiOperation(value = "Fetch fights without score url")
+	@GetMapping("missing/scoreUrl")
+	public ResponseEntity<GetResponse> getFightIdsWithoutScoreUrl() {
+		GetResponse response = fightService.getFightsWithoutScore(); 
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 }

@@ -1,5 +1,6 @@
 package com.hensley.ufc.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +19,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.hensley.ufc.domain.FightData;
 import com.hensley.ufc.domain.LocationData;
 import com.hensley.ufc.enums.ParseTargetEnum;
-import com.hensley.ufc.pojo.dto.FightDto;
+import com.hensley.ufc.pojo.dto.fight.BasicFightDto;
+import com.hensley.ufc.pojo.dto.fight.FightDto;
 import com.hensley.ufc.pojo.request.ParseRequest;
 import com.hensley.ufc.pojo.response.GetResponse;
 import com.hensley.ufc.pojo.response.ParseResponse;
@@ -73,6 +75,19 @@ public class FightService {
 		String errorString = null;
 		List<String> fightList = fightRepo.findFightIdsWithScore();
 		return new GetResponse(HttpStatus.ACCEPTED, errorString, fightList);
+	}
+
+	@Transactional
+	public GetResponse getFightsWithoutScore(){
+		String errorString = null;
+		List<FightData> fightList = fightRepo.findFightIdsWithoutScore();
+		
+		List<BasicFightDto> response = new ArrayList<>();
+		for (FightData fightData: fightList) {
+			BasicFightDto fightDto = (BasicFightDto) mappingUtils.mapToDto(fightData, BasicFightDto.class);
+			response.add(fightDto);
+		}
+		return new GetResponse(HttpStatus.ACCEPTED, errorString, response);
 	}
 	
 	@Transactional

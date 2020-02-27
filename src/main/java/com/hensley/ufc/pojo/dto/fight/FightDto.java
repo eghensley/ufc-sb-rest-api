@@ -1,10 +1,12 @@
-package com.hensley.ufc.pojo.dto;
+package com.hensley.ufc.pojo.dto.fight;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.hensley.ufc.domain.LocationData;
+import com.hensley.ufc.pojo.dto.SuperAuditDto;
+import com.hensley.ufc.pojo.dto.bout.BoutDto;
+import com.hensley.ufc.pojo.dto.location.LocationDto;
 
 public class FightDto extends SuperAuditDto {
 	private String fightId;
@@ -13,7 +15,8 @@ public class FightDto extends SuperAuditDto {
 	private Date fightDate;
 	private Boolean completed;
 	private List<BoutDto> bouts;
-	
+	private String mmaDecFightUrl;
+
 	public FightDto() {
 		this.bouts = new ArrayList<>();
 	}
@@ -100,6 +103,20 @@ public class FightDto extends SuperAuditDto {
 	 */
 	public void setBouts(List<BoutDto> bouts) {
 		this.bouts = bouts;
+	}
+
+	/**
+	 * @return the mmaDecFightUrl
+	 */
+	public String getMmaDecFightUrl() {
+		return mmaDecFightUrl;
+	}
+
+	/**
+	 * @param mmaDecFightUrl the mmaDecFightUrl to set
+	 */
+	public void setMmaDecFightUrl(String mmaDecFightUrl) {
+		this.mmaDecFightUrl = mmaDecFightUrl;
 	}
 
 	

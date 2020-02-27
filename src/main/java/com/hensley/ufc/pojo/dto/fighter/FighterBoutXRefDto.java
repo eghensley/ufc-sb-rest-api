@@ -1,9 +1,10 @@
-package com.hensley.ufc.pojo.dto;
+package com.hensley.ufc.pojo.dto.fighter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.hensley.ufc.enums.BoutOutcomeEnum;
+import com.hensley.ufc.pojo.dto.strike.StrikeDto;
 
 public class FighterBoutXRefDto {
 	private FighterDto fighter;

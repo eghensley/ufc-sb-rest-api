@@ -65,16 +65,18 @@ public class ParseController {
 	@GetMapping("fights/{fightId}/bouts/all")
 	public ResponseEntity<ParseResponse> getFightBoutDetails(@PathVariable("fightId") String fightId) throws MalformedURLException, IOException{
 //		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
+		@SuppressWarnings("unused")
 		ParseResponse initResponse = boutService.scrapeBoutsFromFightId(fightId); 
 
 		List<String> boutList = boutService.getBoutsFromFight(fightId);
 		for (String boutId: boutList) {
+			@SuppressWarnings("unused")
 			ParseResponse response = boutDetailService.scrapeBoutDetailsFromBoutId(fightId, boutId); 
 		}
 		return new ResponseEntity<>(new ParseResponse(), HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "Parse round scores")
+	@ApiOperation(value = "Get judge scores for year")
 	@GetMapping("fights/judgeScores/{year}")
 	public ResponseEntity<ParseResponse> getRoundJudgeScores(@PathVariable("year") String year) throws MalformedURLException, IOException{
 //		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
@@ -83,8 +85,17 @@ public class ParseController {
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 	
-	@ApiOperation(value = "Parse round scores")
-	@GetMapping("fights/judgeScores/fight/{fightOid}")
+//	@ApiOperation(value = "Parse round scores")
+//	@GetMapping("fights/judgeScores/fight/{fightOid}")
+//	public ResponseEntity<ParseResponse> getRoundFightScores(@PathVariable("fightOid") String fightOid) throws MalformedURLException, IOException{
+////		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
+////		ParseResponse response = roundScoreService.scrapeScoresFromBout(); 
+//		ParseResponse response = roundScoreService.addBoutScoreUrl(fightOid);
+//		return new ResponseEntity<>(response, response.getStatus());
+//	}
+	
+	@ApiOperation(value = "Add url to fight")
+	@GetMapping("fights/judgeScores/fight/{fightOid}/url/{fightURl}")
 	public ResponseEntity<ParseResponse> getRoundFightScores(@PathVariable("fightOid") String fightOid) throws MalformedURLException, IOException{
 //		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
 //		ParseResponse response = roundScoreService.scrapeScoresFromBout(); 

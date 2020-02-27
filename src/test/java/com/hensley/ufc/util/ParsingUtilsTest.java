@@ -6,7 +6,6 @@ import javax.annotation.Generated;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.tools.configuration.base.MethodRef;
 
 @Generated(value = "org.junit-tools-1.1.0")
 public class ParsingUtilsTest {
@@ -16,7 +15,6 @@ public class ParsingUtilsTest {
 	}
 
 	@SuppressWarnings("deprecation")
-	@MethodRef(name = "stringToDate", signature = "(QString;)QDate;")
 	@Test
 	public void testStringToDate() throws Exception {
 		ParsingUtils testSubject;
@@ -29,7 +27,6 @@ public class ParsingUtilsTest {
 		Assert.assertEquals(new Date(119, 0, 1), result);
 	}
 	
-	@MethodRef(name = "stringToDate", signature = "(QString;)QDate;")
 	@Test
 	public void testStringToDateError() throws Exception {
 		ParsingUtils testSubject;

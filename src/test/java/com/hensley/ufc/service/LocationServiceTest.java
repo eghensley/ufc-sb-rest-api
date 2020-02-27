@@ -6,7 +6,6 @@ import javax.annotation.Generated;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.tools.configuration.base.MethodRef;
 
 import com.hensley.ufc.domain.CountryData;
 import com.hensley.ufc.domain.LocationData;
@@ -55,7 +54,6 @@ public class LocationServiceTest {
 		return new LocationService(setupLocationRepo(), setupCountryRepo());
 	}
 
-	@MethodRef(name = "matchLocationToModel", signature = "([QString;)QLocationData;")
 	@Test
 	public void testMatchLocationToModelArrayLenTwo() throws Exception {
 		LocationService testSubject;
@@ -69,7 +67,6 @@ public class LocationServiceTest {
 		Assert.assertEquals(initLocationData(), result);
 	}
 
-	@MethodRef(name = "matchLocationToModel", signature = "([QString;)QLocationData;")
 	@Test
 	public void testMatchLocationToModelArrayLenThree() throws Exception {
 		LocationService testSubject;
@@ -83,7 +80,6 @@ public class LocationServiceTest {
 		Assert.assertEquals(initLocationData(), result);
 	}
 
-	@MethodRef(name = "matchLocationToModel", signature = "([QString;)QLocationData;")
 	@Test
 	public void testMatchLocationToModelMissingLocation() throws Exception {
 		LocationService testSubject;
@@ -97,7 +93,6 @@ public class LocationServiceTest {
 		Assert.assertNotEquals(initLocationData(), result);
 	}
 
-	@MethodRef(name = "createMissingLocation", signature = "(QString;QString;QString;)QLocationData;")
 	@Test
 	public void testCreateMissingLocation() throws Exception {
 		LocationService testSubject;
@@ -115,7 +110,6 @@ public class LocationServiceTest {
 		Assert.assertNotNull(result.getOid());
 	}
 
-	@MethodRef(name = "createCountryIfMissing", signature = "(QString;)QCountryData;")
 	@Test
 	public void testCreateCountryIfMissing() throws Exception {
 		LocationService testSubject;
@@ -128,7 +122,6 @@ public class LocationServiceTest {
 		Assert.assertEquals(initCountryData(), result);
 	}
 	
-	@MethodRef(name = "createCountryIfMissing", signature = "(QString;)QCountryData;")
 	@Test
 	public void testCreateCountryIfMissingIsMissing() throws Exception {
 		LocationService testSubject;

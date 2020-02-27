@@ -28,4 +28,11 @@ public class BoutController {
 		GetResponse response = boutService.getBoutDto(boutId); 
 		return new ResponseEntity<>(response, response.getStatus());
 	}
+	
+	@ApiOperation(value = "Fetch bout by Id")
+	@GetMapping("missing/scores")
+	public ResponseEntity<GetResponse> getBoutsMissingScores() {
+		GetResponse response = boutService.getBoutsMissingScores(); 
+		return new ResponseEntity<>(response, response.getStatus());
+	}
 }

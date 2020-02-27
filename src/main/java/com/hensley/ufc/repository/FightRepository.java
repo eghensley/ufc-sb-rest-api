@@ -19,6 +19,9 @@ public interface FightRepository extends JpaRepository<FightData, String> {
 	
 	@Query(value = "select f.oid from ufc2.fight f where f.mma_dec_fight_url is not null", nativeQuery = true)
 	List<String> findFightIdsWithScore();
+
+	@Query(value = "select * from ufc2.fight f where f.mma_dec_fight_url is null", nativeQuery = true)
+	List<FightData> findFightIdsWithoutScore();
 	
 	@Query(value = "select * from ufc2.fight f where f.fight_name LIKE :fightName", nativeQuery = true)
 	Optional<List<FightData>> findFightByFuzzyName(@Param("fightName") String fightName);

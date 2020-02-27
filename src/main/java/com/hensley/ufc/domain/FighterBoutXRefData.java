@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.hensley.ufc.enums.BoutOutcomeEnum;
+import com.hensley.ufc.pojo.parse.SingleRoundScoreParse;
 
 @Entity
 @Table(name = "FIGHTER_BOUT_XREF")
@@ -43,6 +45,17 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 		
 	}
 
+	public StrikeData getStatsByRound(Integer round) {
+		List<StrikeData> potMatches = boutDetails.stream().filter(d -> d.getRound().equals(round)).collect(Collectors.toList());
+		if (potMatches.isEmpty()) {
+			throw new IllegalArgumentException(String.format("No stats for round %s", round));
+		} else if (potMatches.size()>1) {
+			throw new IllegalArgumentException(String.format("Multiple matches found for round %s", round));
+		} else {
+			return potMatches.get(0);
+		}
+	}
+	
 	/**
 	 * @return the bout
 	 */
@@ -64,6 +77,10 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 		return fighter;
 	}
 
+	public String getFighterName() {
+		return this.fighter.getFighterName();
+	}
+	
 	/**
 	 * @param fighter the fighter to set
 	 */

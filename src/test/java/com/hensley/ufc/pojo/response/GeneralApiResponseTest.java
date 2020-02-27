@@ -7,7 +7,6 @@ import javax.annotation.Generated;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.tools.configuration.base.MethodRef;
 import org.springframework.http.HttpStatus;
 
 @Generated(value = "org.junit-tools-1.1.0")
@@ -20,7 +19,6 @@ public class GeneralApiResponseTest {
 		return new GeneralApiResponse();
 	}
 
-	@MethodRef(name = "getStatus", signature = "()QHttpStatus;")
 	@Test
 	public void testGetStatus() throws Exception {
 		GeneralApiResponse testSubject;
@@ -33,7 +31,6 @@ public class GeneralApiResponseTest {
 		Assert.assertEquals(status, testSubject.status);
 	}
 
-	@MethodRef(name = "setStatus", signature = "(QHttpStatus;)V")
 	@Test
 	public void testSetStatus() throws Exception {
 		GeneralApiResponse testSubject;
@@ -46,7 +43,6 @@ public class GeneralApiResponseTest {
 		Assert.assertEquals(status, testSubject.status);
 	}
 
-	@MethodRef(name = "getTimestamp", signature = "()QDate;")
 	@Test
 	public void testGetTimestamp() throws Exception {
 		GeneralApiResponse testSubject;
@@ -59,7 +55,6 @@ public class GeneralApiResponseTest {
 		Assert.assertEquals(timestamp, testSubject.getTimestamp());
 	}
 
-	@MethodRef(name = "setTimestamp", signature = "(QDate;)V")
 	@Test
 	public void testSetTimestamp() throws Exception {
 		GeneralApiResponse testSubject;
@@ -72,7 +67,6 @@ public class GeneralApiResponseTest {
 		Assert.assertEquals(timestamp, testSubject.getTimestamp());
 	}
 
-	@MethodRef(name = "getErrorMsg", signature = "()QString;")
 	@Test
 	public void testGetErrorMsg() throws Exception {
 		GeneralApiResponse testSubject;
@@ -85,7 +79,6 @@ public class GeneralApiResponseTest {
 		Assert.assertEquals(errorMsg, testSubject.getErrorMsg());
 	}
 
-	@MethodRef(name = "setErrorMsg", signature = "(QString;)V")
 	@Test
 	public void testSetErrorMsg() throws Exception {
 		GeneralApiResponse testSubject;

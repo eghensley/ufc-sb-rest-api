@@ -8,9 +8,6 @@ import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-
-
 @Service
 public class ParsingUtils {
 	private Logger LOG = Logger.getLogger(ParsingUtils.class.toString());

@@ -8,7 +8,6 @@ import javax.annotation.Generated;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.tools.configuration.base.MethodRef;
 
 @Generated(value = "org.junit-tools-1.1.0")
 public class CountryDataTest {
@@ -20,7 +19,6 @@ public class CountryDataTest {
 		return new CountryData();
 	}
 
-	@MethodRef(name = "getCountryName", signature = "()QString;")
 	@Test
 	public void testGetCountryName() throws Exception {
 		CountryData testSubject;
@@ -33,7 +31,6 @@ public class CountryDataTest {
 		Assert.assertEquals(countryName, testSubject.getCountryName());
 	}
 
-	@MethodRef(name = "setCountryName", signature = "(QString;)V")
 	@Test
 	public void testSetCountryName() throws Exception {
 		CountryData testSubject;
@@ -46,7 +43,6 @@ public class CountryDataTest {
 		Assert.assertEquals(countryName, testSubject.getCountryName());
 	}
 
-	@MethodRef(name = "getLocations", signature = "()QList<QLocationData;>;")
 	@Test
 	public void testGetLocations() throws Exception {
 		CountryData testSubject;
@@ -59,7 +55,6 @@ public class CountryDataTest {
 		Assert.assertTrue(result.size() == 0);
 	}
 
-	@MethodRef(name = "setLocations", signature = "(QList<QLocationData;>;)V")
 	@Test
 	public void testSetLocationsNull() throws Exception {
 		CountryData testSubject;
@@ -72,7 +67,6 @@ public class CountryDataTest {
 		Assert.assertNotNull(testSubject.getLocations());
 	}
 	
-	@MethodRef(name = "setLocations", signature = "()QList<QLocationData;>;")
 	@Test
 	public void testSetLocationsEmpty() throws Exception {
 		CountryData testSubject;
@@ -85,7 +79,6 @@ public class CountryDataTest {
 		Assert.assertNotNull(testSubject.getLocations());
 	}
 	
-	@MethodRef(name = "setLocations", signature = "()QList<QLocationData;>;")
 	@Test
 	public void testSetLocations() throws Exception {
 		CountryData testSubject;
@@ -101,7 +94,6 @@ public class CountryDataTest {
 		Assert.assertTrue(testSubject.getLocations().size() == 1);
 	}
 
-	@MethodRef(name = "addLocation", signature = "(QLocationData;)V")
 	@Test
 	public void testAddLocation() throws Exception {
 		CountryData testSubject;
@@ -114,7 +106,6 @@ public class CountryDataTest {
 		Assert.assertTrue(testSubject.getLocations().get(0).getCountry().equals(testSubject));
 	}
 
-	@MethodRef(name = "hashCode", signature = "()I")
 	@Test
 	public void testHashCode() throws Exception {
 		CountryData testSubject;
@@ -127,7 +118,6 @@ public class CountryDataTest {
 		Assert.assertNotNull(result);
 	}
 
-	@MethodRef(name = "equals", signature = "(QObject;)Z")
 	@Test
 	public void testEquals() throws Exception {
 		CountryData testSubject;
@@ -141,7 +131,6 @@ public class CountryDataTest {
 		Assert.assertTrue(result);
 	}
 	
-	@MethodRef(name = "equals", signature = "(QObject;)Z")
 	@Test
 	public void testNotEquals() throws Exception {
 		CountryData testSubject;

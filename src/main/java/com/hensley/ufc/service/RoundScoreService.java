@@ -3,10 +3,12 @@ package com.hensley.ufc.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,13 +19,17 @@ import com.gargoylesoftware.htmlunit.html.DomText;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
+import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.hensley.ufc.domain.BoutData;
 import com.hensley.ufc.domain.FightData;
 import com.hensley.ufc.domain.FighterBoutXRefData;
 import com.hensley.ufc.domain.FighterData;
 import com.hensley.ufc.domain.StrikeData;
 import com.hensley.ufc.enums.ParseTargetEnum;
+import com.hensley.ufc.pojo.parse.RoundScoreFighterParseStore;
+import com.hensley.ufc.pojo.parse.RoundScoreParseStore;
 import com.hensley.ufc.pojo.parse.ScorePartialParse;
+import com.hensley.ufc.pojo.parse.SingleRoundScoreParse;
 import com.hensley.ufc.pojo.request.ParseRequest;
 import com.hensley.ufc.pojo.response.ParseResponse;
 import com.hensley.ufc.pojo.response.UrlParseRequest;
@@ -249,41 +255,78 @@ public class RoundScoreService {
 		}
 	}
 
-	
-	
 	@Transactional
 	public ParseResponse addBoutScores(String boutId) {
 		ParseRequest request = new ParseRequest(ParseTargetEnum.ROUNDS, null, boutId, null);
 		HtmlPage page;
 		ParseResponse response = new ParseResponse(request);
 		List<FighterBoutXRefData> boutXrefList;
-		
+		String judgePath;
+		List<HtmlTableRow> judgeRoundScores;
+		String roundPath;
+
 		Optional<BoutData> boutDataOpt = boutRepo.findByOid(boutId);
 		BoutData boutData = boutDataOpt.get();
-		
+
 		String baseUrl = boutData.getMmaDecBoutUrl();
 		UrlParseRequest urlParseRequest = urlUtils.parse(baseUrl);
 		String errorStr = urlParseRequest.getErrorStr();
 		if (urlParseRequest.getSuccess()) {
 			page = urlParseRequest.getPage();
-			
+			LOG.info("Completed SCORES Parse");
+			RoundScoreParseStore scoreStore = new RoundScoreParseStore();
+
+			Integer fighterNameNmbr = 0;
+			List<HtmlElement> webFighterNames = page.getByXPath(
+					"//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[1]/tbody/tr[1]/td[1]/table/tbody/tr/td/a");
+			for (HtmlElement webFighterName : webFighterNames) {
+				fighterNameNmbr += 1;
+				scoreStore.addNameToFighter(webFighterName.asText().trim(), fighterNameNmbr);
+			}
+
+			List<HtmlTableDataCell> judgeScoreList = page.getByXPath(
+					"//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[1]/tbody/tr[3]/td/table/tbody/tr/td");
+
+			Integer itemsFound = judgeScoreList.size();
+			response.setItemsFound(itemsFound);
+			LOG.info(String.format("%s item found", response.getItemsFound()));
+			if (itemsFound == 0) {
+				errorStr = String.format(NO_SCORES_FOUND, baseUrl);
+				response.addResponseMsg(HttpStatus.NO_CONTENT, errorStr);
+				return response;
+			}
+			for (HtmlTableDataCell judgeScores : judgeScoreList) {
+				judgePath = judgeScores.getCanonicalXPath();
+				judgeRoundScores = page.getByXPath(judgePath + "/table/tbody/tr[@class=\"decision\"]");
+				Integer round = 0;
+				for (HtmlTableRow roundScores : judgeRoundScores) {
+					round += 1;
+					roundPath = roundScores.getCanonicalXPath();
+					List<HtmlElement> fighterScores = page.getByXPath(roundPath + "/td");
+					Integer fighterNmbr = 1;
+					scoreStore.addScoreToFighter(fighterNmbr, round,
+							Integer.valueOf(fighterScores.get(fighterNmbr).asText()));
+					fighterNmbr = 2;
+					scoreStore.addScoreToFighter(fighterNmbr, round,
+							Integer.valueOf(fighterScores.get(fighterNmbr).asText()));
+				}
+			}
+			boutXrefList = boutData.getFighterBoutXRefs();
+			for (FighterBoutXRefData boutXref : boutXrefList) {
+				RoundScoreFighterParseStore extractedScores = scoreStore.matchFighterName(boutXref.getFighterName());
+				List<SingleRoundScoreParse> roundScoreList = extractedScores.outputRoundScores();
+				for (SingleRoundScoreParse roundScore : roundScoreList) {
+					StrikeData roundStats = boutXref.getStatsByRound(roundScore.getRound());
+					roundStats.setScore(roundScore.getScore());
+				}
+			}
+			response.setStatus(HttpStatus.OK);
 			return response;
 		} else {
 			return errorService.handleParseError(errorStr, response);
 		}
 	}
-	
-	
-	
-//	
-//	
-//	
-//	
-//	
-//	
-//	
-//	
-//	
+
 //	@Transactional
 //	public ParseResponse scrapeScoresFromBout(String fightNameRaw, String baseUrl, ParseRequest fightRequest) {
 //		String errorStr = null;
@@ -356,7 +399,7 @@ public class RoundScoreService {
 //			return errorService.handleParseError(errorStr, e, response);
 //		}
 //	}
-//
+
 //	public void adfasdfa(HtmlPage page, Integer round) {
 //		List<HtmlElement> roundScoreHtml;
 //

@@ -1,9 +1,11 @@
-package com.hensley.ufc.pojo.dto;
+package com.hensley.ufc.pojo.dto.bout;
 
 import java.util.List;
 
 import com.hensley.ufc.enums.FightMethodEnum;
 import com.hensley.ufc.enums.WeightClassEnum;
+import com.hensley.ufc.pojo.dto.SuperAuditDto;
+import com.hensley.ufc.pojo.dto.fighter.FighterBoutXRefDto;
 
 public class BoutDto extends SuperAuditDto {
 
@@ -20,6 +22,7 @@ public class BoutDto extends SuperAuditDto {
 	private FightMethodEnum finishMethod;
 	private String finishDetails;
 	private List<FighterBoutXRefDto> fighterBoutXRefs;
+	private String mmaDecBoutUrl;
 	
 	public BoutDto() {
 		
@@ -205,6 +208,14 @@ public class BoutDto extends SuperAuditDto {
 	 */
 	public void setFighterBoutXRefs(List<FighterBoutXRefDto> fighterBoutXRefs) {
 		this.fighterBoutXRefs = fighterBoutXRefs;
+	}
+
+	public String getMmaDecBoutUrl() {
+		return mmaDecBoutUrl;
+	}
+
+	public void setMmaDecBoutUrl(String mmaDecBoutUrl) {
+		this.mmaDecBoutUrl = mmaDecBoutUrl;
 	}
 	
 }

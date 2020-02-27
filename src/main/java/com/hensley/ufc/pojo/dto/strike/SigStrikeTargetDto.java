@@ -1,4 +1,4 @@
-package com.hensley.ufc.pojo.dto;
+package com.hensley.ufc.pojo.dto.strike;
 
 public class SigStrikeTargetDto {
 

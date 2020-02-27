@@ -6,7 +6,9 @@ import javax.annotation.Generated;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.tools.configuration.base.MethodRef;
+
+import com.hensley.ufc.pojo.dto.location.CountryDto;
+import com.hensley.ufc.pojo.dto.location.LocationDto;
 
 @Generated(value = "org.junit-tools-1.1.0")
 public class LocationDtoTest {
@@ -18,7 +20,6 @@ public class LocationDtoTest {
 		return new LocationDto();
 	}
 
-	@MethodRef(name = "getCityName", signature = "()QString;")
 	@Test
 	public void testGetCityName() throws Exception {
 		LocationDto testSubject;
@@ -31,7 +32,6 @@ public class LocationDtoTest {
 		Assert.assertEquals(cityName, testSubject.getCityName());
 	}
 
-	@MethodRef(name = "setCityName", signature = "(QString;)V")
 	@Test
 	public void testSetCityName() throws Exception {
 		LocationDto testSubject;
@@ -44,7 +44,6 @@ public class LocationDtoTest {
 		Assert.assertEquals(cityName, testSubject.getCityName());
 	}
 
-	@MethodRef(name = "getStateName", signature = "()QString;")
 	@Test
 	public void testGetStateName() throws Exception {
 		LocationDto testSubject;
@@ -57,7 +56,6 @@ public class LocationDtoTest {
 		Assert.assertEquals(stateName, testSubject.getStateName());
 	}
 
-	@MethodRef(name = "setStateName", signature = "(QString;)V")
 	@Test
 	public void testSetStateName() throws Exception {
 		LocationDto testSubject;
@@ -70,7 +68,6 @@ public class LocationDtoTest {
 		Assert.assertEquals(stateName, testSubject.getStateName());
 	}
 
-	@MethodRef(name = "getCountry", signature = "()QCountryDto;")
 	@Test
 	public void testGetCountry() throws Exception {
 		LocationDto testSubject;
@@ -83,7 +80,6 @@ public class LocationDtoTest {
 		Assert.assertEquals(country, testSubject.getCountry());
 	}
 
-	@MethodRef(name = "setCountry", signature = "(QCountryDto;)V")
 	@Test
 	public void testSetCountry() throws Exception {
 		LocationDto testSubject;

@@ -6,7 +6,6 @@ import javax.annotation.Generated;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.tools.configuration.base.MethodRef;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
@@ -20,7 +19,6 @@ public class UrlParseRequestTest {
 		return new UrlParseRequest();
 	}
 
-	@MethodRef(name = "UrlParseRequest", signature = "()V")
 	@Test
 	public void testUrlParseRequest() throws Exception {
 		UrlParseRequest testSubject;
@@ -35,7 +33,6 @@ public class UrlParseRequestTest {
 		Assert.assertEquals(success, testSubject.getSuccess());
 	}
 
-	@MethodRef(name = "getPage", signature = "()QHtmlPage;")
 	@Test
 	public void testGetPage() throws Exception {
 		UrlParseRequest testSubject;
@@ -47,7 +44,6 @@ public class UrlParseRequestTest {
 		Assert.assertNull(result);
 	}
 
-	@MethodRef(name = "getErrorStr", signature = "()QString;")
 	@Test
 	public void testGetErrorStr() throws Exception {
 		UrlParseRequest testSubject;
@@ -59,7 +55,6 @@ public class UrlParseRequestTest {
 		Assert.assertEquals(errorStr, testSubject.getErrorStr());
 	}
 
-	@MethodRef(name = "setErrorStr", signature = "(QString;)V")
 	@Test
 	public void testSetErrorStr() throws Exception {
 		UrlParseRequest testSubject;
@@ -71,7 +66,6 @@ public class UrlParseRequestTest {
 		Assert.assertEquals(errorStr, testSubject.getErrorStr());
 	}
 
-	@MethodRef(name = "getSuccess", signature = "()QBoolean;")
 	@Test
 	public void testGetSuccess() throws Exception {
 		UrlParseRequest testSubject;
@@ -83,7 +77,6 @@ public class UrlParseRequestTest {
 		Assert.assertTrue(testSubject.getSuccess());
 	}
 
-	@MethodRef(name = "setSuccess", signature = "(QBoolean;)V")
 	@Test
 	public void testSetSuccess() throws Exception {
 		UrlParseRequest testSubject;

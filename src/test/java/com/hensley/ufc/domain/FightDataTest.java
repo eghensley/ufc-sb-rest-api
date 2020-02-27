@@ -9,7 +9,6 @@ import javax.annotation.Generated;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.tools.configuration.base.MethodRef;
 
 @Generated(value = "org.junit-tools-1.1.0")
 public class FightDataTest {
@@ -21,7 +20,6 @@ public class FightDataTest {
 		return new FightData();
 	}
 
-	@MethodRef(name = "FightData", signature = "()QString;")
 	@Test
 	public void testFightData() throws Exception {
 		FightData testSubject;
@@ -42,7 +40,6 @@ public class FightDataTest {
 
 	}
 	
-	@MethodRef(name = "getFightId", signature = "()QString;")
 	@Test
 	public void testGetFightId() throws Exception {
 		FightData testSubject;
@@ -55,7 +52,6 @@ public class FightDataTest {
 		Assert.assertEquals(fightId, testSubject.getFightId());
 	}
 
-	@MethodRef(name = "setFightId", signature = "(QString;)V")
 	@Test
 	public void testSetFightId() throws Exception {
 		FightData testSubject;
@@ -68,7 +64,6 @@ public class FightDataTest {
 		Assert.assertEquals(fightId, testSubject.getFightId());
 	}
 
-	@MethodRef(name = "getLocation", signature = "()QLocationData;")
 	@Test
 	public void testGetLocation() throws Exception {
 		FightData testSubject;
@@ -81,7 +76,6 @@ public class FightDataTest {
 		Assert.assertEquals(location, testSubject.getLocation());
 	}
 
-	@MethodRef(name = "setLocation", signature = "(QLocationData;)V")
 	@Test
 	public void testSetLocation() throws Exception {
 		FightData testSubject;
@@ -94,7 +88,6 @@ public class FightDataTest {
 		Assert.assertEquals(location, testSubject.getLocation());
 	}
 
-	@MethodRef(name = "getFightName", signature = "()QString;")
 	@Test
 	public void testGetFightName() throws Exception {
 		FightData testSubject;
@@ -107,7 +100,6 @@ public class FightDataTest {
 		Assert.assertEquals(fightName, testSubject.getFightName());
 	}
 
-	@MethodRef(name = "setFightName", signature = "(QString;)V")
 	@Test
 	public void testSetFightName() throws Exception {
 		FightData testSubject;
@@ -120,7 +112,6 @@ public class FightDataTest {
 		Assert.assertEquals(fightName, testSubject.getFightName());
 	}
 
-	@MethodRef(name = "getFightDate", signature = "()QDate;")
 	@Test
 	public void testGetFightDate() throws Exception {
 		FightData testSubject;
@@ -133,7 +124,6 @@ public class FightDataTest {
 		Assert.assertEquals(fightDate, testSubject.getFightDate());
 	}
 
-	@MethodRef(name = "setFightDate", signature = "(QDate;)V")
 	@Test
 	public void testSetFightDate() throws Exception {
 		FightData testSubject;
@@ -146,7 +136,6 @@ public class FightDataTest {
 		Assert.assertEquals(fightDate, testSubject.getFightDate());
 	}
 
-	@MethodRef(name = "getBouts", signature = "()QList<QBoutData;>;")
 	@Test
 	public void testGetBouts() throws Exception {
 		FightData testSubject;
@@ -159,7 +148,6 @@ public class FightDataTest {
 		Assert.assertTrue(result.size() == 0);
 	}
 
-	@MethodRef(name = "setBouts", signature = "(QList<QBoutData;>;)V")
 	@Test
 	public void testSetBoutsNull() throws Exception {
 		FightData testSubject;
@@ -172,7 +160,6 @@ public class FightDataTest {
 		Assert.assertTrue(testSubject.getBouts().size() == 0);
 	}
 	
-	@MethodRef(name = "setBouts", signature = "(QList<QBoutData;>;)V")
 	@Test
 	public void testSetBoutsEmpty() throws Exception {
 		FightData testSubject;
@@ -185,7 +172,6 @@ public class FightDataTest {
 		Assert.assertTrue(testSubject.getBouts().size() == 0);
 	}
 	
-	@MethodRef(name = "setBouts", signature = "(QList<QBoutData;>;)V")
 	@Test
 	public void testSetBouts() throws Exception {
 		FightData testSubject;
@@ -200,7 +186,6 @@ public class FightDataTest {
 		Assert.assertTrue(testSubject.getBouts().size() == 1);
 	}
 
-	@MethodRef(name = "addBout", signature = "(QBoutData;)V")
 	@Test
 	public void testAddBout() throws Exception {
 		FightData testSubject;
@@ -214,7 +199,6 @@ public class FightDataTest {
 //		Assert.assertTrue(testSubject.getBouts().get(0).getFight().equals(testSubject));
 	}
 
-	@MethodRef(name = "getCompleted", signature = "()QBoolean;")
 	@Test
 	public void testGetCompleted() throws Exception {
 		FightData testSubject;
@@ -227,7 +211,6 @@ public class FightDataTest {
 		Assert.assertFalse(result);
 	}
 
-	@MethodRef(name = "setCompleted", signature = "(QBoolean;)V")
 	@Test
 	public void testSetCompleted() throws Exception {
 		FightData testSubject;
@@ -240,7 +223,6 @@ public class FightDataTest {
 		Assert.assertEquals(completed, testSubject.getCompleted());
 	}
 
-	@MethodRef(name = "hashCode", signature = "()I")
 	@Test
 	public void testHashCode() throws Exception {
 		FightData testSubject;
@@ -253,7 +235,6 @@ public class FightDataTest {
 		Assert.assertNotNull(result);
 	}
 
-	@MethodRef(name = "equals", signature = "(QObject;)Z")
 	@Test
 	public void testEquals() throws Exception {
 		FightData testSubject;
@@ -267,7 +248,6 @@ public class FightDataTest {
 		Assert.assertTrue(result);
 	}
 	
-	@MethodRef(name = "equals", signature = "(QObject;)Z")
 	@Test
 	public void testNotEquals() throws Exception {
 		FightData testSubject;
@@ -282,7 +262,6 @@ public class FightDataTest {
 		Assert.assertFalse(result);
 	}
 
-	@MethodRef(name = "toString", signature = "()QString;")
 	@Test
 	public void testToString() throws Exception {
 		FightData testSubject;

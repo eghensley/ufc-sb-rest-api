@@ -23,7 +23,7 @@ import com.hensley.ufc.enums.BoutOutcomeEnum;
 import com.hensley.ufc.enums.FightMethodEnum;
 import com.hensley.ufc.enums.ParseTargetEnum;
 import com.hensley.ufc.enums.WeightClassEnum;
-import com.hensley.ufc.pojo.dto.BoutDto;
+import com.hensley.ufc.pojo.dto.bout.BoutDto;
 import com.hensley.ufc.pojo.request.ParseRequest;
 import com.hensley.ufc.pojo.response.GetResponse;
 import com.hensley.ufc.pojo.response.ParseResponse;
@@ -82,6 +82,12 @@ public class BoutService {
 	public List<String> getBoutsFromFight(String fightId){
 		List<String> boutList = boutRepo.findBoutIdByFightId(fightId);
 		return boutList;
+	}
+	
+	@Transactional
+	public GetResponse getBoutsMissingScores(){
+		List<String> boutList = boutRepo.findBoutsMissingScores();
+		return new GetResponse(HttpStatus.OK, null, boutList);
 	}
 	
 	@Transactional

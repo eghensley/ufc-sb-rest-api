@@ -4,7 +4,8 @@ import javax.annotation.Generated;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.tools.configuration.base.MethodRef;
+
+import com.hensley.ufc.pojo.dto.location.CountryDto;
 
 @Generated(value = "org.junit-tools-1.1.0")
 public class CountryDtoTest {
@@ -13,7 +14,6 @@ public class CountryDtoTest {
 		return new CountryDto();
 	}
 
-	@MethodRef(name = "getCountryName", signature = "()QString;")
 	@Test
 	public void testGetCountryName() throws Exception {
 		CountryDto testSubject;
@@ -25,7 +25,6 @@ public class CountryDtoTest {
 		Assert.assertEquals(countryName, testSubject.getCountryName());
 	}
 
-	@MethodRef(name = "setCountryName", signature = "(QString;)V")
 	@Test
 	public void testSetCountryName() throws Exception {
 		CountryDto testSubject;

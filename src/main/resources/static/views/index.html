@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Main Page</title>
+</head>
+<body ng-app="ufc">
+<hr/>
+<div class="container" ng-controller="FightController">
+    <div class="row">
+        <p>{{MissingUrlFights | json}}</p>
+    </div>
+    <hr/>
+    <div class="row" ng-repeat="missingFight in MissingUrlFights">
+        <div class="">
+            <h3>{{missingFight.fightName}}</h3>
+            <h3>{{missingFight.fightDate}}</h3>
+            <h3>{{missingFight.fightId}}</h3>
+        </div>
+    </div>
+</div>
+</body>
+<script src="../js/lib/angular.min.js"></script>
+<script src="../js/lib/ui-bootstrap-tpls-2.5.0.min.js"></script>
+<script src="../js/app/app.js"></script>
+<script src="../js/app/UserController.js"></script>
+<script src="../js/app/UserService.js"></script>
+<link rel="stylesheet" href="../css/lib/bootstrap.min.css"/>
+<link rel="stylesheet" href="../css/app/app.css"/>
+</html>

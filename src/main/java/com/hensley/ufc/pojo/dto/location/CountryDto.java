@@ -1,4 +1,6 @@
-package com.hensley.ufc.pojo.dto;
+package com.hensley.ufc.pojo.dto.location;
+
+import com.hensley.ufc.pojo.dto.SuperAuditDto;
 
 public class CountryDto extends SuperAuditDto {
 

@@ -37,6 +37,8 @@ public class FightData extends BaseAuditEntity implements Serializable {
 	private List<BoutData> bouts;
 	@Column(name = "MMA_DEC_FIGHT_URL", nullable = true)
 	private String mmaDecFightUrl;
+	@Column(name = "BEST_FIGHT_ODDS_URL", nullable = true)
+	private String bestFightOddsUrl;
 	
 	public FightData() {
 		this.bouts = new ArrayList<>();
@@ -180,12 +182,27 @@ public class FightData extends BaseAuditEntity implements Serializable {
 		this.mmaDecFightUrl = mmaDecFightUrl;
 	}
 
+	/**
+	 * @return the bestFightOddsUrl
+	 */
+	public String getBestFightOddsUrl() {
+		return bestFightOddsUrl;
+	}
+
+	/**
+	 * @param bestFightOddsUrl the bestFightOddsUrl to set
+	 */
+	public void setBestFightOddsUrl(String bestFightOddsUrl) {
+		this.bestFightOddsUrl = bestFightOddsUrl;
+	}
+
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ Objects.hash(bouts, completed, fightDate, fightId, fightName, location, mmaDecFightUrl);
+		result = prime * result + Objects.hash(bestFightOddsUrl, bouts, completed, fightDate, fightId, fightName,
+				location, mmaDecFightUrl);
 		return result;
 	}
 
@@ -201,10 +218,10 @@ public class FightData extends BaseAuditEntity implements Serializable {
 			return false;
 		}
 		FightData other = (FightData) obj;
-		return Objects.equals(bouts, other.bouts) && Objects.equals(completed, other.completed)
-				&& Objects.equals(fightDate, other.fightDate) && Objects.equals(fightId, other.fightId)
-				&& Objects.equals(fightName, other.fightName) && Objects.equals(location, other.location)
-				&& Objects.equals(mmaDecFightUrl, other.mmaDecFightUrl);
+		return Objects.equals(bestFightOddsUrl, other.bestFightOddsUrl) && Objects.equals(bouts, other.bouts)
+				&& Objects.equals(completed, other.completed) && Objects.equals(fightDate, other.fightDate)
+				&& Objects.equals(fightId, other.fightId) && Objects.equals(fightName, other.fightName)
+				&& Objects.equals(location, other.location) && Objects.equals(mmaDecFightUrl, other.mmaDecFightUrl);
 	}
 
 	@Override

@@ -6,7 +6,6 @@ import javax.annotation.Generated;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.tools.configuration.base.MethodRef;
 import org.springframework.http.HttpStatus;
 
 import com.hensley.ufc.pojo.request.ParseRequest;
@@ -21,7 +20,6 @@ public class ParseResponseTest {
 		return new ParseResponse();
 	}
 
-	@MethodRef(name = "ParseResponse", signature = "()QParseRequest;")
 	@Test
 	public void testParseResponse() throws Exception {
 		ParseResponse testSubject;
@@ -43,7 +41,6 @@ public class ParseResponseTest {
 
 	}
 	
-	@MethodRef(name = "getRequest", signature = "()QParseRequest;")
 	@Test
 	public void testGetRequest() throws Exception {
 		ParseResponse testSubject;
@@ -56,7 +53,6 @@ public class ParseResponseTest {
 		Assert.assertEquals(request, testSubject.getRequest());
 	}
 
-	@MethodRef(name = "setRequest", signature = "(QParseRequest;)V")
 	@Test
 	public void testSetRequest() throws Exception {
 		ParseResponse testSubject;
@@ -69,7 +65,6 @@ public class ParseResponseTest {
 		Assert.assertEquals(request, testSubject.getRequest());
 	}
 
-	@MethodRef(name = "getItemsFound", signature = "()QInteger;")
 	@Test
 	public void testGetItemsFound() throws Exception {
 		ParseResponse testSubject;
@@ -82,7 +77,6 @@ public class ParseResponseTest {
 		Assert.assertEquals(itemsFound, testSubject.getItemsFound());
 	}
 
-	@MethodRef(name = "setItemsFound", signature = "(QInteger;)V")
 	@Test
 	public void testSetItemsFound() throws Exception {
 		ParseResponse testSubject;
@@ -95,7 +89,6 @@ public class ParseResponseTest {
 		Assert.assertEquals(itemsFound, testSubject.getItemsFound());
 	}
 
-	@MethodRef(name = "getItemsCompleted", signature = "()QInteger;")
 	@Test
 	public void testGetItemsCompleted() throws Exception {
 		ParseResponse testSubject;
@@ -108,7 +101,6 @@ public class ParseResponseTest {
 		Assert.assertEquals(itemsCompleted, testSubject.getItemsCompleted());
 	}
 
-	@MethodRef(name = "setItemsCompleted", signature = "(QInteger;)V")
 	@Test
 	public void testSetItemsCompleted() throws Exception {
 		ParseResponse testSubject;

@@ -22,14 +22,14 @@ public class ParseResponse extends GeneralApiResponse {
 		this.itemsCompleted = 0;
 	}
 	
-//	public ParseResponse(ParseRequest request, Integer itemsFound, Integer itemsCompleted, HttpStatus status, String errorMsg) {
-//		this.request = request;
-//		this.itemsFound = itemsFound;
-//		this.itemsCompleted = itemsCompleted;
-//		this.status = status;
-//		this.timestamp = new Date();
-//		this.errorMsg = errorMsg;
-//	}
+	public ParseResponse(ParseRequest request, Integer itemsFound, Integer itemsCompleted, HttpStatus status, String errorMsg) {
+		this.request = request;
+		this.itemsFound = itemsFound;
+		this.itemsCompleted = itemsCompleted;
+		this.status = status;
+		this.timestamp = new Date();
+		this.errorMsg = errorMsg;
+	}
 
 	public void addResponseMsg(HttpStatus status, String errorMsg) {
 		this.status = status;
