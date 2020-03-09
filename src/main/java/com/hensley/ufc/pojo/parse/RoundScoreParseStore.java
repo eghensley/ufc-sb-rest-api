@@ -42,10 +42,11 @@ public class RoundScoreParseStore {
 	public RoundScoreFighterParseStore matchFighterName(String actName) {
 		Integer fighter1Match = StringUtils.getLevenshteinDistance(actName, this.fighter1.getWebFighterName());
 		Integer fighter2Match = StringUtils.getLevenshteinDistance(actName, this.fighter2.getWebFighterName());
+		// TODO investigate save if switched fighters 
 		if (fighter1Match > fighter2Match) {
-			return this.fighter1;
-		} else if (fighter2Match > fighter1Match) {
 			return this.fighter2;
+		} else if (fighter2Match > fighter1Match) {
+			return this.fighter1;
 		} else {
 			throw new IllegalArgumentException(String.format("Cannot match fighter name (%s) to extracted... %s & %s",
 					actName, this.fighter1.getWebFighterName(), this.fighter2.getWebFighterName()));

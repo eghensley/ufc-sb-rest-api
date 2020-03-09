@@ -21,4 +21,8 @@ public interface FighterBoutXRefRepository extends JpaRepository<FighterBoutXRef
 
 	@Query(value = "select fbx.* from ufc2.fighter_bout_xref fbx join ufc2.bout b on b.oid = fbx.bout_oid join ufc2.fight fi on fi.oid = b.fight_oid where fbx.fighter_oid =:fighterOid and fi.oid =:fightOid", nativeQuery = true)
 	Optional<List<FighterBoutXRefData>> getFighterXRefByFighterOidFightOid(@Param("fighterOid") String fighterOid, @Param("fightOid") String fightOid);
+
+	@Query(value = "select fbx.* from ufc2.fighter_bout_xref fbx join ufc2.bout b on b.oid = fbx.bout_oid join ufc2.fight fi on fi.oid = b.fight_oid where fi.oid =:fightOid", nativeQuery = true)
+	Optional<List<FighterBoutXRefData>> getFighterXRefByFightOid(@Param("fightOid") String fightOid);
+
 }

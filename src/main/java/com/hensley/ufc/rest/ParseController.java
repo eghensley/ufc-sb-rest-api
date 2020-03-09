@@ -16,6 +16,7 @@ import com.hensley.ufc.pojo.response.ParseResponse;
 import com.hensley.ufc.service.BoutDetailService;
 import com.hensley.ufc.service.BoutService;
 import com.hensley.ufc.service.FightService;
+import com.hensley.ufc.service.OddsService;
 import com.hensley.ufc.service.RoundScoreService;
 
 import io.swagger.annotations.Api;
@@ -37,6 +38,9 @@ public class ParseController {
 	
 	@Autowired
 	RoundScoreService roundScoreService;
+	
+	@Autowired
+	OddsService oddsService;
 	
 	@ApiOperation(value = "Parse fight events")
 	@GetMapping("fights")
@@ -113,6 +117,21 @@ public class ParseController {
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 	
+	@ApiOperation(value = "Parse fight odds")
+	@GetMapping("fights/{fightId}/expOutcomes")
+	public ResponseEntity<ParseResponse> parseFightExpOutcomes(@PathVariable("fightId") String fightId) throws MalformedURLException, IOException{
+//		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
+//		ParseResponse response = roundScoreService.scrapeScoresFromBout(); 
+		ParseResponse response = oddsService.scrapeExpOutcomesFromFightOid(fightId);
+		return new ResponseEntity<>(response, response.getStatus());
+	}
 	
-	
+	@ApiOperation(value = "Parse fight odds")
+	@GetMapping("fights/{fightId}/odds")
+	public ResponseEntity<ParseResponse> parseFightOdds(@PathVariable("fightId") String fightId) throws MalformedURLException, IOException{
+//		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
+//		ParseResponse response = roundScoreService.scrapeScoresFromBout(); 
+		ParseResponse response = oddsService.scrapeOddsFromFightOid(fightId);
+		return new ResponseEntity<>(response, response.getStatus());
+	}
 }

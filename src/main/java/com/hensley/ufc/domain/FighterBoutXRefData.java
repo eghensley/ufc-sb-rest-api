@@ -13,10 +13,10 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.hensley.ufc.enums.BoutOutcomeEnum;
-import com.hensley.ufc.pojo.parse.SingleRoundScoreParse;
 
 @Entity
 @Table(name = "FIGHTER_BOUT_XREF")
@@ -37,6 +37,15 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 	
 	@OneToMany(mappedBy = "fighterBout", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<StrikeData> boutDetails;
+	
+//	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//	private VegasOddsData vegasOdds;
+	
+	@Column(name = "ML_ODDS")
+	private Integer mlOdds;
+	
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private BfoExpectedOutcomeData bfoExpectedOutcomes;
 	
 	@Column(name = "OUTCOME")
 	private BoutOutcomeEnum outcome;
@@ -125,13 +134,56 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 		this.boutDetails.add(boutDetail);
 		boutDetail.setFighterBout(this);
 	}
-	
-	
+
+//	/**
+//	 * @return the vegasOdds
+//	 */
+//	public VegasOddsData getVegasOdds() {
+//		return vegasOdds;
+//	}
+//
+//	/**
+//	 * @param vegasOdds the vegasOdds to set
+//	 */
+//	public void setVegasOdds(VegasOddsData vegasOdds) {
+//		this.vegasOdds = vegasOdds;
+//		vegasOdds.setFighterBout(this);
+//	}
+
+	/**
+	 * @return the bfoExpectedOutcomes
+	 */
+	public BfoExpectedOutcomeData getBfoExpectedOutcomes() {
+		return bfoExpectedOutcomes;
+	}
+
+	/**
+	 * @param bfoExpectedOutcomes the bfoExpectedOutcomes to set
+	 */
+	public void setBfoExpectedOutcomes(BfoExpectedOutcomeData bfoExpectedOutcomes) {
+		this.bfoExpectedOutcomes = bfoExpectedOutcomes;
+		bfoExpectedOutcomes.setFighterBout(this);
+	}
+
+	/**
+	 * @return the mlOdds
+	 */
+	public Integer getMlOdds() {
+		return mlOdds;
+	}
+
+	/**
+	 * @param mlOdds the mlOdds to set
+	 */
+	public void setMlOdds(Integer mlOdds) {
+		this.mlOdds = mlOdds;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(bout, boutDetails, fighter, outcome);
+		result = prime * result + Objects.hash(bfoExpectedOutcomes, bout, boutDetails, fighter, mlOdds, outcome);
 		return result;
 	}
 
@@ -147,13 +199,9 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 			return false;
 		}
 		FighterBoutXRefData other = (FighterBoutXRefData) obj;
-		return Objects.equals(bout, other.bout) && Objects.equals(boutDetails, other.boutDetails)
-				&& Objects.equals(fighter, other.fighter) && outcome == other.outcome;
-	}
-
-	@Override
-	public String toString() {
-		return "FighterBoutXRefData [bout=" + bout + ", fighter=" + fighter + ", outcome=" + outcome + "]";
+		return Objects.equals(bfoExpectedOutcomes, other.bfoExpectedOutcomes) && Objects.equals(bout, other.bout)
+				&& Objects.equals(boutDetails, other.boutDetails) && Objects.equals(fighter, other.fighter)
+				&& Objects.equals(mlOdds, other.mlOdds) && outcome == other.outcome;
 	}
 
 }

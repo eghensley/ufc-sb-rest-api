@@ -40,6 +40,8 @@ import com.hensley.ufc.repository.FighterRepository;
 import com.hensley.ufc.repository.StrikeDataRepository;
 import com.hensley.ufc.util.UrlUtils;
 
+// TODO investigate save if switched fighters 
+
 @Service
 public class RoundScoreService {
 	private static final Logger LOG = Logger.getLogger(RoundScoreService.class.toString());
@@ -313,6 +315,7 @@ public class RoundScoreService {
 			}
 			boutXrefList = boutData.getFighterBoutXRefs();
 			for (FighterBoutXRefData boutXref : boutXrefList) {
+				// TODO investigate save if switched fighters 
 				RoundScoreFighterParseStore extractedScores = scoreStore.matchFighterName(boutXref.getFighterName());
 				List<SingleRoundScoreParse> roundScoreList = extractedScores.outputRoundScores();
 				for (SingleRoundScoreParse roundScore : roundScoreList) {
