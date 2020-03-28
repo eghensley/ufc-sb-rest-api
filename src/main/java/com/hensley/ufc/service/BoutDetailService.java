@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gargoylesoftware.htmlunit.html.DomText;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.hensley.ufc.domain.BoutData;
 import com.hensley.ufc.domain.FighterBoutXRefData;
 import com.hensley.ufc.domain.SigStrikePositionData;
 import com.hensley.ufc.domain.SigStrikeTargetData;
@@ -25,6 +26,7 @@ import com.hensley.ufc.pojo.FinishDataTransfer;
 import com.hensley.ufc.pojo.request.ParseRequest;
 import com.hensley.ufc.pojo.response.ParseResponse;
 import com.hensley.ufc.pojo.response.UrlParseRequest;
+import com.hensley.ufc.repository.BoutRepository;
 import com.hensley.ufc.repository.FighterBoutXRefRepository;
 import com.hensley.ufc.util.UrlUtils;
 
@@ -47,12 +49,15 @@ public class BoutDetailService {
 	private final UrlUtils urlUtils;
 	private final FighterBoutXRefRepository fighterBoutXRefRepo;
 	private final ErrorService errorService;
+	private final BoutRepository boutRepo;
 
 	@Autowired
-	BoutDetailService(UrlUtils urlUtils, FighterBoutXRefRepository fighterBoutXRefRepo, ErrorService errorService) {
+	BoutDetailService(UrlUtils urlUtils, FighterBoutXRefRepository fighterBoutXRefRepo, ErrorService errorService,
+			BoutRepository boutRepo) {
 		this.urlUtils = urlUtils;
 		this.fighterBoutXRefRepo = fighterBoutXRefRepo;
 		this.errorService = errorService;
+		this.boutRepo = boutRepo;
 	}
 
 	@Transactional
@@ -74,7 +79,22 @@ public class BoutDetailService {
 			fighterBoutList = fighterBoutListOpt.get();
 		}
 		try {
-			return addBoutDetails(fighterBoutList, response);
+			Integer boutRounds = boutRepo.findBoutRounds(boutId);
+			if (boutRounds.equals(fighterBoutList.get(0).getBoutDetails().size())
+					&& boutRounds.equals(fighterBoutList.get(1).getBoutDetails().size())) {
+				response.setItemsCompleted(0);
+				response.setItemsFound(0);
+				response.setStatus(HttpStatus.OK);
+			} else {
+				response = addBoutDetails(fighterBoutList, response);
+			}
+			if (response.getErrorMsg() == null && response.getItemsFound() == response.getItemsCompleted()) {
+				Optional<BoutData> boutOpt = boutRepo.findByBoutId(boutId);
+				BoutData bout = boutOpt.get();
+				bout.setCompleted(true);
+				boutRepo.save(bout);
+			}
+			return response;
 		} catch (Exception e) {
 			errorStr = e.getMessage();
 			return errorService.handleParseError(errorStr, e, response);
@@ -162,15 +182,19 @@ public class BoutDetailService {
 			} else {
 
 				for (HtmlElement roundItem : boutRoundsHtml) {
-					roundDetailResponse = parseRound(roundItem, fighterBout, boutDetailRequest, roundParsed,
-							finishTransfer);
-					roundParsed += 1;
-					if (HttpStatus.OK.equals(roundDetailResponse.getStatus())) {
-						boutDetailResponse.setItemsCompleted(boutDetailResponse.getItemsCompleted() + 1);
+					if (!fighterBout.evalIfRoundStored(roundParsed)) {
+						roundDetailResponse = parseRound(roundItem, fighterBout, boutDetailRequest, roundParsed,
+								finishTransfer);
+						if (HttpStatus.OK.equals(roundDetailResponse.getStatus())) {
+							boutDetailResponse.setItemsCompleted(boutDetailResponse.getItemsCompleted() + 1);
+						} else {
+							errorStr = roundDetailResponse.getErrorMsg();
+							break;
+						}
 					} else {
-						errorStr = roundDetailResponse.getErrorMsg();
-						break;
+						boutDetailResponse.setItemsCompleted(boutDetailResponse.getItemsCompleted() + 1);
 					}
+					roundParsed += 1;
 				}
 			}
 			fighterBoutXRefRepo.save(fighterBout);
@@ -206,8 +230,8 @@ public class BoutDetailService {
 			parseKoSub(strikeData, finishTransfer, roundParsed);
 			fighterBout.addBoutDetail(strikeData);
 			roundResponse.setStatus(HttpStatus.OK);
-			LOG.log(Level.INFO, String.format(ROUND_COMPLETION_MESSAGE, fighterBout.getFighter().getFighterName(),
-					roundParsed));
+			LOG.log(Level.INFO,
+					String.format(ROUND_COMPLETION_MESSAGE, fighterBout.getFighter().getFighterName(), roundParsed));
 			return roundResponse;
 		} catch (Exception e) {
 			return errorService.handleParseError(e.getLocalizedMessage(), e, roundResponse);
@@ -248,7 +272,7 @@ public class BoutDetailService {
 		DomText totalStrikeHtml = roundItem
 				.getFirstByXPath(roundPath + String.format("/td[5]/p[%s]/text()", fighterRow + 1));
 		totalStrikeRaw = totalStrikeHtml.asText().trim().split(" of ");
-		
+
 		totalStrikeSuccess = Integer.valueOf(totalStrikeRaw[0].trim());
 		totalStrikeAttempt = Integer.valueOf(totalStrikeRaw[1].trim());
 
@@ -273,7 +297,7 @@ public class BoutDetailService {
 		DomText takedownHtml = roundItem
 				.getFirstByXPath(roundPath + String.format("/td[6]/p[%s]/text()", fighterRow + 1));
 		takedownRaw = takedownHtml.asText().trim().split(" of ");
-		
+
 		takedownSuccess = Integer.valueOf(takedownRaw[0].trim());
 		takedownAttempt = Integer.valueOf(takedownRaw[1].trim());
 
@@ -343,6 +367,9 @@ public class BoutDetailService {
 				} else if (FightMethodEnum.SUB.equals(finishTransfer.getMethod())) {
 					strikeData.setTkoKo(0);
 					strikeData.setSubmissionSuccessful(1);
+				} else if (FightMethodEnum.DOC_STOP.equals(finishTransfer.getMethod())) {
+				strikeData.setTkoKo(1);
+					strikeData.setSubmissionSuccessful(0);					
 				} else {
 					throw new IllegalArgumentException("Failure to apply finish values.");
 				}
@@ -361,7 +388,8 @@ public class BoutDetailService {
 	private void parseSigStrike(HtmlElement roundItem, StrikeData strikeData, Integer fighterRow, Integer roundParsed) {
 //		String roundSigStrikePath = String.format("/html/body/section/div/div/section[5]/table/thead[2]/tr[%s]",
 //				roundParsed + 1);
-		String roundSigStrikePath = String.format("/html/body/section/div/div/section[5]/table/thead[%s]/tr[2]", roundParsed + 1);
+		String roundSigStrikePath = String.format("/html/body/section/div/div/section[5]/table/thead[%s]/tr[2]",
+				roundParsed + 1);
 		HtmlElement sigStrikeItem = roundItem.getFirstByXPath(roundSigStrikePath);
 		SigStrikePositionData sigStrikePositionData = new SigStrikePositionData();
 		SigStrikeTargetData sigStrikeTargetData = new SigStrikeTargetData();
@@ -386,7 +414,7 @@ public class BoutDetailService {
 		DomText headHtml = sigStrikeItem
 				.getFirstByXPath(roundSigStrikePath + String.format("/td[4]/p[%s]/text()", fighterRow + 1));
 		headRaw = headHtml.asText().trim().split(" of ");
-		
+
 		headSuccess = Integer.valueOf(headRaw[0].trim());
 		headAttempt = Integer.valueOf(headRaw[1].trim());
 
@@ -412,7 +440,7 @@ public class BoutDetailService {
 		DomText bodyHtml = sigStrikeItem
 				.getFirstByXPath(roundSigStrikePath + String.format("/td[5]/p[%s]/text()", fighterRow + 1));
 		bodyRaw = bodyHtml.asText().trim().split(" of ");
-		
+
 		bodySuccess = Integer.valueOf(bodyRaw[0].trim());
 		bodyAttempt = Integer.valueOf(bodyRaw[1].trim());
 
@@ -438,7 +466,7 @@ public class BoutDetailService {
 		DomText legHtml = sigStrikeItem
 				.getFirstByXPath(roundSigStrikePath + String.format("/td[6]/p[%s]/text()", fighterRow + 1));
 		legRaw = legHtml.asText().trim().split(" of ");
-		
+
 		legSuccess = Integer.valueOf(legRaw[0].trim());
 		legAttempt = Integer.valueOf(legRaw[1].trim());
 
@@ -463,7 +491,7 @@ public class BoutDetailService {
 		DomText distanceHtml = sigStrikeItem
 				.getFirstByXPath(roundSigStrikePath + String.format("/td[7]/p[%s]/text()", fighterRow + 1));
 		distanceRaw = distanceHtml.asText().trim().split(" of ");
-		
+
 		distanceSuccess = Integer.valueOf(distanceRaw[0].trim());
 		distanceAttempt = Integer.valueOf(distanceRaw[1].trim());
 
@@ -489,7 +517,7 @@ public class BoutDetailService {
 		DomText clinchHtml = sigStrikeItem
 				.getFirstByXPath(roundSigStrikePath + String.format("/td[8]/p[%s]/text()", fighterRow + 1));
 		clinchRaw = clinchHtml.asText().trim().split(" of ");
-		
+
 		clinchSuccess = Integer.valueOf(clinchRaw[0].trim());
 		clinchAttempt = Integer.valueOf(clinchRaw[1].trim());
 
@@ -515,7 +543,7 @@ public class BoutDetailService {
 		DomText groundHtml = sigStrikeItem
 				.getFirstByXPath(roundSigStrikePath + String.format("/td[9]/p[%s]/text()", fighterRow + 1));
 		groundRaw = groundHtml.asText().trim().split(" of ");
-		
+
 		groundSuccess = Integer.valueOf(groundRaw[0].trim());
 		groundAttempt = Integer.valueOf(groundRaw[1].trim());
 

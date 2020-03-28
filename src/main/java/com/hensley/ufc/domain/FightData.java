@@ -196,6 +196,16 @@ public class FightData extends BaseAuditEntity implements Serializable {
 		this.bestFightOddsUrl = bestFightOddsUrl;
 	}
 
+	public boolean evalBoutDecCompleted() {
+		boolean response = true;
+		for (BoutData bout: bouts) {
+			if (bout.getMmaDecBoutUrl() == null) {
+				response = false;
+				return response;
+			}
+		}
+		return response;
+	}
 	
 	@Override
 	public int hashCode() {

@@ -2,25 +2,26 @@ package com.hensley.ufc.pojo.dto.strike;
 
 public class StrikeDto {
 
+	private String oid;
 	private Integer round;
 	private Integer knockdowns;
 	private Integer totStrikeAttempted;
 	private Integer totStrikeSuccessful;
 	private Integer takedownAttempted;
 	private Integer takedownSuccessful;
-	private Integer submissionAttempted;	
+	private Integer submissionAttempted;
 	private Integer passSuccessful;
-	private Integer reversalSuccessful;	
-	private Integer tkoKo;	
+	private Integer reversalSuccessful;
+	private Integer tkoKo;
 	private Integer submissionSuccessful;
 	private SigStrikePositionDto sigStrikePosition;
 	private SigStrikeTargetDto sigStrikeTarget;
 	private Double score;
 
 	public StrikeDto() {
-		
+
 	}
-	
+
 	/**
 	 * @return the round
 	 */
@@ -77,10 +78,14 @@ public class StrikeDto {
 		this.totStrikeSuccessful = totStrikeSuccessful;
 	}
 
-	public Integer getTotStrikeAccuracy() {
-		return this.totStrikeSuccessful/this.totStrikeAttempted;
+	public Double getTotStrikeAccuracy() {
+		if (this.totStrikeAttempted == 0) {
+			return 0.0;
+		} else {
+			return Double.valueOf(this.totStrikeSuccessful / this.totStrikeAttempted);
+		}
 	}
-	
+
 	/**
 	 * @return the takedownAttempted
 	 */
@@ -197,69 +202,99 @@ public class StrikeDto {
 	 * @return the distanceStrikeAttemped
 	 */
 	public Double getDistanceSigStrikeAttemped() {
+		if (this.sigStrikePosition == null) {
+			return null;
+		}
 		return this.sigStrikePosition.getDistanceStrikeAttemped();
 	}
-	
+
 	/**
 	 * @return the distanceStrikeSuccessful
 	 */
 	public Double getDistanceSigStrikeSuccessful() {
+		if (this.sigStrikePosition == null) {
+			return null;
+		}
 		return this.sigStrikePosition.getDistanceStrikeSuccessful();
 	}
-	
+
 	/**
 	 * @return the distanceStrikeAccuracy
 	 */
 	public Double getDistanceSigStrikeAccuracy() {
+		if (this.sigStrikePosition == null) {
+			return null;
+		}
 		return this.sigStrikePosition.getDistanceStrikeAccuracy();
 	}
-	
+
 	/**
 	 * @return the clinchStrikeAttemped
 	 */
 	public Double getClinchSigStrikeAttemped() {
+		if (this.sigStrikePosition == null) {
+			return null;
+		}
 		return this.sigStrikePosition.getClinchStrikeAttemped();
 	}
-	
+
 	/**
 	 * @return the clinchStrikeSuccessful
 	 */
 	public Double getClinchSigStrikeSuccessful() {
+		if (this.sigStrikePosition == null) {
+			return null;
+		}
 		return this.sigStrikePosition.getClinchStrikeSuccessful();
 	}
-	
+
 	/**
 	 * @return the clinchStrikeAccuracy
 	 */
 	public Double getClinchSigStrikeAccuracy() {
+		if (this.sigStrikePosition == null) {
+			return null;
+		}
 		return this.sigStrikePosition.getClinchStrikeAccuracy();
 	}
-	
+
 	/**
 	 * @return the groundStrikeAttemped
 	 */
 	public Double getGroundSigStrikeAttemped() {
+		if (this.sigStrikePosition == null) {
+			return null;
+		}
 		return this.sigStrikePosition.getGroundStrikeAttemped();
 	}
-	
+
 	/**
 	 * @return the groundStrikeSuccessful
 	 */
 	public Double getGroundSigStrikeSuccessful() {
+		if (this.sigStrikePosition == null) {
+			return null;
+		}
 		return this.sigStrikePosition.getGroundStrikeSuccessful();
 	}
-	
+
 	/**
 	 * @return the groundStrikeAccuracy
 	 */
 	public Double getGroundSigStrikeAccuracy() {
+		if (this.sigStrikePosition == null) {
+			return null;
+		}
 		return this.sigStrikePosition.getGroundStrikeAccuracy();
 	}
-	
+
 	/**
 	 * @return the headStrikeAttemped
 	 */
 	public Double getHeadSigStrikeAttemped() {
+		if (this.sigStrikeTarget == null) {
+			return null;
+		}
 		return this.sigStrikeTarget.getHeadStrikeAttemped();
 	}
 
@@ -267,6 +302,9 @@ public class StrikeDto {
 	 * @return the headStrikeSuccessful
 	 */
 	public Double getHeadSigStrikeSuccessful() {
+		if (this.sigStrikeTarget == null) {
+			return null;
+		}
 		return this.sigStrikeTarget.getHeadStrikeSuccessful();
 	}
 
@@ -274,13 +312,19 @@ public class StrikeDto {
 	 * @return the headStrikeAccuracy
 	 */
 	public Double getHeadSigStrikeAccuracy() {
+		if (this.sigStrikeTarget == null) {
+			return null;
+		}
 		return this.sigStrikeTarget.getHeadStrikeAccuracy();
 	}
-	
+
 	/**
 	 * @return the bodyStrikeAttemped
 	 */
 	public Double getBodySigStrikeAttemped() {
+		if (this.sigStrikeTarget == null) {
+			return null;
+		}
 		return this.sigStrikeTarget.getBodyStrikeAttemped();
 	}
 
@@ -288,6 +332,9 @@ public class StrikeDto {
 	 * @return the bodyStrikeSuccessful
 	 */
 	public Double getBodySigStrikeSuccessful() {
+		if (this.sigStrikeTarget == null) {
+			return null;
+		}
 		return this.sigStrikeTarget.getBodyStrikeSuccessful();
 	}
 
@@ -295,13 +342,19 @@ public class StrikeDto {
 	 * @return the bodyStrikeAccuracy
 	 */
 	public Double getBodySigStrikeAccuracy() {
+		if (this.sigStrikeTarget == null) {
+			return null;
+		}
 		return this.sigStrikeTarget.getBodyStrikeAccuracy();
 	}
-	
+
 	/**
 	 * @return the legStrikeAttemped
 	 */
 	public Double getLegSigStrikeAttemped() {
+		if (this.sigStrikeTarget == null) {
+			return null;
+		}
 		return this.sigStrikeTarget.getLegStrikeAttemped();
 	}
 
@@ -309,13 +362,19 @@ public class StrikeDto {
 	 * @return the legStrikeSuccessful
 	 */
 	public Double getLegSigStrikeSuccessful() {
+		if (this.sigStrikeTarget == null) {
+			return null;
+		}
 		return this.sigStrikeTarget.getLegStrikeSuccessful();
 	}
-	
+
 	/**
 	 * @return the legStrikeAccuracy
 	 */
 	public Double getLegSigStrikeAccuracy() {
+		if (this.sigStrikeTarget == null) {
+			return null;
+		}
 		return this.sigStrikeTarget.getLegStrikeAccuracy();
 	}
 
@@ -332,6 +391,19 @@ public class StrikeDto {
 	public void setScore(Double score) {
 		this.score = score;
 	}
-	
-	
+
+	/**
+	 * @return the oid
+	 */
+	public String getOid() {
+		return oid;
+	}
+
+	/**
+	 * @param oid the oid to set
+	 */
+	public void setOid(String oid) {
+		this.oid = oid;
+	}
+
 }

@@ -55,9 +55,20 @@ public class BoutData extends BaseAuditEntity implements Serializable {
 	private List<FighterBoutXRefData> fighterBoutXRefs;
 	@Column(name = "MMA_DEC_BOUT_URL", nullable = true)
 	private String mmaDecBoutUrl;
-	
+
 	public BoutData() {
 		this.fighterBoutXRefs = new ArrayList<>();
+	}
+
+	public boolean evalIfBoutScoresMissing() {
+		boolean response = false;
+		for (FighterBoutXRefData xRef : fighterBoutXRefs) {
+			if (xRef.evalIfRoundScoresMissing()) {
+				response = true;
+				return response;
+			}
+		}
+		return response;
 	}
 
 	public BoutData(String boutId, WeightClassEnum weightClass, Boolean champBout) {
@@ -134,7 +145,7 @@ public class BoutData extends BaseAuditEntity implements Serializable {
 	public String getFightOid() {
 		return fight.getOid();
 	}
-	
+
 	/**
 	 * @param fight the fight to set
 	 */
@@ -245,7 +256,7 @@ public class BoutData extends BaseAuditEntity implements Serializable {
 	 */
 	public List<FighterData> getFighters() {
 		List<FighterData> fighters = new ArrayList<>();
-		for (FighterBoutXRefData fighterXref: this.fighterBoutXRefs) {
+		for (FighterBoutXRefData fighterXref : this.fighterBoutXRefs) {
 			fighters.add(fighterXref.getFighter());
 		}
 		return fighters;
@@ -256,19 +267,19 @@ public class BoutData extends BaseAuditEntity implements Serializable {
 	 */
 	public List<String> getFighterIds() {
 		List<String> fighterIds = new ArrayList<>();
-		for (FighterBoutXRefData fighterXref: this.fighterBoutXRefs) {
+		for (FighterBoutXRefData fighterXref : this.fighterBoutXRefs) {
 			fighterIds.add(fighterXref.getFighter().getFighterId());
 		}
 		return fighterIds;
 	}
-	
+
 	/**
 	 * @return the fighter
 	 */
 	public List<FighterBoutXRefData> getFighterBoutXRefs() {
 		return fighterBoutXRefs;
 	}
-	
+
 	/**
 	 * @param fighterBoutXRefs the fighterBoutXRefs to set
 	 */

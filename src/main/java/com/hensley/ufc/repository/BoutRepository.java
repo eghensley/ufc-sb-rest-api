@@ -16,6 +16,9 @@ public interface BoutRepository extends JpaRepository<BoutData, String> {
 
 	Optional<BoutData> findByOid(String boutOid);
 	
+	@Query(value = "select f.finish_rounds from ufc2.bout f where f.bout_id=:boutId", nativeQuery = true)
+	Integer findBoutRounds(@Param("boutId") String boutId);
+	
 	@Query(value = "select b.bout_id from ufc2.fight f join ufc2.bout b on b.fight_oid = f.oid where f.fight_id=:fightId", nativeQuery = true)
 	List<String> findBoutIdByFightId(@Param("fightId") String fightId);
 	

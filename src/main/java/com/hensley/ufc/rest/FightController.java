@@ -22,6 +22,13 @@ public class FightController {
 	FightService fightService;
 	
 	@ApiOperation(value = "Fetch fight details by Id")
+	@GetMapping("year/{year}")
+	public ResponseEntity<GetResponse> getFightsByYear(@PathVariable("year") Integer year) {
+		GetResponse response = fightService.getFightsIdsByYear(year); 
+		return new ResponseEntity<>(response, response.getStatus());
+	}
+	
+	@ApiOperation(value = "Fetch fight details by Id")
 	@GetMapping("{fightId}/details")
 	public ResponseEntity<GetResponse> getFightById(@PathVariable("fightId") String fightId) {
 		GetResponse response = fightService.getFightDto(fightId); 

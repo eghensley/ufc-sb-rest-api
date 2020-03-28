@@ -4,17 +4,17 @@ public class SigStrikeTargetDto {
 
 	private Double headStrikeAttemped;
 	private Double headStrikeSuccessful;
-	
+
 	private Double bodyStrikeAttemped;
-	private Double bodyStrikeSuccessful;	
-	
+	private Double bodyStrikeSuccessful;
+
 	private Double legStrikeAttemped;
-	private Double legStrikeSuccessful;	
-	
+	private Double legStrikeSuccessful;
+
 	public SigStrikeTargetDto() {
-		
+
 	}
-	
+
 	/**
 	 * @return the headStrikeAttemped
 	 */
@@ -47,9 +47,15 @@ public class SigStrikeTargetDto {
 	 * @return the headStrikeAccuracy
 	 */
 	public Double getHeadStrikeAccuracy() {
-		return this.headStrikeSuccessful/this.headStrikeAttemped;
+		if (this.headStrikeSuccessful == null || this.headStrikeAttemped == null) {
+			return null;
+		} else if (this.headStrikeAttemped == 0) {
+			return 0.0;
+		} else {
+			return this.headStrikeSuccessful / this.headStrikeAttemped;
+		}
 	}
-	
+
 	/**
 	 * @return the bodyStrikeAttemped
 	 */
@@ -82,9 +88,15 @@ public class SigStrikeTargetDto {
 	 * @return the bodyStrikeAccuracy
 	 */
 	public Double getBodyStrikeAccuracy() {
-		return this.bodyStrikeSuccessful/this.bodyStrikeAttemped;
+		if (this.bodyStrikeSuccessful == null || this.bodyStrikeAttemped == null) {
+			return null;
+		} else if (this.bodyStrikeAttemped == 0) {
+			return 0.0;
+		} else {
+			return this.bodyStrikeSuccessful / this.bodyStrikeAttemped;
+		}
 	}
-	
+
 	/**
 	 * @return the legStrikeAttemped
 	 */
@@ -112,12 +124,18 @@ public class SigStrikeTargetDto {
 	public void setLegStrikeSuccessful(Integer legStrikeSuccessful) {
 		this.legStrikeSuccessful = Double.valueOf(legStrikeSuccessful);
 	}
-	
+
 	/**
 	 * @return the legStrikeAccuracy
 	 */
 	public Double getLegStrikeAccuracy() {
-		return this.legStrikeSuccessful/this.legStrikeAttemped;
+		if (this.legStrikeAttemped == null || this.legStrikeSuccessful == null) {
+			return null;
+		} else if (this.legStrikeAttemped == 0) {
+			return 0.0;
+		} else {
+			return this.legStrikeSuccessful / this.legStrikeAttemped;
+		}
 	}
 
 }

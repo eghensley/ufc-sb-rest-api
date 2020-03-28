@@ -1,14 +1,10 @@
 package com.hensley.ufc.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.text.Normalizer;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,53 +24,55 @@ import com.hensley.ufc.domain.StrikeData;
 import com.hensley.ufc.enums.ParseTargetEnum;
 import com.hensley.ufc.pojo.parse.RoundScoreFighterParseStore;
 import com.hensley.ufc.pojo.parse.RoundScoreParseStore;
-import com.hensley.ufc.pojo.parse.ScorePartialParse;
 import com.hensley.ufc.pojo.parse.SingleRoundScoreParse;
+import com.hensley.ufc.pojo.request.AddBoutRoundScoreRequest;
 import com.hensley.ufc.pojo.request.ParseRequest;
 import com.hensley.ufc.pojo.response.ParseResponse;
 import com.hensley.ufc.pojo.response.UrlParseRequest;
 import com.hensley.ufc.repository.BoutRepository;
 import com.hensley.ufc.repository.FightRepository;
-import com.hensley.ufc.repository.FighterBoutXRefRepository;
 import com.hensley.ufc.repository.FighterRepository;
 import com.hensley.ufc.repository.StrikeDataRepository;
+import com.hensley.ufc.util.MappingUtils;
 import com.hensley.ufc.util.UrlUtils;
-
-// TODO investigate save if switched fighters 
 
 @Service
 public class RoundScoreService {
 	private static final Logger LOG = Logger.getLogger(RoundScoreService.class.toString());
-	private static final String ERROR_ADDING_BOUTS = "Error adding bouts to fight %s.";
-	private static final String FIGHT_LOAD_ERROR = "Fight %s could not be loaded from DB.";
-	private static final String COMPLETION_MESSAGE = "Completed parsing request.  Found %s fights and parsed %s fights";
-	private static final String JUDGE_SCORE_HTML_XPATH = "//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[1]/tbody/tr[3]/td/table/tbody/tr/td";
+//	private static final String ERROR_ADDING_BOUTS = "Error adding bouts to fight %s.";
+	private static final String BOUT_LOAD_ERROR = "Bout %s could not be loaded from DB.";
+	private static final String BOUT_ODDS_ALREADY_COMPLETE = "Round odds already added for bout %s.";
+
+//	private static final String COMPLETION_MESSAGE = "Completed parsing request.  Found %s fights and parsed %s fights";
+//	private static final String JUDGE_SCORE_HTML_XPATH = "//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[1]/tbody/tr[3]/td/table/tbody/tr/td";
 	private static final String NO_SCORES_FOUND = "No scores available for id %s";
 
-	private static final String ERROR_SCRAPING_FIGHT = "Error scraping scores for fight %s.";
-
+//	private static final String ERROR_SCRAPING_FIGHT = "Error scraping scores for fight %s.";
+//
 	private static final String ERROR_SCRAPING_BOUT = "Error scraping scores for bout %s.";
-	private static final String ERROR_SCRAPING_ROUND = "Error scraping scores for round %s";
+//	private static final String ERROR_SCRAPING_ROUND = "Error scraping scores for round %s";
 
 	private final ErrorService errorService;
 	private final UrlUtils urlUtils;
 	private final FighterRepository fighterRepo;
 	private final FightRepository fightRepo;
-	private final FighterBoutXRefRepository fighterXRefRepo;
+//	private final FighterBoutXRefRepository fighterXRefRepo;
 	private final StrikeDataRepository strikeRepo;
 	private final BoutRepository boutRepo;
+	private final MappingUtils mappingUtils;
 
 	@Autowired
-	public RoundScoreService(BoutRepository boutRepo, StrikeDataRepository strikeRepo,
-			FighterBoutXRefRepository fighterXRefRepo, ErrorService errorService, UrlUtils urlUtils,
-			FighterRepository fighterRepo, FightRepository fightRepo) {
+	public RoundScoreService(BoutRepository boutRepo, ErrorService errorService, UrlUtils urlUtils,
+			FighterRepository fighterRepo, FightRepository fightRepo, MappingUtils mappingUtils,
+			StrikeDataRepository strikeRepo) {
 		this.errorService = errorService;
 		this.urlUtils = urlUtils;
 		this.fighterRepo = fighterRepo;
 		this.fightRepo = fightRepo;
-		this.fighterXRefRepo = fighterXRefRepo;
+//		this.fighterXRefRepo = fighterXRefRepo;
 		this.strikeRepo = strikeRepo;
 		this.boutRepo = boutRepo;
+		this.mappingUtils = mappingUtils;
 	}
 
 	@Transactional
@@ -101,14 +99,8 @@ public class RoundScoreService {
 						response.setItemsFound(response.getItemsFound() + 1);
 						String xPath = fightPage.getCanonicalXPath();
 						DomAttr baseUrl = fightPage.getFirstByXPath(xPath + "/@href");
-						try {
-							String fightName = fightPage.asText().split(":")[fightPage.asText().split(":").length - 1]
-									.trim().replace(".", "");
-							matchFightByName(fightName, baseUrl.getValue());
-						} catch (Exception e) {
-							String fightName2 = fightPage.asText().trim().replace(".", "");
-							matchFightByName(fightName2, baseUrl.getValue());
-						}
+						String fightName2 = fightPage.asText().trim();
+						matchFightByName(fightName2, baseUrl.getValue());
 					}
 					response.setItemsCompleted(response.getItemsCompleted() + 1);
 				} catch (Exception e) {
@@ -123,7 +115,7 @@ public class RoundScoreService {
 	public void matchFightByName(String fightName, String baseUrl) {
 		FightData fightData;
 
-		Optional<List<FightData>> rawFightData = fightRepo.findFightByFuzzyName("%" + fightName);
+		Optional<List<FightData>> rawFightData = fightRepo.findFightByFuzzyName(fightName);
 		if (rawFightData.isPresent() & rawFightData.get().size() == 1) {
 
 			fightData = rawFightData.get().get(0);
@@ -133,6 +125,23 @@ public class RoundScoreService {
 			fightRepo.save(fightData);
 		} else {
 			throw new IllegalArgumentException(String.format("No fight matched for fight name %s", fightName));
+		}
+	}
+
+	@Transactional
+	public ParseResponse addManualBoutScore(AddBoutRoundScoreRequest request) {
+		ParseResponse response = new ParseResponse();
+		response.setItemsFound(1);
+		try {
+			StrikeData updatedStrikeData = (StrikeData) mappingUtils.mapToModel(request, StrikeData.class);
+			strikeRepo.save(updatedStrikeData);
+			response.setItemsCompleted(1);
+			response.setStatus(HttpStatus.valueOf(200));
+			return response;
+		} catch (Exception e) {
+			response.setItemsCompleted(0);
+			response.addResponseMsg(HttpStatus.valueOf(500), e.getLocalizedMessage());
+			return response;
 		}
 	}
 
@@ -150,7 +159,11 @@ public class RoundScoreService {
 		String boutXpath = "//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[2]/tbody/tr/td[1]/b/a";
 
 		fightData = fightRepo.getOne(fightOid);
-		if (fightData.getCompleted()) {
+		if (fightData.evalBoutDecCompleted()) {
+			String msg = String.format("All bouts for fight %s have judge decision URL's", fightData.getFightName());
+			LOG.info(msg);
+			fightResponse.setErrorMsg(msg);
+			fightResponse.setStatus(HttpStatus.ACCEPTED);
 			return fightResponse;
 		}
 
@@ -232,7 +245,8 @@ public class RoundScoreService {
 		fighterNameHtml = page.getFirstByXPath(String.format(
 				"//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[1]/tbody/tr[1]/td[1]/table/tbody/tr[%s]/td[%s]/a/text()",
 				trKey, fighterNum));
-		fighterOpt = fighterRepo.findByFighterName(fighterNameHtml.asText());
+		fighterOpt = fighterRepo
+				.findByFuzzyFighterName(Normalizer.normalize(fighterNameHtml.asText(), Normalizer.Form.NFD));
 		if (fighterOpt.isPresent()) {
 			fighter = fighterOpt.get();
 			return fighter;
@@ -260,20 +274,45 @@ public class RoundScoreService {
 	@Transactional
 	public ParseResponse addBoutScores(String boutId) {
 		ParseRequest request = new ParseRequest(ParseTargetEnum.ROUNDS, null, boutId, null);
-		HtmlPage page;
 		ParseResponse response = new ParseResponse(request);
-		List<FighterBoutXRefData> boutXrefList;
-		String judgePath;
-		List<HtmlTableRow> judgeRoundScores;
-		String roundPath;
 
 		Optional<BoutData> boutDataOpt = boutRepo.findByOid(boutId);
+		if (!boutDataOpt.isPresent()) {
+			String msg = String.format(BOUT_LOAD_ERROR, boutId);
+			LOG.info(msg);
+			response.setErrorMsg(msg);
+			response.setStatus(HttpStatus.valueOf(500));
+			return response;
+		}
 		BoutData boutData = boutDataOpt.get();
+
+		if (!boutData.evalIfBoutScoresMissing()) {
+			String msg = String.format(BOUT_ODDS_ALREADY_COMPLETE, boutId);
+			LOG.info(msg);
+			response.setErrorMsg(msg);
+			response.setStatus(HttpStatus.valueOf(200));
+			return response;
+		}
 
 		String baseUrl = boutData.getMmaDecBoutUrl();
 		UrlParseRequest urlParseRequest = urlUtils.parse(baseUrl);
 		String errorStr = urlParseRequest.getErrorStr();
 		if (urlParseRequest.getSuccess()) {
+			return scrapeScoresFromBout(boutData, urlParseRequest, errorStr, response, baseUrl);
+		} else {
+			return errorService.handleParseError(errorStr, response);
+		}
+	}
+
+	public ParseResponse scrapeScoresFromBout(BoutData boutData, UrlParseRequest urlParseRequest, String errorStr,
+			ParseResponse response, String baseUrl) {
+		HtmlPage page;
+		List<FighterBoutXRefData> boutXrefList;
+		String judgePath;
+		List<HtmlTableRow> judgeRoundScores;
+		String roundPath;
+
+		try {
 			page = urlParseRequest.getPage();
 			LOG.info("Completed SCORES Parse");
 			RoundScoreParseStore scoreStore = new RoundScoreParseStore();
@@ -315,7 +354,6 @@ public class RoundScoreService {
 			}
 			boutXrefList = boutData.getFighterBoutXRefs();
 			for (FighterBoutXRefData boutXref : boutXrefList) {
-				// TODO investigate save if switched fighters 
 				RoundScoreFighterParseStore extractedScores = scoreStore.matchFighterName(boutXref.getFighterName());
 				List<SingleRoundScoreParse> roundScoreList = extractedScores.outputRoundScores();
 				for (SingleRoundScoreParse roundScore : roundScoreList) {
@@ -325,8 +363,10 @@ public class RoundScoreService {
 			}
 			response.setStatus(HttpStatus.OK);
 			return response;
-		} else {
-			return errorService.handleParseError(errorStr, response);
+		} catch (Exception e) {
+			errorStr = String.format(ERROR_SCRAPING_BOUT, boutData.getBoutId());
+			LOG.info(errorStr);
+			return errorService.handleParseError(errorStr, e, response);
 		}
 	}
 

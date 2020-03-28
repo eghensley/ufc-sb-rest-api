@@ -42,7 +42,7 @@ public class FightService {
 
 	private static final String FIGHT_HTML_XPATH = "/html/body/section/div/div/div/div[2]/div/table/tbody/tr[3 <= position()]";
 	private static final String EVENT_DETAIL_URL = "http://www.ufcstats.com/event-details/";
-	
+
 	private static final String NO_FIGHTS_FOUND = "No fight available for id %s";
 
 	private final FightRepository fightRepo;
@@ -64,30 +64,55 @@ public class FightService {
 	}
 
 	@Transactional
-	public GetResponse getFights(){
+	public GetResponse getFights() {
 		String errorString = null;
-		List<String> fightList = fightRepo.findFightIds();
+		List<String> fightList = fightRepo.findFightIdsByDateDesc();
 		return new GetResponse(HttpStatus.ACCEPTED, errorString, fightList);
 	}
-	
+
 	@Transactional
-	public GetResponse getFightsWithScore(){
+	public GetResponse getFightsWithScore() {
 		String errorString = null;
 		List<String> fightList = fightRepo.findFightIdsWithScore();
 		return new GetResponse(HttpStatus.ACCEPTED, errorString, fightList);
 	}
 
 	@Transactional
-	public GetResponse getFightsWithoutScore(){
+	public ParseResponse addFightOddsUrl(String fightId, String fightUrl) {
+		Optional<FightData> fightDataOpt;
+		FightData fightData;
+		ParseRequest fightRequest = new ParseRequest(ParseTargetEnum.ROUNDS, fightId, null, null);
+		ParseResponse fightResponse = new ParseResponse(fightRequest);
+
+		fightDataOpt = fightRepo.findByFightId(fightId);
+		fightData = fightDataOpt.get();
+		fightRequest.setFightId(fightData.getFightId());
+
+		fightData.setBestFightOddsUrl(fightUrl);
+		fightRepo.save(fightData);
+		fightResponse.setStatus(HttpStatus.OK);
+		return fightResponse;
+
+	}
+
+	@Transactional
+	public GetResponse getFightsWithoutScore() {
 		String errorString = null;
 		List<FightData> fightList = fightRepo.findFightIdsWithoutScore();
-		
+
 		List<BasicFightDto> response = new ArrayList<>();
-		for (FightData fightData: fightList) {
+		for (FightData fightData : fightList) {
 			BasicFightDto fightDto = (BasicFightDto) mappingUtils.mapToDto(fightData, BasicFightDto.class);
 			response.add(fightDto);
 		}
 		return new GetResponse(HttpStatus.ACCEPTED, errorString, response);
+	}
+
+	@Transactional
+	public GetResponse getFightsIdsByYear(Integer year) {
+		String errorString = null;
+		List<String> fightList = fightRepo.findFightIdsByYear(year);
+		return new GetResponse(HttpStatus.ACCEPTED, errorString, fightList);
 	}
 	
 	@Transactional
@@ -96,21 +121,21 @@ public class FightService {
 		FightData fightData;
 		FightDto fightDto;
 		String errorString = null;
-		
+
 		try {
-		fightDataOpt = fightRepo.findByFightId(fightId);
-		if (fightDataOpt.isPresent()) {
-			fightData = fightDataOpt.get();
-			fightDto = (FightDto) mappingUtils.mapToDto(fightData, FightDto.class);
-			return new GetResponse(HttpStatus.ACCEPTED, errorString, fightDto);
-		} else {
-			errorString = String.format(NO_FIGHTS_FOUND, fightId);
-			LOG.log(Level.WARNING, errorString);
-			return new GetResponse(HttpStatus.ACCEPTED, errorString, null);
-		}
+			fightDataOpt = fightRepo.findByFightId(fightId);
+			if (fightDataOpt.isPresent()) {
+				fightData = fightDataOpt.get();
+				fightDto = (FightDto) mappingUtils.mapToDto(fightData, FightDto.class);
+				return new GetResponse(HttpStatus.ACCEPTED, errorString, fightDto);
+			} else {
+				errorString = String.format(NO_FIGHTS_FOUND, fightId);
+				LOG.log(Level.WARNING, errorString);
+				return new GetResponse(HttpStatus.ACCEPTED, errorString, null);
+			}
 		} catch (Exception e) {
 			errorString = e.getLocalizedMessage();
-			LOG.log(Level.SEVERE, errorString);
+			LOG.log(Level.SEVERE, errorString, e);
 			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
 
 		}
@@ -120,7 +145,7 @@ public class FightService {
 	public ParseResponse fightScraper() {
 		UrlParseRequest urlParseRequest;
 
-		String baseUrl = FIGHT_URL ;
+		String baseUrl = FIGHT_URL;
 
 		HtmlPage page;
 		List<HtmlElement> fightHtml;
@@ -130,7 +155,7 @@ public class FightService {
 
 		ParseRequest request = new ParseRequest(ParseTargetEnum.FIGHTS, fightId, null, null);
 		ParseResponse response = new ParseResponse(request);
-		
+
 		try {
 			urlParseRequest = urlUtils.parse(baseUrl);
 			errorStr = urlParseRequest.getErrorStr();
@@ -157,8 +182,9 @@ public class FightService {
 							break;
 						}
 					}
-				}				
-				LOG.log(Level.INFO, String.format(COMPLETION_MESSAGE, response.getItemsFound(), response.getItemsCompleted()));
+				}
+				LOG.log(Level.INFO,
+						String.format(COMPLETION_MESSAGE, response.getItemsFound(), response.getItemsCompleted()));
 				response.addResponseMsg(HttpStatus.OK, errorStr);
 				return response;
 			} else {
@@ -175,7 +201,7 @@ public class FightService {
 		String fightPath = fightHtml.getCanonicalXPath();
 		String fightId;
 		LocationData location;
-		
+
 		try {
 			HtmlElement fightLocHtml = fightHtml.getFirstByXPath(fightPath + "/td[2]");
 			if (fightLocHtml != null) {
@@ -209,29 +235,29 @@ public class FightService {
 //		LOG.info(fightData.toString());
 		fightRepo.save(fightData);
 	}
-	
+
 	private Date parseFightDate(HtmlElement fightHtml, String fightPath) {
 		Date fightDate;
 		HtmlElement fightDateHtml = fightHtml.getFirstByXPath(fightPath + "/td[1]/i/span");
 		fightDate = parsingUtils.stringToDate(fightDateHtml.asText());
-		if(fightDate == null) {
+		if (fightDate == null) {
 			throw new IllegalArgumentException("Fight date failed to parse");
 		}
 		LOG.info(String.format("Fight Date: %s", fightDate));
 		return fightDate;
 	}
-	
+
 	private String parseFightName(HtmlElement fightHtml, String fightPath) {
 		String fightName;
 		HtmlElement fightTitleHtml = fightHtml.getFirstByXPath(fightPath + "/td[1]/i/a");
 		fightName = fightTitleHtml.asText();
-		if(fightName == null) {
+		if (fightName == null) {
 			throw new IllegalArgumentException("Fight name failed to parse");
 		}
 		LOG.info(String.format("Fight Name: %s", fightName));
 		return fightName;
 	}
-	
+
 	private boolean ifNewFight(String fightId) {
 		Optional<FightData> fightData = fightRepo.findByFightId(fightId);
 		if (fightData.isPresent()) {

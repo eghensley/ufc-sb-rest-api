@@ -7,11 +7,13 @@ import com.hensley.ufc.enums.BoutOutcomeEnum;
 import com.hensley.ufc.pojo.dto.strike.StrikeDto;
 
 public class FighterBoutXRefDto {
+	private String oid;
 	private FighterDto fighter;
 	private BoutOutcomeEnum outcome;
 	private List<StrikeDto> boutDetails;
+	private Integer mlOdds;
+	private BfoExpectedOutcomeDto bfoExpectedOutcomes;
 
-	
 	public FighterBoutXRefDto() {
 		this.boutDetails = new ArrayList<>();
 	}
@@ -57,6 +59,47 @@ public class FighterBoutXRefDto {
 	public void setBoutDetails(List<StrikeDto> boutDetails) {
 		this.boutDetails = boutDetails;
 	}
-	
+
+	/**
+	 * @return the oid
+	 */
+	public String getOid() {
+		return oid;
+	}
+
+	/**
+	 * @param oid the oid to set
+	 */
+	public void setOid(String oid) {
+		this.oid = oid;
+	}
+
+	/**
+	 * @return the mlOdds
+	 */
+	public Integer getMlOdds() {
+		return mlOdds;
+	}
+
+	/**
+	 * @param mlOdds the mlOdds to set
+	 */
+	public void setMlOdds(Integer mlOdds) {
+		this.mlOdds = mlOdds;
+	}
+
+	/**
+	 * @return the bfoExpectedOutcomes
+	 */
+	public BfoExpectedOutcomeDto getBfoExpectedOutcomes() {
+		return bfoExpectedOutcomes;
+	}
+
+	/**
+	 * @param bfoExpectedOutcomes the bfoExpectedOutcomes to set
+	 */
+	public void setBfoExpectedOutcomes(BfoExpectedOutcomeDto bfoExpectedOutcomes) {
+		this.bfoExpectedOutcomes = bfoExpectedOutcomes;
+	}
 	
 }

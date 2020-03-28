@@ -35,4 +35,11 @@ public class BoutController {
 		GetResponse response = boutService.getBoutsMissingScores(); 
 		return new ResponseEntity<>(response, response.getStatus());
 	}
+	
+	@ApiOperation(value = "Fetch bout by Id")
+	@GetMapping("{boutOid}/summary")
+	public ResponseEntity<GetResponse> getBoutSummary(@PathVariable("boutOid") String boutOid) {
+		GetResponse response = boutService.getBoutSummary(boutOid); 
+		return new ResponseEntity<>(response, response.getStatus());
+	}
 }

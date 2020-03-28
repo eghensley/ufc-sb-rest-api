@@ -1,7 +1,5 @@
 package com.hensley.ufc.rest;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,114 +22,108 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("parse")
-@Api(value="Parsing System")
+@Api(value = "Parsing System")
 public class ParseController {
 
 	@Autowired
 	FightService fightService;
-	
+
 	@Autowired
 	BoutService boutService;
-	
+
 	@Autowired
 	BoutDetailService boutDetailService;
-	
+
 	@Autowired
 	RoundScoreService roundScoreService;
-	
+
 	@Autowired
 	OddsService oddsService;
-	
+
 	@ApiOperation(value = "Parse fight events")
 	@GetMapping("fights")
-	public ResponseEntity<ParseResponse> getFights() throws MalformedURLException, IOException{
-		ParseResponse response = fightService.fightScraper(); 
+	public ResponseEntity<ParseResponse> getFights() {
+		ParseResponse response = fightService.fightScraper();
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 
 	@ApiOperation(value = "Parse bouts in a fight")
 	@GetMapping("fights/{fightId}/bouts")
-	public ResponseEntity<ParseResponse> getBouts(@PathVariable("fightId") String fightId) throws MalformedURLException, IOException{
-//		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
-		ParseResponse response = boutService.scrapeBoutsFromFightId(fightId); 
+	public ResponseEntity<ParseResponse> getBouts(@PathVariable("fightId") String fightId) {
+		ParseResponse response = boutService.scrapeBoutsFromFightId(fightId);
 		return new ResponseEntity<>(response, response.getStatus());
 	}
-	
+
 	@ApiOperation(value = "Parse details in a bout")
 	@GetMapping("fights/{fightId}/bouts/{boutId}")
-	public ResponseEntity<ParseResponse> getBoutDetails(@PathVariable("boutId") String boutId, @PathVariable("fightId") String fightId) throws MalformedURLException, IOException{
-//		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
-		ParseResponse response = boutDetailService.scrapeBoutDetailsFromBoutId(fightId, boutId); 
+	public ResponseEntity<ParseResponse> getBoutDetails(@PathVariable("boutId") String boutId,
+			@PathVariable("fightId") String fightId) {
+		ParseResponse response = boutDetailService.scrapeBoutDetailsFromBoutId(fightId, boutId);
 		return new ResponseEntity<>(response, response.getStatus());
 	}
-	
+
 	@ApiOperation(value = "Parse details in all bouts for a fight")
 	@GetMapping("fights/{fightId}/bouts/all")
-	public ResponseEntity<ParseResponse> getFightBoutDetails(@PathVariable("fightId") String fightId) throws MalformedURLException, IOException{
-//		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
+	public ResponseEntity<ParseResponse> getFightBoutDetails(@PathVariable("fightId") String fightId) {
 		@SuppressWarnings("unused")
-		ParseResponse initResponse = boutService.scrapeBoutsFromFightId(fightId); 
+		ParseResponse initResponse = boutService.scrapeBoutsFromFightId(fightId);
 
 		List<String> boutList = boutService.getBoutsFromFight(fightId);
-		for (String boutId: boutList) {
+		for (String boutId : boutList) {
 			@SuppressWarnings("unused")
-			ParseResponse response = boutDetailService.scrapeBoutDetailsFromBoutId(fightId, boutId); 
+			ParseResponse response = boutDetailService.scrapeBoutDetailsFromBoutId(fightId, boutId);
 		}
 		return new ResponseEntity<>(new ParseResponse(), HttpStatus.OK);
 	}
-	
+
 	@ApiOperation(value = "Get judge scores for year")
 	@GetMapping("fights/judgeScores/{year}")
-	public ResponseEntity<ParseResponse> getRoundJudgeScores(@PathVariable("year") String year) throws MalformedURLException, IOException{
-//		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
-//		ParseResponse response = roundScoreService.scrapeScoresFromBout(); 
+	public ResponseEntity<ParseResponse> getRoundJudgeScores(@PathVariable("year") String year) {
 		ParseResponse response = roundScoreService.addFightScoreUrl(year);
 		return new ResponseEntity<>(response, response.getStatus());
 	}
-	
-//	@ApiOperation(value = "Parse round scores")
-//	@GetMapping("fights/judgeScores/fight/{fightOid}")
-//	public ResponseEntity<ParseResponse> getRoundFightScores(@PathVariable("fightOid") String fightOid) throws MalformedURLException, IOException{
-////		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
-////		ParseResponse response = roundScoreService.scrapeScoresFromBout(); 
-//		ParseResponse response = roundScoreService.addBoutScoreUrl(fightOid);
-//		return new ResponseEntity<>(response, response.getStatus());
-//	}
-	
+
 	@ApiOperation(value = "Add url to fight")
-	@GetMapping("fights/judgeScores/fight/{fightOid}/url/{fightURl}")
-	public ResponseEntity<ParseResponse> getRoundFightScores(@PathVariable("fightOid") String fightOid) throws MalformedURLException, IOException{
-//		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
-//		ParseResponse response = roundScoreService.scrapeScoresFromBout(); 
+	@GetMapping("fights/judgeScores/fight/{fightOid}")
+	public ResponseEntity<ParseResponse> getRoundFightScores(@PathVariable("fightOid") String fightOid) {
 		ParseResponse response = roundScoreService.addBoutScoreUrl(fightOid);
 		return new ResponseEntity<>(response, response.getStatus());
 	}
-	
-	
+
+	@ApiOperation(value = "Add odds url to fight")
+	@GetMapping("odds/fight/{fightOid}/fightOdds/{fightURl}")
+	public ResponseEntity<ParseResponse> addFightOddsUrl(@PathVariable("fightOid") String fightOid,
+			@PathVariable("fightURl") String fightUrl) {
+		ParseResponse response = fightService.addFightOddsUrl(fightOid,
+				String.format("https://www.bestfightodds.com/events/%s", fightUrl));
+		return new ResponseEntity<>(response, response.getStatus());
+	}
+
 	@ApiOperation(value = "Parse round scores")
 	@GetMapping("fights/judgeScores/bout/{boutOid}")
-	public ResponseEntity<ParseResponse> parseRoundBoutScores(@PathVariable("boutOid") String boutOid) throws MalformedURLException, IOException{
-//		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
-//		ParseResponse response = roundScoreService.scrapeScoresFromBout(); 
+	public ResponseEntity<ParseResponse> parseRoundBoutScores(@PathVariable("boutOid") String boutOid) {
 		ParseResponse response = roundScoreService.addBoutScores(boutOid);
 		return new ResponseEntity<>(response, response.getStatus());
 	}
-	
+
 	@ApiOperation(value = "Parse fight odds")
-	@GetMapping("fights/{fightId}/expOutcomes")
-	public ResponseEntity<ParseResponse> parseFightExpOutcomes(@PathVariable("fightId") String fightId) throws MalformedURLException, IOException{
-//		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
-//		ParseResponse response = roundScoreService.scrapeScoresFromBout(); 
+	@GetMapping("odds/fight/{fightId}/expOutcomes")
+	public ResponseEntity<ParseResponse> parseFightExpOutcomes(@PathVariable("fightId") String fightId) {
 		ParseResponse response = oddsService.scrapeExpOutcomesFromFightOid(fightId);
 		return new ResponseEntity<>(response, response.getStatus());
 	}
-	
+
 	@ApiOperation(value = "Parse fight odds")
-	@GetMapping("fights/{fightId}/odds")
-	public ResponseEntity<ParseResponse> parseFightOdds(@PathVariable("fightId") String fightId) throws MalformedURLException, IOException{
-//		String baseUrl = "http://www.ufcstats.com/event-details/8d04923f2db59b7f" ;
-//		ParseResponse response = roundScoreService.scrapeScoresFromBout(); 
+	@GetMapping("odds/fight/{fightId}/odds")
+	public ResponseEntity<ParseResponse> parseFightOdds(@PathVariable("fightId") String fightId) {
 		ParseResponse response = oddsService.scrapeOddsFromFightOid(fightId);
 		return new ResponseEntity<>(response, response.getStatus());
 	}
+	
+//	@ApiOperation(value = "Parse fight odds")
+//	@GetMapping("odds/fight/{fightId}/odds")
+//	public ResponseEntity<ParseResponse> parseFightOdds(@PathVariable("fightId") String fightId) {
+//		ParseResponse response = oddsService.scrapeOddsFromFightOid(fightId);
+//		return new ResponseEntity<>(response, response.getStatus());
+//	}
 }

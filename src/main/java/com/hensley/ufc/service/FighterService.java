@@ -43,6 +43,10 @@ public class FighterService {
 		this.fighterBoutXRefRepo = fighterBoutXRefRepo;
 	}
 
+	public String fuzzyMatchFighterIdByName(String fighterName) {
+		return fighterRepo.findFighterIdByFuzzyFighterName(fighterName);
+	}
+	
 	@Transactional
 	public FighterBoutXRefData linkFighterToBout(String fighterId, String boutId, BoutOutcomeEnum fighterOutcome) {
 		Optional<FighterBoutXRefData> fighterXRefOpt;

@@ -220,7 +220,7 @@ public class OddsService {
 				errorStr = String.format(NO_ODDS_DATA_FOUND, response.getRequest().getFightId());
 				return errorService.handleParseError(errorStr, response);
 			} else {
-				Map<String, Integer> fighterBoutOddsMap = new HashMap<>();
+				Map<String, Double> fighterBoutOddsMap = new HashMap<>();
 				for (HtmlElement fighterOddsItem : fighterOddsHTML) {
 					String fighterOddsRoot = fighterOddsItem.getCanonicalXPath();
 					DomAttr fighterNameHtml = page.getFirstByXPath(fighterOddsRoot + ODDS_FIGHTER_NAME_PATH);
@@ -228,18 +228,18 @@ public class OddsService {
 					fighterName = fighterName.substring(0, fighterName.lastIndexOf("-"));
 					oddsHtml = page.getByXPath(fighterOddsRoot+ODDS_PATH);
 					
-					List<Integer> oddsList = new ArrayList<>();
+					List<Double> oddsList = new ArrayList<>();
 					for (HtmlElement oddsElement: oddsHtml) {
 						String oddsString = oddsElement.asText().replace("+", "");
 						if (oddsString.isEmpty()) {
 							continue;
 						}
-						oddsList.add(Integer.valueOf(oddsString));
+						oddsList.add(convertOddsToPercent(Integer.valueOf(oddsString)));
 					}
 					if (oddsList.isEmpty()) {
 						continue;
 					}
-					Integer fighterBoutOdds = (int) oddsList.stream().mapToInt(val -> val).average().orElse(0.0);
+					Double fighterBoutOdds = (Double) oddsList.stream().mapToDouble(val -> val).average().orElse(0.0);
 					fighterBoutOddsMap.put(fighterName, fighterBoutOdds);
 					response.setItemsCompleted(response.getItemsCompleted() + 1);
 				}
@@ -255,13 +255,13 @@ public class OddsService {
 	}
 
 	public void matchOddsFighterBoutByFighterName(List<FighterBoutXRefData> availableBouts,
-			Map<String, Integer> fighterBoutOddsMap) {
+			Map<String, Double> fighterBoutOddsMap) {
 		for (FighterBoutXRefData availableBout : availableBouts) {
 			if (availableBout.getMlOdds() != null) {
 				continue;
 			}
 			List<Integer> scoreList = new ArrayList<>();
-			Map<Integer, Integer> nameScores = new HashMap<>();
+			Map<Integer, Double> nameScores = new HashMap<>();
 			for (String oddsName : fighterBoutOddsMap.keySet()) {
 				Integer fighterMatch = StringUtils.getLevenshteinDistance(availableBout.getFighterName(),
 						oddsName);
@@ -270,6 +270,14 @@ public class OddsService {
 			}
 			availableBout.setMlOdds(nameScores.get(Collections.min(scoreList)));
 			fighterBoutXrefRepo.save(availableBout);
+		}
+	}
+	
+	public Double convertOddsToPercent(Integer odds) {
+		if (odds > 0) {
+			return (100.0 / (Double.valueOf(odds) + 100.0)) * 100.0;
+		} else {
+			return (Double.valueOf(odds) * -1)/((Double.valueOf(odds) * -1) + 100.0) * 100;
 		}
 	}
 }

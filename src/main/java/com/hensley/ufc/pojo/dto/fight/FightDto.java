@@ -16,6 +16,7 @@ public class FightDto extends SuperAuditDto {
 	private Boolean completed;
 	private List<BoutDto> bouts;
 	private String mmaDecFightUrl;
+	private String bestFightOddsUrl;
 
 	public FightDto() {
 		this.bouts = new ArrayList<>();
@@ -119,6 +120,18 @@ public class FightDto extends SuperAuditDto {
 		this.mmaDecFightUrl = mmaDecFightUrl;
 	}
 
-	
+	/**
+	 * @return the bestFightOddsUrl
+	 */
+	public String getBestFightOddsUrl() {
+		return bestFightOddsUrl;
+	}
+
+	/**
+	 * @param bestFightOddsUrl the bestFightOddsUrl to set
+	 */
+	public void setBestFightOddsUrl(String bestFightOddsUrl) {
+		this.bestFightOddsUrl = bestFightOddsUrl;
+	}
 	
 }

@@ -34,37 +34,49 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "FIGHTER_OID", referencedColumnName = "OID", nullable = false)
 	private FighterData fighter;
-	
+
 	@OneToMany(mappedBy = "fighterBout", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<StrikeData> boutDetails;
-	
+
 //	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //	private VegasOddsData vegasOdds;
-	
+
 	@Column(name = "ML_ODDS")
-	private Integer mlOdds;
-	
+	private Double mlOdds;
+
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private BfoExpectedOutcomeData bfoExpectedOutcomes;
-	
+
 	@Column(name = "OUTCOME")
 	private BoutOutcomeEnum outcome;
-	
+
 	public FighterBoutXRefData() {
-		
+
+	}
+
+	public boolean evalIfRoundScoresMissing() {
+		boolean response = false;
+		for (StrikeData roundData : boutDetails) {
+			if (roundData.getScore() == null) {
+				response = true;
+				return response;
+			}
+		}
+		return response;
 	}
 
 	public StrikeData getStatsByRound(Integer round) {
-		List<StrikeData> potMatches = boutDetails.stream().filter(d -> d.getRound().equals(round)).collect(Collectors.toList());
+		List<StrikeData> potMatches = boutDetails.stream().filter(d -> d.getRound().equals(round))
+				.collect(Collectors.toList());
 		if (potMatches.isEmpty()) {
 			throw new IllegalArgumentException(String.format("No stats for round %s", round));
-		} else if (potMatches.size()>1) {
+		} else if (potMatches.size() > 1) {
 			throw new IllegalArgumentException(String.format("Multiple matches found for round %s", round));
 		} else {
 			return potMatches.get(0);
 		}
 	}
-	
+
 	/**
 	 * @return the bout
 	 */
@@ -89,7 +101,7 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 	public String getFighterName() {
 		return this.fighter.getFighterName();
 	}
-	
+
 	/**
 	 * @param fighter the fighter to set
 	 */
@@ -122,7 +134,7 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 	 * @param boutDetails the boutDetails to set
 	 */
 	public void setBoutDetails(List<StrikeData> boutDetails) {
-		for (StrikeData boutDetail: boutDetails) {
+		for (StrikeData boutDetail : boutDetails) {
 			addBoutDetail(boutDetail);
 		}
 	}
@@ -168,15 +180,24 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 	/**
 	 * @return the mlOdds
 	 */
-	public Integer getMlOdds() {
+	public Double getMlOdds() {
 		return mlOdds;
 	}
 
 	/**
 	 * @param mlOdds the mlOdds to set
 	 */
-	public void setMlOdds(Integer mlOdds) {
+	public void setMlOdds(Double mlOdds) {
 		this.mlOdds = mlOdds;
+	}
+
+	public boolean evalIfRoundStored(Integer round) {
+		for (StrikeData boutDetail : boutDetails) {
+			if (round.equals(boutDetail.getRound())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
