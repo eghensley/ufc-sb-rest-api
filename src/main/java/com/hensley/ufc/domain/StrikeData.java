@@ -47,7 +47,10 @@ public class StrikeData  extends BaseAuditEntity implements Serializable {
 	private Integer tkoKo;	
 	@Column(name = "SUBMISSION_SUCCESSFUL", nullable = false)
 	private Integer submissionSuccessful;	
-	
+	@Column(name = "SUB_SCORE")
+	private Double submissionScore;
+	@Column(name = "KO_SCORE")
+	private Double koScore;
 	@Column(name = "SCORE", nullable = true)
 	private Double score;
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -116,6 +119,32 @@ public class StrikeData  extends BaseAuditEntity implements Serializable {
 		this.takedownAttempted = takedownAttempted;
 	}
 
+	/**
+	 * @return the takedownAccuracy
+	 */
+	public Double getTakedownAccuracy() {
+		if (this.takedownAttempted == null || this.takedownSuccessful == null) {
+			return null;
+		} else if (this.takedownAttempted == 0) {
+			return 0.0;
+		} else {
+			return Double.valueOf(this.takedownSuccessful) / Double.valueOf(this.takedownAttempted);
+		}
+	}
+	
+	/**
+	 * @return the submissionAccuracy
+	 */
+	public Double getSubmissionAccuracy() {
+		if (this.submissionAttempted == null || this.submissionSuccessful == null) {
+			return null;
+		} else if (this.submissionSuccessful == 0) {
+			return 0.0;
+		} else {
+			return Double.valueOf(this.submissionSuccessful) / Double.valueOf(this.submissionAttempted);
+		}
+	}
+	
 	/**
 	 * @return the takedownSuccessful
 	 */
@@ -272,13 +301,42 @@ public class StrikeData  extends BaseAuditEntity implements Serializable {
 		this.score = score;
 	}
 
+	/**
+	 * @return the submissionScore
+	 */
+	public Double getSubmissionScore() {
+		return submissionScore;
+	}
+
+	/**
+	 * @param submissionScore the submissionScore to set
+	 */
+	public void setSubmissionScore(Double submissionScore) {
+		this.submissionScore = submissionScore;
+	}
+
+	/**
+	 * @return the koScore
+	 */
+	public Double getKoScore() {
+		return koScore;
+	}
+
+	/**
+	 * @param koScore the koScore to set
+	 */
+	public void setKoScore(Double koScore) {
+		this.koScore = koScore;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(fighterBout, knockdowns, passSuccessful, reversalSuccessful, round,
-				score, sigStrikePosition, sigStrikeTarget, submissionAttempted, submissionSuccessful, takedownAttempted,
-				takedownSuccessful, tkoKo, totStrikeAttempted, totStrikeSuccessful);
+		result = prime * result
+				+ Objects.hash(fighterBout, knockdowns, koScore, passSuccessful, reversalSuccessful, round, score,
+						sigStrikePosition, sigStrikeTarget, submissionAttempted, submissionScore, submissionSuccessful,
+						takedownAttempted, takedownSuccessful, tkoKo, totStrikeAttempted, totStrikeSuccessful);
 		return result;
 	}
 
@@ -295,16 +353,17 @@ public class StrikeData  extends BaseAuditEntity implements Serializable {
 		}
 		StrikeData other = (StrikeData) obj;
 		return Objects.equals(fighterBout, other.fighterBout) && Objects.equals(knockdowns, other.knockdowns)
-				&& Objects.equals(passSuccessful, other.passSuccessful)
+				&& Objects.equals(koScore, other.koScore) && Objects.equals(passSuccessful, other.passSuccessful)
 				&& Objects.equals(reversalSuccessful, other.reversalSuccessful) && Objects.equals(round, other.round)
 				&& Objects.equals(score, other.score) && Objects.equals(sigStrikePosition, other.sigStrikePosition)
 				&& Objects.equals(sigStrikeTarget, other.sigStrikeTarget)
 				&& Objects.equals(submissionAttempted, other.submissionAttempted)
+				&& Objects.equals(submissionScore, other.submissionScore)
 				&& Objects.equals(submissionSuccessful, other.submissionSuccessful)
 				&& Objects.equals(takedownAttempted, other.takedownAttempted)
 				&& Objects.equals(takedownSuccessful, other.takedownSuccessful) && Objects.equals(tkoKo, other.tkoKo)
 				&& Objects.equals(totStrikeAttempted, other.totStrikeAttempted)
 				&& Objects.equals(totStrikeSuccessful, other.totStrikeSuccessful);
 	}
-	
+
 }

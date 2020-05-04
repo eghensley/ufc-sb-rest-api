@@ -18,4 +18,5 @@ public interface StrikeDataRepository extends JpaRepository<StrikeData, String> 
 			"and sd.round =:round", nativeQuery = true)
 	Optional<List<StrikeData>> getStrikeDataByFighterAndFightAndRound(@Param("fighterOid") String fighterOid, @Param("fightOid") String fightOid, @Param("round") Integer round);
 
+	StrikeData findByOid(@Param("oid") String oid);
 }

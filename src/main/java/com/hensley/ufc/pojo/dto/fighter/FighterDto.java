@@ -5,6 +5,7 @@ import java.util.Date;
 import com.hensley.ufc.enums.FighterStanceEnum;
 
 public class FighterDto {
+	private String oid;
 	private String fighterId;
 	private String fighterName;	
 	private Integer reach;		
@@ -98,6 +99,20 @@ public class FighterDto {
 	 */
 	public void setStance(FighterStanceEnum stance) {
 		this.stance = stance;
+	}
+
+	/**
+	 * @return the oid
+	 */
+	public String getOid() {
+		return oid;
+	}
+
+	/**
+	 * @param oid the oid to set
+	 */
+	public void setOid(String oid) {
+		this.oid = oid;
 	}
 	
 	

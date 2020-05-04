@@ -1,7 +1,9 @@
 package com.hensley.ufc.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -24,8 +26,12 @@ import com.hensley.ufc.enums.BoutOutcomeEnum;
 import com.hensley.ufc.enums.FightMethodEnum;
 import com.hensley.ufc.enums.ParseTargetEnum;
 import com.hensley.ufc.enums.WeightClassEnum;
+import com.hensley.ufc.pojo.dto.bout.BoutDataDto;
 import com.hensley.ufc.pojo.dto.bout.BoutDto;
 import com.hensley.ufc.pojo.dto.bout.BoutSummaryDto;
+import com.hensley.ufc.pojo.dto.fighter.FighterBoutXRefDto;
+import com.hensley.ufc.pojo.dto.strike.RoundStrikeDto;
+import com.hensley.ufc.pojo.dto.strike.StrikeDto;
 import com.hensley.ufc.pojo.request.ParseRequest;
 import com.hensley.ufc.pojo.response.GetResponse;
 import com.hensley.ufc.pojo.response.ParseResponse;
@@ -43,7 +49,7 @@ public class BoutService {
 	private static final String SUCCESSFUL_SAVE_MESSAGE = "Completed save of bout %s.";
 	private static final String FIGHT_URL = "http://www.ufcstats.com/event-details/%s";
 
-	private static final String NO_BOUTS_FOUND = "No fight available for id %s";
+	private static final String NO_BOUTS_FOUND = "No bout available for id %s";
 	private static final String FIGHT_LOAD_ERROR = "Fight %s could not be loaded from DB.";
 
 	private static final String ERROR_ADDING_BOUTS = "Error adding bouts to fight %s.";
@@ -91,6 +97,12 @@ public class BoutService {
 		List<String> boutList = boutRepo.findBoutsMissingScores();
 		return new GetResponse(HttpStatus.OK, null, boutList);
 	}
+	
+	@Transactional
+	public GetResponse getBoutsDateAsc() {
+		List<String> boutList = boutRepo.findBoutsDateAsc();
+		return new GetResponse(HttpStatus.OK, null, boutList);
+	}
 
 	@Transactional
 	public GetResponse getBoutSummary(String boutOid) {
@@ -122,6 +134,80 @@ public class BoutService {
 				boutData = boutDataOpt.get();
 				boutDto = (BoutDto) mappingUtils.mapToDto(boutData, BoutDto.class);
 				return new GetResponse(HttpStatus.ACCEPTED, errorString, boutDto);
+			} else {
+				errorString = String.format(NO_BOUTS_FOUND, boutId);
+				LOG.log(Level.WARNING, errorString);
+				return new GetResponse(HttpStatus.ACCEPTED, errorString, null);
+			}
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			LOG.log(Level.SEVERE, errorString);
+			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
+
+		}
+	}
+	
+	@Transactional
+	public GetResponse getBoutDataDto(String boutId) {
+		Optional<BoutData> boutDataOpt;
+		BoutData boutData;
+		BoutDto boutDto;
+		String errorString = null;
+
+		try {
+			boutDataOpt = boutRepo.findByBoutId(boutId);
+			if (boutDataOpt.isPresent()) {
+				boutData = boutDataOpt.get();
+				List<RoundStrikeDto> response = new ArrayList<>();
+				boutDto = (BoutDto) mappingUtils.mapToDto(boutData, BoutDto.class);
+				FighterBoutXRefDto fighter1 = boutDto.getFighterBoutXRefs().get(0);
+				FighterBoutXRefDto fighter2 = boutDto.getFighterBoutXRefs().get(1);
+				
+				Map<Integer, RoundStrikeDto> fighter1Map = new HashMap<>();
+				Map<Integer, RoundStrikeDto> fighter2Map = new HashMap<>();
+				
+				for (StrikeDto fighter1Round: fighter1.getBoutDetails()) {
+					RoundStrikeDto fighter1RoundStrike = (RoundStrikeDto) mappingUtils.mapToDto(fighter1Round, RoundStrikeDto.class);
+					fighter1RoundStrike.setBoutOid(boutData.getOid());
+					fighter1RoundStrike.setFighterOid(fighter1.getFighter().getFighterId());
+					fighter1RoundStrike.setWeightClass(boutData.getWeightClass());
+					if (fighter1Round.getRound() < boutDto.getFinishRounds()) {
+						fighter1RoundStrike.setSeconds(300);
+					} else {
+						fighter1RoundStrike.setSeconds(boutDto.getFinishTime() - ((fighter1Round.getRound() - 1) * 300));
+					}
+					fighter1Map.put(fighter1Round.getRound(), fighter1RoundStrike);
+				}
+				
+				for (StrikeDto fighter2Round: fighter2.getBoutDetails()) {
+					RoundStrikeDto fighter2RoundStrike = (RoundStrikeDto) mappingUtils.mapToDto(fighter2Round, RoundStrikeDto.class);
+					fighter2RoundStrike.setBoutOid(boutData.getOid());
+					fighter2RoundStrike.setFighterOid(fighter2.getFighter().getFighterId());
+					fighter2RoundStrike.setWeightClass(boutData.getWeightClass());
+					if (fighter2Round.getRound() < boutDto.getFinishRounds()) {
+						fighter2RoundStrike.setSeconds(300);
+					} else {
+						fighter2RoundStrike.setSeconds(boutDto.getFinishTime() - ((fighter2Round.getRound() - 1) * 300));
+					}
+					fighter2Map.put(fighter2Round.getRound(), fighter2RoundStrike);
+				}
+				
+				if (fighter1Map.size() != fighter2Map.size()) {
+					return new GetResponse(HttpStatus.ACCEPTED, errorString, response);
+				}
+				for (StrikeDto fighter2DefRound: fighter1.getBoutDetails()) {
+					RoundStrikeDto fighter2FullRound = fighter2Map.get(fighter2DefRound.getRound());
+					fighter2FullRound.setDefStats(fighter2DefRound);
+					response.add(fighter2FullRound);
+				}				
+				
+				for (StrikeDto fighter1DefRound: fighter2.getBoutDetails()) {
+					RoundStrikeDto fighter1FullRound = fighter1Map.get(fighter1DefRound.getRound());
+					fighter1FullRound.setDefStats(fighter1DefRound);
+					response.add(fighter1FullRound);
+				}
+				
+				return new GetResponse(HttpStatus.ACCEPTED, errorString, response);
 			} else {
 				errorString = String.format(NO_BOUTS_FOUND, boutId);
 				LOG.log(Level.WARNING, errorString);

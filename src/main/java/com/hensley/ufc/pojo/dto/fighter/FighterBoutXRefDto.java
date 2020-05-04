@@ -13,7 +13,15 @@ public class FighterBoutXRefDto {
 	private List<StrikeDto> boutDetails;
 	private Integer mlOdds;
 	private BfoExpectedOutcomeDto bfoExpectedOutcomes;
+	private Double offStrikeEloPre;
+	private Double defStrikeEloPre;
+	private Double offGrapplingEloPre;
+	private Double defGrapplingEloPre;
 
+	private Double offStrikeEloPost;
+	private Double defStrikeEloPost;
+	private Double offGrapplingEloPost;
+	private Double defGrapplingEloPost;
 	public FighterBoutXRefDto() {
 		this.boutDetails = new ArrayList<>();
 	}
@@ -100,6 +108,118 @@ public class FighterBoutXRefDto {
 	 */
 	public void setBfoExpectedOutcomes(BfoExpectedOutcomeDto bfoExpectedOutcomes) {
 		this.bfoExpectedOutcomes = bfoExpectedOutcomes;
+	}
+
+	/**
+	 * @return the offStrikeEloPre
+	 */
+	public Double getOffStrikeEloPre() {
+		return offStrikeEloPre;
+	}
+
+	/**
+	 * @param offStrikeEloPre the offStrikeEloPre to set
+	 */
+	public void setOffStrikeEloPre(Double offStrikeEloPre) {
+		this.offStrikeEloPre = offStrikeEloPre;
+	}
+
+	/**
+	 * @return the defStrikeEloPre
+	 */
+	public Double getDefStrikeEloPre() {
+		return defStrikeEloPre;
+	}
+
+	/**
+	 * @param defStrikeEloPre the defStrikeEloPre to set
+	 */
+	public void setDefStrikeEloPre(Double defStrikeEloPre) {
+		this.defStrikeEloPre = defStrikeEloPre;
+	}
+
+	/**
+	 * @return the offGrapplingEloPre
+	 */
+	public Double getOffGrapplingEloPre() {
+		return offGrapplingEloPre;
+	}
+
+	/**
+	 * @param offGrapplingEloPre the offGrapplingEloPre to set
+	 */
+	public void setOffGrapplingEloPre(Double offGrapplingEloPre) {
+		this.offGrapplingEloPre = offGrapplingEloPre;
+	}
+
+	/**
+	 * @return the defGrapplingEloPre
+	 */
+	public Double getDefGrapplingEloPre() {
+		return defGrapplingEloPre;
+	}
+
+	/**
+	 * @param defGrapplingEloPre the defGrapplingEloPre to set
+	 */
+	public void setDefGrapplingEloPre(Double defGrapplingEloPre) {
+		this.defGrapplingEloPre = defGrapplingEloPre;
+	}
+
+	/**
+	 * @return the offStrikeEloPost
+	 */
+	public Double getOffStrikeEloPost() {
+		return offStrikeEloPost;
+	}
+
+	/**
+	 * @param offStrikeEloPost the offStrikeEloPost to set
+	 */
+	public void setOffStrikeEloPost(Double offStrikeEloPost) {
+		this.offStrikeEloPost = offStrikeEloPost;
+	}
+
+	/**
+	 * @return the defStrikeEloPost
+	 */
+	public Double getDefStrikeEloPost() {
+		return defStrikeEloPost;
+	}
+
+	/**
+	 * @param defStrikeEloPost the defStrikeEloPost to set
+	 */
+	public void setDefStrikeEloPost(Double defStrikeEloPost) {
+		this.defStrikeEloPost = defStrikeEloPost;
+	}
+
+	/**
+	 * @return the offGrapplingEloPost
+	 */
+	public Double getOffGrapplingEloPost() {
+		return offGrapplingEloPost;
+	}
+
+	/**
+	 * @param offGrapplingEloPost the offGrapplingEloPost to set
+	 */
+	public void setOffGrapplingEloPost(Double offGrapplingEloPost) {
+		this.offGrapplingEloPost = offGrapplingEloPost;
+	}
+
+	/**
+	 * @return the defGrapplingEloPost
+	 */
+	public Double getDefGrapplingEloPost() {
+		return defGrapplingEloPost;
+	}
+
+	/**
+	 * @param defGrapplingEloPost the defGrapplingEloPost to set
+	 */
+	public void setDefGrapplingEloPost(Double defGrapplingEloPost) {
+		this.defGrapplingEloPost = defGrapplingEloPost;
 	}
 	
 }

@@ -27,4 +27,7 @@ public interface BoutRepository extends JpaRepository<BoutData, String> {
 	
 	@Query(value = "select distinct(b.oid) from ufc2.bout b join ufc2.fighter_bout_xref fbx on fbx.bout_oid = b.oid join ufc2.strike_data s on s.fighter_bout_oid = fbx.oid where b.mma_dec_bout_url is not null and s.score is null", nativeQuery = true)
 	List<String> findBoutsMissingScores();
+	
+	@Query(value = "select b.bout_id from ufc2.bout b join ufc2.fight f on b.fight_oid = f.oid where f.fight_date > '2005-01-01 00:00:00' and f.fight_date < '2020-01-01 00:00:00' order by f.fight_date asc", nativeQuery = true)
+	List<String> findBoutsDateAsc();
 }

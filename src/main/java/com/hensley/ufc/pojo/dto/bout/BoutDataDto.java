@@ -3,12 +3,11 @@ package com.hensley.ufc.pojo.dto.bout;
 import java.util.List;
 
 import com.hensley.ufc.enums.FightMethodEnum;
-import com.hensley.ufc.enums.GenderEnum;
 import com.hensley.ufc.enums.WeightClassEnum;
 import com.hensley.ufc.pojo.dto.SuperAuditDto;
-import com.hensley.ufc.pojo.dto.fighter.FighterBoutXRefDto;
+import com.hensley.ufc.pojo.dto.fighter.FighterBoutXrefDataDto;
 
-public class BoutDto extends SuperAuditDto {
+public class BoutDataDto extends SuperAuditDto {
 
 	private String boutId;
 	private WeightClassEnum weightClass;
@@ -22,11 +21,10 @@ public class BoutDto extends SuperAuditDto {
 	private Integer finishTime;
 	private FightMethodEnum finishMethod;
 	private String finishDetails;
-	private List<FighterBoutXRefDto> fighterBoutXRefs;
+	private List<FighterBoutXrefDataDto> fighterBoutXRefs;
 	private String mmaDecBoutUrl;
-	private GenderEnum gender;
 	
-	public BoutDto() {
+	public BoutDataDto() {
 		
 	}
 
@@ -56,7 +54,6 @@ public class BoutDto extends SuperAuditDto {
 	 */
 	public void setWeightClass(WeightClassEnum weightClass) {
 		this.weightClass = weightClass;
-		this.gender = weightClass.gender;
 	}
 
 	/**
@@ -202,14 +199,14 @@ public class BoutDto extends SuperAuditDto {
 	/**
 	 * @return the fighterBoutXRefs
 	 */
-	public List<FighterBoutXRefDto> getFighterBoutXRefs() {
+	public List<FighterBoutXrefDataDto> getFighterBoutXRefs() {
 		return fighterBoutXRefs;
 	}
 
 	/**
 	 * @param fighterBoutXRefs the fighterBoutXRefs to set
 	 */
-	public void setFighterBoutXRefs(List<FighterBoutXRefDto> fighterBoutXRefs) {
+	public void setFighterBoutXRefs(List<FighterBoutXrefDataDto> fighterBoutXRefs) {
 		this.fighterBoutXRefs = fighterBoutXRefs;
 	}
 
@@ -220,13 +217,5 @@ public class BoutDto extends SuperAuditDto {
 	public void setMmaDecBoutUrl(String mmaDecBoutUrl) {
 		this.mmaDecBoutUrl = mmaDecBoutUrl;
 	}
-
-	/**
-	 * @return the gender
-	 */
-	public GenderEnum getGender() {
-		return gender;
-	}
-	
 	
 }

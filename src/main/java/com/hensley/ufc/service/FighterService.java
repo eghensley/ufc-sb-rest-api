@@ -1,5 +1,6 @@
 package com.hensley.ufc.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -8,18 +9,24 @@ import java.util.logging.Logger;
 
 import javax.transaction.Transactional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.html.DomText;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.hensley.ufc.domain.FightData;
 import com.hensley.ufc.domain.FighterBoutXRefData;
 import com.hensley.ufc.domain.FighterData;
 import com.hensley.ufc.enums.BoutOutcomeEnum;
 import com.hensley.ufc.enums.FighterStanceEnum;
+import com.hensley.ufc.pojo.dto.fight.BasicFightDto;
+import com.hensley.ufc.pojo.dto.fighter.FighterOidAndNameDto;
+import com.hensley.ufc.pojo.response.GetResponse;
 import com.hensley.ufc.pojo.response.UrlParseRequest;
 import com.hensley.ufc.repository.FighterBoutXRefRepository;
 import com.hensley.ufc.repository.FighterRepository;
+import com.hensley.ufc.util.MappingUtils;
 import com.hensley.ufc.util.ParsingUtils;
 import com.hensley.ufc.util.UrlUtils;
 
@@ -34,17 +41,31 @@ public class FighterService {
 	private final UrlUtils urlUtils;
 	private final ParsingUtils parsingUtils;
 	private final FighterBoutXRefRepository fighterBoutXRefRepo;
+	private final MappingUtils mappingUtils;
 
 	public FighterService(FighterRepository fighterRepo, UrlUtils urlUtils, ParsingUtils parsingUtils,
-			FighterBoutXRefRepository fighterBoutXRefRepo) {
+			FighterBoutXRefRepository fighterBoutXRefRepo, MappingUtils mappingUtils) {
 		this.fighterRepo = fighterRepo;
 		this.urlUtils = urlUtils;
 		this.parsingUtils = parsingUtils;
 		this.fighterBoutXRefRepo = fighterBoutXRefRepo;
+		this.mappingUtils = mappingUtils;
 	}
 
 	public String fuzzyMatchFighterIdByName(String fighterName) {
 		return fighterRepo.findFighterIdByFuzzyFighterName(fighterName);
+	}
+	
+	@Transactional
+	public GetResponse getFighters() {
+		String errorString = null;
+		List<FighterOidAndNameDto> response = new ArrayList<>();
+		List<FighterData> fighterList = fighterRepo.getFighterList();
+		for (FighterData fighter: fighterList) {
+			FighterOidAndNameDto fighterDto = (FighterOidAndNameDto) mappingUtils.mapToDto(fighter, FighterOidAndNameDto.class);
+			response.add(fighterDto);
+		}
+		return new GetResponse(HttpStatus.ACCEPTED, errorString, response);
 	}
 	
 	@Transactional

@@ -9,15 +9,19 @@ public class StrikeDto {
 	private Integer totStrikeSuccessful;
 	private Integer takedownAttempted;
 	private Integer takedownSuccessful;
+	private Double takedownAccuracy;
 	private Integer submissionAttempted;
 	private Integer passSuccessful;
 	private Integer reversalSuccessful;
 	private Integer tkoKo;
 	private Integer submissionSuccessful;
+	private Double submissionAccuracy;
 	private SigStrikePositionDto sigStrikePosition;
 	private SigStrikeTargetDto sigStrikeTarget;
 	private Double score;
-
+	private Double submissionScore;
+	private Double koScore;
+	
 	public StrikeDto() {
 
 	}
@@ -82,7 +86,7 @@ public class StrikeDto {
 		if (this.totStrikeAttempted == 0) {
 			return 0.0;
 		} else {
-			return Double.valueOf(this.totStrikeSuccessful / this.totStrikeAttempted);
+			return Double.valueOf(Double.valueOf(this.totStrikeSuccessful) / Double.valueOf(this.totStrikeAttempted));
 		}
 	}
 
@@ -119,6 +123,20 @@ public class StrikeDto {
 	 */
 	public Integer getSubmissionAttempted() {
 		return submissionAttempted;
+	}
+
+	/**
+	 * @return the takedownAccuracy
+	 */
+	public Double getSubmissionAccuracy() {
+		return submissionAccuracy;
+	}
+	
+	/**
+	 * @return the takedownAccuracy
+	 */
+	public void setSubmissionAccuracy(Double submissionAccuracy) {
+		this.submissionAccuracy = submissionAccuracy;
 	}
 
 	/**
@@ -404,6 +422,48 @@ public class StrikeDto {
 	 */
 	public void setOid(String oid) {
 		this.oid = oid;
+	}
+
+	/**
+	 * @return the takedownAccuracy
+	 */
+	public Double getTakedownAccuracy() {
+		return takedownAccuracy;
+	}
+
+	/**
+	 * @param takedownAccuracy the takedownAccuracy to set
+	 */
+	public void setTakedownAccuracy(Double takedownAccuracy) {
+		this.takedownAccuracy = takedownAccuracy;
+	}
+
+	/**
+	 * @return the submissionScore
+	 */
+	public Double getSubmissionScore() {
+		return submissionScore;
+	}
+
+	/**
+	 * @param submissionScore the submissionScore to set
+	 */
+	public void setSubmissionScore(Double submissionScore) {
+		this.submissionScore = submissionScore;
+	}
+
+	/**
+	 * @return the koScore
+	 */
+	public Double getKoScore() {
+		return koScore;
+	}
+
+	/**
+	 * @param koScore the koScore to set
+	 */
+	public void setKoScore(Double koScore) {
+		this.koScore = koScore;
 	}
 
 }

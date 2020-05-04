@@ -41,5 +41,9 @@ public enum WeightClassEnum {
     public static WeightClassEnum valueOfDesc(String description) {
         return BY_DESCRIPTION.get(description);
     }
+    
+    public Integer getWeight() {
+    	return this.weightCeiling;
+    }
 	
 }

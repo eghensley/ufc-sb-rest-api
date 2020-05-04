@@ -23,9 +23,23 @@ public class BoutController {
 	BoutService boutService;
 	
 	@ApiOperation(value = "Fetch bout by Id")
+	@GetMapping("all")
+	public ResponseEntity<GetResponse> getBoutsDateAsc() {
+		GetResponse response = boutService.getBoutsDateAsc(); 
+		return new ResponseEntity<>(response, response.getStatus());
+	}
+	
+	@ApiOperation(value = "Fetch bout by Id")
 	@GetMapping("{boutId}/info")
 	public ResponseEntity<GetResponse> getBoutById(@PathVariable("boutId") String boutId) {
 		GetResponse response = boutService.getBoutDto(boutId); 
+		return new ResponseEntity<>(response, response.getStatus());
+	}
+
+	@ApiOperation(value = "Fetch bout by Id")
+	@GetMapping("{boutId}/data")
+	public ResponseEntity<GetResponse> getBoutDataById(@PathVariable("boutId") String boutId) {
+		GetResponse response = boutService.getBoutDataDto(boutId); 
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 	
