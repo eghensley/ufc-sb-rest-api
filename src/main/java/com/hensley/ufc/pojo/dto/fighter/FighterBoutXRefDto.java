@@ -3,6 +3,8 @@ package com.hensley.ufc.pojo.dto.fighter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
+
 import com.hensley.ufc.enums.BoutOutcomeEnum;
 import com.hensley.ufc.pojo.dto.strike.StrikeDto;
 
@@ -22,6 +24,17 @@ public class FighterBoutXRefDto {
 	private Double defStrikeEloPost;
 	private Double offGrapplingEloPost;
 	private Double defGrapplingEloPost;
+	
+	private Double powerStrikeEloPre;
+	private Double chinStrikeEloPre;
+	private Double subGrapplingEloPre;
+	private Double evasGrapplingEloPre;
+	
+	private Double powerStrikeEloPost;
+	private Double chinStrikeEloPost;
+	private Double subGrapplingEloPost;
+	private Double evasGrapplingEloPost;
+	
 	public FighterBoutXRefDto() {
 		this.boutDetails = new ArrayList<>();
 	}
@@ -220,6 +233,118 @@ public class FighterBoutXRefDto {
 	 */
 	public void setDefGrapplingEloPost(Double defGrapplingEloPost) {
 		this.defGrapplingEloPost = defGrapplingEloPost;
+	}
+
+	/**
+	 * @return the powerStrikeEloPre
+	 */
+	public Double getPowerStrikeEloPre() {
+		return powerStrikeEloPre;
+	}
+
+	/**
+	 * @param powerStrikeEloPre the powerStrikeEloPre to set
+	 */
+	public void setPowerStrikeEloPre(Double powerStrikeEloPre) {
+		this.powerStrikeEloPre = powerStrikeEloPre;
+	}
+
+	/**
+	 * @return the chinStrikeEloPre
+	 */
+	public Double getChinStrikeEloPre() {
+		return chinStrikeEloPre;
+	}
+
+	/**
+	 * @param chinStrikeEloPre the chinStrikeEloPre to set
+	 */
+	public void setChinStrikeEloPre(Double chinStrikeEloPre) {
+		this.chinStrikeEloPre = chinStrikeEloPre;
+	}
+
+	/**
+	 * @return the subGrapplingEloPre
+	 */
+	public Double getSubGrapplingEloPre() {
+		return subGrapplingEloPre;
+	}
+
+	/**
+	 * @param subGrapplingEloPre the subGrapplingEloPre to set
+	 */
+	public void setSubGrapplingEloPre(Double subGrapplingEloPre) {
+		this.subGrapplingEloPre = subGrapplingEloPre;
+	}
+
+	/**
+	 * @return the evasGrapplingEloPre
+	 */
+	public Double getEvasGrapplingEloPre() {
+		return evasGrapplingEloPre;
+	}
+
+	/**
+	 * @param evasGrapplingEloPre the evasGrapplingEloPre to set
+	 */
+	public void setEvasGrapplingEloPre(Double evasGrapplingEloPre) {
+		this.evasGrapplingEloPre = evasGrapplingEloPre;
+	}
+
+	/**
+	 * @return the powerStrikeEloPost
+	 */
+	public Double getPowerStrikeEloPost() {
+		return powerStrikeEloPost;
+	}
+
+	/**
+	 * @param powerStrikeEloPost the powerStrikeEloPost to set
+	 */
+	public void setPowerStrikeEloPost(Double powerStrikeEloPost) {
+		this.powerStrikeEloPost = powerStrikeEloPost;
+	}
+
+	/**
+	 * @return the chinStrikeEloPost
+	 */
+	public Double getChinStrikeEloPost() {
+		return chinStrikeEloPost;
+	}
+
+	/**
+	 * @param chinStrikeEloPost the chinStrikeEloPost to set
+	 */
+	public void setChinStrikeEloPost(Double chinStrikeEloPost) {
+		this.chinStrikeEloPost = chinStrikeEloPost;
+	}
+
+	/**
+	 * @return the subGrapplingEloPost
+	 */
+	public Double getSubGrapplingEloPost() {
+		return subGrapplingEloPost;
+	}
+
+	/**
+	 * @param subGrapplingEloPost the subGrapplingEloPost to set
+	 */
+	public void setSubGrapplingEloPost(Double subGrapplingEloPost) {
+		this.subGrapplingEloPost = subGrapplingEloPost;
+	}
+
+	/**
+	 * @return the evasGrapplingEloPost
+	 */
+	public Double getEvasGrapplingEloPost() {
+		return evasGrapplingEloPost;
+	}
+
+	/**
+	 * @param evasGrapplingEloPost the evasGrapplingEloPost to set
+	 */
+	public void setEvasGrapplingEloPost(Double evasGrapplingEloPost) {
+		this.evasGrapplingEloPost = evasGrapplingEloPost;
 	}
 	
 }

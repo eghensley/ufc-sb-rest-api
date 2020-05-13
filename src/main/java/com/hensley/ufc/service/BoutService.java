@@ -103,6 +103,12 @@ public class BoutService {
 		List<String> boutList = boutRepo.findBoutsDateAsc();
 		return new GetResponse(HttpStatus.OK, null, boutList);
 	}
+	
+	@Transactional
+	public GetResponse getNewBoutsDateAsc() {
+		List<String> boutList = boutRepo.findNewBoutsDateAsc();
+		return new GetResponse(HttpStatus.OK, null, boutList);
+	}
 
 	@Transactional
 	public GetResponse getBoutSummary(String boutOid) {

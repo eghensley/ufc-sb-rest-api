@@ -98,6 +98,18 @@ public class RoundScoreService {
 			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
 		}
 	}
+	
+	public GetResponse getCountLastFights(String fighterOid, String fightIdx) {
+		String errorString;
+		try {
+			Integer prevFightCounts = fighterXRefRepo.getCountPreviousFights(fighterOid, fightIdx);
+				return new GetResponse(HttpStatus.ACCEPTED, null, prevFightCounts);
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			LOG.log(Level.SEVERE, errorString);
+			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
+		}
+	}
 
 	@Transactional
 	public ParseResponse clearEloScores() {

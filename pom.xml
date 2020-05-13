@@ -280,4 +280,39 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<!-- include below build tag to your existing pom.xml -->
+	<build>
+		<plugins>
+			<plugin>
+
+				<!-- Building an executable jar -->
+
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+
+							<!-- give full qualified name of your main class -->
+							<mainClass>com.hensley.ufc.App</mainClass>
+
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.1.5.RELEASE</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

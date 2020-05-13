@@ -1,5 +1,6 @@
 package com.hensley.ufc.pojo.dto.bout;
 
+import java.util.Date;
 import java.util.List;
 
 import com.hensley.ufc.enums.FightMethodEnum;
@@ -14,6 +15,7 @@ public class BoutDto extends SuperAuditDto {
 	private WeightClassEnum weightClass;
 	private Boolean champBout;
 	private String fightId;
+	private Date fightDate;
 	private String fightOid;
 	private Boolean completed;
 	private Integer schedRounds;
@@ -227,6 +229,19 @@ public class BoutDto extends SuperAuditDto {
 	public GenderEnum getGender() {
 		return gender;
 	}
-	
+
+	/**
+	 * @return the fightDate
+	 */
+	public Date getFightDate() {
+		return fightDate;
+	}
+
+	/**
+	 * @param fightDate the fightDate to set
+	 */
+	public void setFightDate(Date fightDate) {
+		this.fightDate = fightDate;
+	}
 	
 }

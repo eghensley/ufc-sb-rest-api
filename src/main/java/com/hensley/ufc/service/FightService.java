@@ -41,6 +41,8 @@ public class FightService {
 	private static final String FIGHT_URL = "http://www.ufcstats.com/statistics/events/completed?page=all";
 
 	private static final String FIGHT_HTML_XPATH = "/html/body/section/div/div/div/div[2]/div/table/tbody/tr[3 <= position()]";
+	private static final String FUT_FIGHT_HTML_XPATH = "/html/body/section/div/div/div/div[2]/div/table/tbody/tr[2]";
+
 	private static final String EVENT_DETAIL_URL = "http://www.ufcstats.com/event-details/";
 
 	private static final String NO_FIGHTS_FOUND = "No fight available for id %s";
@@ -141,6 +143,62 @@ public class FightService {
 		}
 	}
 
+	@Transactional
+	public ParseResponse futFightScraper() {
+		UrlParseRequest urlParseRequest;
+
+		String baseUrl = FIGHT_URL;
+
+		HtmlPage page;
+		List<HtmlElement> fightHtml;
+		String fightId = "ALL";
+		String errorStr = null;
+		boolean continueParsing;
+
+		ParseRequest request = new ParseRequest(ParseTargetEnum.FIGHTS, fightId, null, null);
+		ParseResponse response = new ParseResponse(request);
+
+		try {
+			urlParseRequest = urlUtils.parse(baseUrl);
+			errorStr = urlParseRequest.getErrorStr();
+			if (urlParseRequest.getSuccess()) {
+				page = urlParseRequest.getPage();
+				LOG.info("Completed FIGHTS Parse");
+
+				fightHtml = page.getByXPath(FUT_FIGHT_HTML_XPATH);
+				response.setItemsFound(fightHtml.size());
+				LOG.info(String.format("%s item found", response.getItemsFound()));
+
+				if (fightHtml.isEmpty()) {
+					errorStr = String.format(NO_FIGHTS_FOUND, baseUrl);
+					response.addResponseMsg(HttpStatus.NO_CONTENT, errorStr);
+					return response;
+				}
+
+				else {
+					for (HtmlElement fightItem : fightHtml) {
+						continueParsing = parseFightDetails(fightItem);
+						if (continueParsing) {
+							response.setItemsCompleted(response.getItemsCompleted() + 1);
+						} else {
+							break;
+						}
+					}
+				}
+				LOG.log(Level.INFO,
+						String.format(COMPLETION_MESSAGE, response.getItemsFound(), response.getItemsCompleted()));
+				response.addResponseMsg(HttpStatus.OK, errorStr);
+				return response;
+			} else {
+				return errorService.handleParseError(errorStr, response);
+			}
+		} catch (Exception e) {
+			errorStr = String.format("Error adding fights to DB");
+			return errorService.handleParseError(errorStr, e, response);
+		}
+
+	}
+	
 	@Transactional
 	public ParseResponse fightScraper() {
 		UrlParseRequest urlParseRequest;

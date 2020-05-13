@@ -44,8 +44,15 @@ public class ScoreController {
 	
 	@ApiOperation(value = "Fetch Last Elo Rankings")
 	@GetMapping("elo/last/fighter/{fighterOid}/fight/{fightOid}")
-	public ResponseEntity<GetResponse> getBoutDataById(@PathVariable("fighterOid") String fighterIdx, @PathVariable("fightOid") String fightIdx) {
+	public ResponseEntity<GetResponse> getLastEloData(@PathVariable("fighterOid") String fighterIdx, @PathVariable("fightOid") String fightIdx) {
 		GetResponse response = scoreService.getLastFBX(fighterIdx, fightIdx); 
+		return new ResponseEntity<>(response, response.getStatus());
+	}
+	
+	@ApiOperation(value = "Fetch Count of Last Elo Rankings")
+	@GetMapping("elo/last/fighter/{fighterOid}/fight/{fightOid}/count")
+	public ResponseEntity<GetResponse> getCountPrevFights(@PathVariable("fighterOid") String fighterIdx, @PathVariable("fightOid") String fightIdx) {
+		GetResponse response = scoreService.getCountLastFights(fighterIdx, fightIdx); 
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 	

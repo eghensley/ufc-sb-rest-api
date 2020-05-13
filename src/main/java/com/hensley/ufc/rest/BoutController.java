@@ -30,6 +30,13 @@ public class BoutController {
 	}
 	
 	@ApiOperation(value = "Fetch bout by Id")
+	@GetMapping("new")
+	public ResponseEntity<GetResponse> getNewBoutsDateAsc() {
+		GetResponse response = boutService.getNewBoutsDateAsc(); 
+		return new ResponseEntity<>(response, response.getStatus());
+	}
+	
+	@ApiOperation(value = "Fetch bout by Id")
 	@GetMapping("{boutId}/info")
 	public ResponseEntity<GetResponse> getBoutById(@PathVariable("boutId") String boutId) {
 		GetResponse response = boutService.getBoutDto(boutId); 

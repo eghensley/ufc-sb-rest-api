@@ -30,4 +30,7 @@ public interface BoutRepository extends JpaRepository<BoutData, String> {
 	
 	@Query(value = "select b.bout_id from ufc2.bout b join ufc2.fight f on b.fight_oid = f.oid where f.fight_date > '2005-01-01 00:00:00' and f.fight_date < '2020-01-01 00:00:00' order by f.fight_date asc", nativeQuery = true)
 	List<String> findBoutsDateAsc();
+	
+	@Query(value = "select b.bout_id from ufc2.bout b join ufc2.fight f on b.fight_oid = f.oid where f.fight_date > '2020-01-01 00:00:00' order by f.fight_date asc", nativeQuery = true)
+	List<String> findNewBoutsDateAsc();
 }

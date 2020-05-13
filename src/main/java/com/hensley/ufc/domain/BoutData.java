@@ -2,6 +2,7 @@ package com.hensley.ufc.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -137,6 +138,10 @@ public class BoutData extends BaseAuditEntity implements Serializable {
 	 */
 	public String getFightId() {
 		return fight.getFightId();
+	}
+	
+	public Date getFightDate() {
+		return this.fight.getFightDate();
 	}
 
 	/**
