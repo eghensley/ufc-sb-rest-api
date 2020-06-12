@@ -32,6 +32,6 @@ public interface FightRepository extends JpaRepository<FightData, String> {
 	@Query(value = "select * from ufc2.fight f ORDER BY SIMILARITY(f.fight_name,:fightName) DESC limit 1", nativeQuery = true)
 	Optional<List<FightData>> findFightByFuzzyName(@Param("fightName") String fightName);
 	
-	@Query(value = "select f.fight_id from ufc2.fight f where EXTRACT(YEAR FROM f.fight_date)=:year", nativeQuery = true)
+	@Query(value = "select f.fight_id from ufc2.fight f where EXTRACT(YEAR FROM f.fight_date)=:year ORDER BY f.fight_date asc", nativeQuery = true)
 	List<String> findFightIdsByYear(@Param("year") Integer year);
 }

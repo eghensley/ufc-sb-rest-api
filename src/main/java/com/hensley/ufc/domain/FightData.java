@@ -74,6 +74,20 @@ public class FightData extends BaseAuditEntity implements Serializable {
 		}
 	}
 	
+	public boolean ifBoutIdReqCompletion(String boutId) {
+		boolean resp = true;
+		for (BoutData bout: this.bouts) {
+			if (boutId.equals(bout.getBoutId())) {
+				if (Boolean.TRUE.equals(bout.getCompleted())) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+		}
+		return resp;
+	}
+	
 	/**
 	 * @return the fightId
 	 */

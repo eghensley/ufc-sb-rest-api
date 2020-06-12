@@ -13,7 +13,7 @@ public class FighterBoutXRefDto {
 	private FighterDto fighter;
 	private BoutOutcomeEnum outcome;
 	private List<StrikeDto> boutDetails;
-	private Integer mlOdds;
+	private Double mlOdds;
 	private BfoExpectedOutcomeDto bfoExpectedOutcomes;
 	private Double offStrikeEloPre;
 	private Double defStrikeEloPre;
@@ -34,7 +34,8 @@ public class FighterBoutXRefDto {
 	private Double chinStrikeEloPost;
 	private Double subGrapplingEloPost;
 	private Double evasGrapplingEloPost;
-	
+	private Double expOdds;
+
 	public FighterBoutXRefDto() {
 		this.boutDetails = new ArrayList<>();
 	}
@@ -98,14 +99,14 @@ public class FighterBoutXRefDto {
 	/**
 	 * @return the mlOdds
 	 */
-	public Integer getMlOdds() {
+	public Double getMlOdds() {
 		return mlOdds;
 	}
 
 	/**
 	 * @param mlOdds the mlOdds to set
 	 */
-	public void setMlOdds(Integer mlOdds) {
+	public void setMlOdds(Double mlOdds) {
 		this.mlOdds = mlOdds;
 	}
 
@@ -345,6 +346,20 @@ public class FighterBoutXRefDto {
 	 */
 	public void setEvasGrapplingEloPost(Double evasGrapplingEloPost) {
 		this.evasGrapplingEloPost = evasGrapplingEloPost;
+	}
+
+	/**
+	 * @return the expOdds
+	 */
+	public Double getExpOdds() {
+		return expOdds;
+	}
+
+	/**
+	 * @param expOdds the expOdds to set
+	 */
+	public void setExpOdds(Double expOdds) {
+		this.expOdds = expOdds;
 	}
 	
 }

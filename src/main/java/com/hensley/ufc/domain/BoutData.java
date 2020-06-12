@@ -31,7 +31,7 @@ public class BoutData extends BaseAuditEntity implements Serializable {
 	private String boutId;
 	@Column(name = "WEIGHT_CLASS", nullable = false)
 	private WeightClassEnum weightClass;
-	@Column(name = "CHAMP_BOUT", nullable = false)
+	@Column(name = "CHAMP_BOUT", nullable = true)
 	private Boolean champBout;
 //	@Column(name = "MAIN_EVENT", nullable = false)
 //	private Boolean mainEvent;
@@ -40,9 +40,9 @@ public class BoutData extends BaseAuditEntity implements Serializable {
 	private FightData fight;
 	@Column(name = "F_COMPLETED", nullable = false)
 	private Boolean completed;
-	@Column(name = "SCHED_ROUNDS", nullable = false)
+	@Column(name = "SCHED_ROUNDS", nullable = true)
 	private Integer schedRounds;
-	@Column(name = "REFEREE", nullable = false)
+	@Column(name = "REFEREE", nullable = true)
 	private String referee;
 	@Column(name = "FINISH_ROUNDS", nullable = true)
 	private Integer finishRounds;
@@ -148,7 +148,11 @@ public class BoutData extends BaseAuditEntity implements Serializable {
 	 * @return the fightOid
 	 */
 	public String getFightOid() {
-		return fight.getOid();
+		if (this.fight != null) {
+			return fight.getOid();
+		} else {
+			return null;
+		}
 	}
 
 	/**

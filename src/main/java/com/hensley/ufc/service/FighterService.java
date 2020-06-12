@@ -78,7 +78,9 @@ public class FighterService {
 		if (fighterXRefOpt.isPresent()) {
 			LOG.log(Level.INFO, String.format("Fighter %s already linked to bout", fighterId));
 			fighterXRef = fighterXRefOpt.get();
-			return fighterXRef;
+			fighterXRef.setOutcome(fighterOutcome);
+			fighterBoutXRefRepo.save(fighterXRef);
+			return null;
 		} else {
 			LOG.log(Level.INFO, String.format("Fighter %s not linked to bout.. creating link now", fighterId));
 

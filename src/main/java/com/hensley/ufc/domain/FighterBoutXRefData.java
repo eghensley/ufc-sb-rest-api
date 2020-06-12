@@ -44,6 +44,9 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 	@Column(name = "ML_ODDS")
 	private Double mlOdds;
 
+	@Column(name = "EXP_ODDS")
+	private Double expOdds;
+	
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private BfoExpectedOutcomeData bfoExpectedOutcomes;
 
@@ -480,15 +483,29 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 		this.evasGrapplingEloPost = evasGrapplingEloPost;
 	}
 
+	/**
+	 * @return the expOdds
+	 */
+	public Double getExpOdds() {
+		return expOdds;
+	}
+
+	/**
+	 * @param expOdds the expOdds to set
+	 */
+	public void setExpOdds(Double expOdds) {
+		this.expOdds = expOdds;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(bfoExpectedOutcomes, bout, boutDetails, chinStrikeEloPost,
 				chinStrikeEloPre, defGrapplingEloPost, defGrapplingEloPre, defStrikeEloPost, defStrikeEloPre,
-				evasGrapplingEloPost, evasGrapplingEloPre, fighter, mlOdds, offGrapplingEloPost, offGrapplingEloPre,
-				offStrikeEloPost, offStrikeEloPre, outcome, powerStrikeEloPost, powerStrikeEloPre, subGrapplingEloPost,
-				subGrapplingEloPre);
+				evasGrapplingEloPost, evasGrapplingEloPre, expOdds, fighter, mlOdds, offGrapplingEloPost,
+				offGrapplingEloPre, offStrikeEloPost, offStrikeEloPre, outcome, powerStrikeEloPost, powerStrikeEloPre,
+				subGrapplingEloPost, subGrapplingEloPre);
 		return result;
 	}
 
@@ -514,7 +531,8 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 				&& Objects.equals(defStrikeEloPre, other.defStrikeEloPre)
 				&& Objects.equals(evasGrapplingEloPost, other.evasGrapplingEloPost)
 				&& Objects.equals(evasGrapplingEloPre, other.evasGrapplingEloPre)
-				&& Objects.equals(fighter, other.fighter) && Objects.equals(mlOdds, other.mlOdds)
+				&& Objects.equals(expOdds, other.expOdds) && Objects.equals(fighter, other.fighter)
+				&& Objects.equals(mlOdds, other.mlOdds)
 				&& Objects.equals(offGrapplingEloPost, other.offGrapplingEloPost)
 				&& Objects.equals(offGrapplingEloPre, other.offGrapplingEloPre)
 				&& Objects.equals(offStrikeEloPost, other.offStrikeEloPost)

@@ -13,6 +13,7 @@ public class FighterBoutXrefDataDto {
 	private List<StrikeDto> boutDetails;
 	private Integer mlOdds;
 	private BfoExpectedOutcomeDto bfoExpectedOutcomes;
+	private Double expOdds;
 
 	public FighterBoutXrefDataDto() {
 		this.boutDetails = new ArrayList<>();
@@ -101,4 +102,20 @@ public class FighterBoutXrefDataDto {
 	public void setBfoExpectedOutcomes(BfoExpectedOutcomeDto bfoExpectedOutcomes) {
 		this.bfoExpectedOutcomes = bfoExpectedOutcomes;
 	}
+
+	/**
+	 * @return the expOdds
+	 */
+	public Double getExpOdds() {
+		return expOdds;
+	}
+
+	/**
+	 * @param expOdds the expOdds to set
+	 */
+	public void setExpOdds(Double expOdds) {
+		this.expOdds = expOdds;
+	}
+	
+	
 }

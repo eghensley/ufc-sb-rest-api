@@ -32,6 +32,8 @@ import com.hensley.ufc.pojo.parse.RoundScoreFighterParseStore;
 import com.hensley.ufc.pojo.parse.RoundScoreParseStore;
 import com.hensley.ufc.pojo.parse.SingleRoundScoreParse;
 import com.hensley.ufc.pojo.request.AddBoutRoundScoreRequest;
+import com.hensley.ufc.pojo.request.AddBoutWinProb;
+import com.hensley.ufc.pojo.request.AddMyBookieOddsRequest;
 import com.hensley.ufc.pojo.request.AddRoundMlScore;
 import com.hensley.ufc.pojo.request.ParseRequest;
 import com.hensley.ufc.pojo.response.GetResponse;
@@ -83,8 +85,10 @@ public class RoundScoreService {
 		String errorString;
 		try {
 			Optional<List<FighterBoutXRefData>> prevFbxData = fighterXRefRepo.getPrevFBX(fighterOid, fightIdx);
-			if (prevFbxData.isPresent() && !CollectionUtils.isEmpty(prevFbxData.get()) && prevFbxData.get().get(0).getOffStrikeEloPre() != null) {
-				responseData = (FighterBoutEloScoresDto) mappingUtils.mapToDto(prevFbxData.get().get(0), FighterBoutEloScoresDto.class);
+			if (prevFbxData.isPresent() && !CollectionUtils.isEmpty(prevFbxData.get())
+					&& prevFbxData.get().get(0).getOffStrikeEloPre() != null) {
+				responseData = (FighterBoutEloScoresDto) mappingUtils.mapToDto(prevFbxData.get().get(0),
+						FighterBoutEloScoresDto.class);
 				return new GetResponse(HttpStatus.ACCEPTED, null, responseData);
 			} else {
 				String noPreviousDataFound = String.format("No previous bout found for fighter %s before fight %s",
@@ -98,12 +102,12 @@ public class RoundScoreService {
 			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
 		}
 	}
-	
+
 	public GetResponse getCountLastFights(String fighterOid, String fightIdx) {
 		String errorString;
 		try {
 			Integer prevFightCounts = fighterXRefRepo.getCountPreviousFights(fighterOid, fightIdx);
-				return new GetResponse(HttpStatus.ACCEPTED, null, prevFightCounts);
+			return new GetResponse(HttpStatus.ACCEPTED, null, prevFightCounts);
 		} catch (Exception e) {
 			errorString = e.getLocalizedMessage();
 			LOG.log(Level.SEVERE, errorString);
@@ -115,14 +119,15 @@ public class RoundScoreService {
 	public ParseResponse clearEloScores() {
 		ParseRequest request = new ParseRequest(ParseTargetEnum.ROUNDS, null, null, null);
 		ParseResponse response = new ParseResponse(request);
-		Query query = em.createNativeQuery("update ufc2.fighter_bout_xref set def_grap_elo_post = null, def_grap_elo_pre = null, def_strike_elo_post = null, def_strike_elo_pre = null, off_grap_elo_post = null, off_grap_elo_pre = null, off_strike_elo_post = null, off_strike_elo_pre = null, chin_strike_elo_post = null, chin_strike_elo_pre = null, evas_grap_elo_pre = null, evas_grap_elo_post = null, power_strike_elo_post = null, power_strike_elo_pre = null, sub_grap_elo_post = null, sub_grap_elo_pre = null");
+		Query query = em.createNativeQuery(
+				"update ufc2.fighter_bout_xref set def_grap_elo_post = null, def_grap_elo_pre = null, def_strike_elo_post = null, def_strike_elo_pre = null, off_grap_elo_post = null, off_grap_elo_pre = null, off_strike_elo_post = null, off_strike_elo_pre = null, chin_strike_elo_post = null, chin_strike_elo_pre = null, evas_grap_elo_pre = null, evas_grap_elo_post = null, power_strike_elo_post = null, power_strike_elo_pre = null, sub_grap_elo_post = null, sub_grap_elo_pre = null");
 		int resp = query.executeUpdate();
 		response.setItemsFound(1);
 		response.setItemsCompleted(resp);
 		response.setStatus(HttpStatus.ACCEPTED);
 		return response;
 	}
-	
+
 	@Transactional
 	public ParseResponse addFightScoreUrl(String year) {
 		UrlParseRequest urlParseRequest;
@@ -199,17 +204,17 @@ public class RoundScoreService {
 		response.setItemsFound(1);
 		try {
 			FighterBoutXRefData prevXRefData = fighterXRefRepo.findByOid(request.getOid());
-			
+
 			prevXRefData.setOffStrikeEloPre(request.getOffStrikeEloPre());
 			prevXRefData.setDefStrikeEloPre(request.getDefStrikeEloPre());
 			prevXRefData.setOffStrikeEloPost(request.getOffStrikeEloPost());
 			prevXRefData.setDefStrikeEloPost(request.getDefStrikeEloPost());
-			
+
 			prevXRefData.setOffGrapplingEloPre(request.getOffGrapplingEloPre());
 			prevXRefData.setDefGrapplingEloPre(request.getDefGrapplingEloPre());
 			prevXRefData.setOffGrapplingEloPost(request.getOffGrapplingEloPost());
 			prevXRefData.setDefGrapplingEloPost(request.getDefGrapplingEloPost());
-			
+
 			prevXRefData.setSubGrapplingEloPre(request.getSubGrapplingEloPre());
 			prevXRefData.setEvasGrapplingEloPre(request.getEvasGrapplingEloPre());
 			prevXRefData.setSubGrapplingEloPost(request.getSubGrapplingEloPost());
@@ -219,7 +224,7 @@ public class RoundScoreService {
 			prevXRefData.setChinStrikeEloPre(request.getChinStrikeEloPre());
 			prevXRefData.setPowerStrikeEloPost(request.getPowerStrikeEloPost());
 			prevXRefData.setChinStrikeEloPost(request.getChinStrikeEloPost());
-			
+
 			fighterXRefRepo.save(prevXRefData);
 			response.setItemsCompleted(1);
 			response.setStatus(HttpStatus.valueOf(200));
@@ -230,7 +235,7 @@ public class RoundScoreService {
 			return response;
 		}
 	}
-	
+
 	@Transactional
 	public ParseResponse addMlRoundScore(AddRoundMlScore request) {
 		ParseResponse response = new ParseResponse();
@@ -240,6 +245,24 @@ public class RoundScoreService {
 			updatedStrikeData.setKoScore(request.getKoScore());
 			updatedStrikeData.setSubmissionScore(request.getSubScore());
 			strikeRepo.save(updatedStrikeData);
+			response.setItemsCompleted(1);
+			response.setStatus(HttpStatus.valueOf(200));
+			return response;
+		} catch (Exception e) {
+			response.setItemsCompleted(0);
+			response.addResponseMsg(HttpStatus.valueOf(500), e.getLocalizedMessage());
+			return response;
+		}
+	}
+
+	@Transactional
+	public ParseResponse addMlBoutScore(AddBoutWinProb request) {
+		ParseResponse response = new ParseResponse();
+		response.setItemsFound(1);
+		try {
+			FighterBoutXRefData updatedFighterBoutData = fighterXRefRepo.findByOid(request.getOid());
+			updatedFighterBoutData.setExpOdds(request.getExpOdds());
+			fighterXRefRepo.save(updatedFighterBoutData);
 			response.setItemsCompleted(1);
 			response.setStatus(HttpStatus.valueOf(200));
 			return response;
@@ -475,295 +498,21 @@ public class RoundScoreService {
 		}
 	}
 
-//	@Transactional
-//	public ParseResponse scrapeScoresFromBout(String fightNameRaw, String baseUrl, ParseRequest fightRequest) {
-//		String errorStr = null;
-//		HtmlPage page;
-//		UrlParseRequest urlParseRequest;
-//		List<HtmlElement> round1ScoreHtml;
-//		List<HtmlElement> round2ScoreHtml;
-//		List<HtmlElement> round3ScoreHtml;
-//		List<HtmlElement> round4ScoreHtml;
-//		List<HtmlElement> round5ScoreHtml;
-//		FighterData fighter1;
-//		FighterData fighter2;
-//
-//		ParseRequest request = new ParseRequest(ParseTargetEnum.ROUNDS, null, null, null);
-//		ParseResponse response = new ParseResponse(request);
-//
-//		try {
-//
-//			urlParseRequest = urlUtils.parse("http://mmadecisions.com/" + baseUrl);
-//			errorStr = urlParseRequest.getErrorStr();
-//			if (urlParseRequest.getSuccess()) {
-//				page = urlParseRequest.getPage();
-//				LOG.info("Completed FIGHTS Parse");
-//
-//				round1ScoreHtml = page.getByXPath(
-//						"//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[1]/tbody/tr[3]/td/table/tbody/tr/td/table/tbody/tr[3]");
-//				round2ScoreHtml = page.getByXPath(
-//						"//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[1]/tbody/tr[3]/td/table/tbody/tr/td/table/tbody/tr[4]");
-//				round3ScoreHtml = page.getByXPath(
-//						"//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[1]/tbody/tr[3]/td/table/tbody/tr/td/table/tbody/tr[5]");
-//				round4ScoreHtml = page.getByXPath(
-//						"//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[1]/tbody/tr[3]/td/table/tbody/tr/td/table/tbody/tr[6]");
-//				round5ScoreHtml = page.getByXPath(
-//						"//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[1]/tbody/tr[3]/td/table/tbody/tr/td/table/tbody/tr[7]");
-//
-//				Integer itemsFound = round1ScoreHtml.size() + round2ScoreHtml.size() + round3ScoreHtml.size()
-//						+ round4ScoreHtml.size() + round5ScoreHtml.size();
-//				response.setItemsFound(itemsFound);
-//				LOG.info(String.format("%s item found", response.getItemsFound()));
-//
-//				if (itemsFound == 0) {
-//					errorStr = String.format(NO_SCORES_FOUND, baseUrl);
-//					response.addResponseMsg(HttpStatus.NO_CONTENT, errorStr);
-//					return response;
-//				}
-//
-//				else {
-//					HashMap<String, String> nameMap = new HashMap<>();
-//					fighter1 = matchFighterFromName("1", page, nameMap);
-//					fighter2 = matchFighterFromName("2", page, nameMap);
-//
-//					matchRoundScores(fighter1, fighter2, fightData, round1ScoreHtml, 1);
-//					matchRoundScores(fighter1, fighter2, fightData, round2ScoreHtml, 2);
-//					matchRoundScores(fighter1, fighter2, fightData, round3ScoreHtml, 3);
-//					matchRoundScores(fighter1, fighter2, fightData, round4ScoreHtml, 4);
-//					matchRoundScores(fighter1, fighter2, fightData, round5ScoreHtml, 5);
-//
-//				}
-//				LOG.log(Level.INFO,
-//						String.format(COMPLETION_MESSAGE, response.getItemsFound(), response.getItemsCompleted()));
-//				response.addResponseMsg(HttpStatus.OK, errorStr);
-//				return response;
-//			} else {
-//				return errorService.handleParseError(errorStr, response);
-//			}
-//		} catch (
-//
-//		Exception e) {
-//			errorStr = String.format(ERROR_SCRAPING_BOUT, "XXX");
-//			return errorService.handleParseError(errorStr, e, response);
-//		}
-//	}
-
-//	public void adfasdfa(HtmlPage page, Integer round) {
-//		List<HtmlElement> roundScoreHtml;
-//
-//		roundScoreHtml = page.getByXPath(String.format(
-//				"//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[1]/tbody/tr[3]/td/table/tbody/tr/td/table/tbody/tr[%s]",
-//				round + 2));
-//
-//	}
-//
-//	public void matchRoundScores(FighterData fighter1, FighterData fighter2, FightData fightData,
-//			List<HtmlElement> roundScoreHtml, Integer round) {
-//
-//		String errorStr;
-//
-//		try {
-//			if (!roundScoreHtml.isEmpty()) {
-//
-//				StrikeData fighter1RoundStrike = matchRoundStrikeData(fighter1, fightData, round);
-//				StrikeData fighter2RoundStrike = matchRoundStrikeData(fighter2, fightData, round);
-//
-//				if (fighter1RoundStrike != null & fighter2RoundStrike != null) {
-//					Double fighter1RoundScore = 0.0;
-//					Double fighter2RoundScore = 0.0;
-//					for (HtmlElement rnd1Score : roundScoreHtml) {
-//						String xpath = rnd1Score.getCanonicalXPath();
-//						HtmlTableDataCell fighter1Score = rnd1Score.getFirstByXPath(xpath + "/td[2]");
-//						HtmlTableDataCell fighter2Score = rnd1Score.getFirstByXPath(xpath + "/td[3]");
-//						if (fighter1Score == null || fighter2Score == null) {
-//							break;
-//						}
-//
-//						fighter1RoundScore += Integer.valueOf(fighter1Score.asText());
-//						fighter2RoundScore += Integer.valueOf(fighter2Score.asText());
-//					}
-//					fighter1RoundStrike.setScore(fighter1RoundScore);
-//					fighter2RoundStrike.setScore(fighter2RoundScore);
-//					strikeRepo.save(fighter1RoundStrike);
-//					strikeRepo.save(fighter2RoundStrike);
-//				}
-//			}
-//		} catch (
-//
-//		Exception e) {
-//			errorStr = String.format(ERROR_SCRAPING_ROUND, round);
-//			return errorService.handleParseError(errorStr, e, response);
-//		}
-//	}
-//
-//	public StrikeData matchRoundStrikeData(FighterData fighter, FightData fightData, Integer round) {
-//		StrikeData fighterRoundData;
-//		Optional<List<StrikeData>> fighterRoundDataOpt;
-//
-//		fighterRoundDataOpt = strikeRepo.getStrikeDataByFighterAndFightAndRound(fighter.getOid(), fightData.getOid(),
-//				round);
-//		if (fighterRoundDataOpt.isPresent()) {
-//			fighterRoundData = fighterRoundDataOpt.get().get(0);
-//			return fighterRoundData;
-//		} else {
-//			throw new IllegalArgumentException(
-//					String.format("Fighter %s bout data could not be found for fight %s and round %s.",
-//							fighter.getFighterName(), fightData.getFightName(), round));
-//		}
-//	}
-//	
-//	
-//	
-//	
-//	
-//	
-//	
-//	
-//	
-
-//	@Transactional
-//	public List<ScorePartialParse> fetchFightScoreParse(String fightNameRaw, String baseUrl) {
-//		UrlParseRequest urlParseRequest;
-//		HtmlPage page;
-//		List<HtmlElement> boutPages;
-//		String errorStr;
-//		FightData fightData;
-//		Integer boutsFound;
-//		ParseRequest fightRequest = new ParseRequest(ParseTargetEnum.ROUNDS, null, null, null);
-//		List<ScorePartialParse> response = new ArrayList<>();
-//
-//		String boutXpath = "//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[2]/tbody/tr/td[1]/b/a";
-//
-//		fightData = matchFightByName(fightNameRaw);
-//		if (fightData.getCompleted()) {
-//			return response;
-//		}
-//		LOG.info(String.format("Matched name %s to fightId %s", fightNameRaw, fightData.getOid()));
-//
-//		fightRequest.setFightId(fightData.getFightId());
-//		ParseResponse fightResponse = new ParseResponse(fightRequest);
-//
-//		urlParseRequest = urlUtils.parse("http://mmadecisions.com/" + baseUrl);
-//		errorStr = urlParseRequest.getErrorStr();
-//		if (urlParseRequest.getSuccess()) {
-//			page = urlParseRequest.getPage();
-//			LOG.info("Completed FIGHTS Parse");
-//			boutPages = page.getByXPath(boutXpath);
-//			boutsFound = boutPages.size();
-//			fightResponse.setItemsFound(boutsFound);
-//			for (HtmlElement boutPage : boutPages) {
-//				String xPath = boutPage.getCanonicalXPath();
-//				DomAttr boutUrl = boutPage.getFirstByXPath(xPath + "/@href");
-//
-//				fightResponse.setItemsCompleted(fightResponse.getItemsCompleted() + 1);
-////				scrapeScoresFromBout(fightData, boutUrl.getValue(), fightRequest);
-//			}
-//			fightResponse.setStatus(HttpStatus.ACCEPTED);
-//			return fightResponse;
-//		} else {
-//			return errorService.handleParseError(errorStr, fightResponse);
-//		}
-//
-//	}
-//
-//	@Transactional
-//	public ParseResponse scrapeJudgeScores() {
-//		String errorStr = null;
-//		UrlParseRequest urlParseRequest;
-//		HtmlPage page;
-//		List<HtmlElement> fightPages;
-//		String year = "2019";
-//		Integer fightsFound;
-//
-//		ParseRequest request = new ParseRequest(ParseTargetEnum.ROUNDS, null, null, null);
-//		ParseResponse response = new ParseResponse(request);
-//
-//		String yearUrl = String.format("http://mmadecisions.com/decisions-by-event/%s/", year);
-//		String eventXpath = "//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[2]/tbody/tr/td[2]/a";
-//
-//		urlParseRequest = urlUtils.parse(yearUrl);
-//
-//		if (urlParseRequest.getSuccess()) {
-//			page = urlParseRequest.getPage();
-//			LOG.info(String.format("Completed Parse of fights for year %s", year));
-//			fightPages = page.getByXPath(eventXpath);
-//			fightsFound = fightPages.size();
-//			response.setItemsFound(fightsFound);
-//			for (HtmlElement fightPage : fightPages) {
-//				if (fightPage.asText().toUpperCase().contains("UFC")) {
-//					String xPath = fightPage.getCanonicalXPath();
-//					DomAttr baseUrl = fightPage.getFirstByXPath(xPath + "/@href");
-//					scrapeFightScores(fightPage.asText(), baseUrl.getValue());
-//				}
-//				response.setItemsCompleted(response.getItemsCompleted() + 1);
-//			}
-//		}
-//		response.setStatus(HttpStatus.ACCEPTED);
-//		return response;
-//	}
-//
-//	public ParseResponse scrapeFightScores(String fightNameRaw, String baseUrl) {
-//		UrlParseRequest urlParseRequest;
-//		HtmlPage page;
-//		List<HtmlElement> boutPages;
-//		String errorStr;
-//		FightData fightData;
-//		Integer boutsFound;
-//		ParseRequest fightRequest = new ParseRequest(ParseTargetEnum.ROUNDS, null, null, null);
-//
-//		String boutXpath = "//*[@id=\"container_outer\"]/table[2]/tbody/tr/td[1]/table[2]/tbody/tr/td[1]/b/a";
-//
-//		try {
-//			fightData = matchFightByName(fightNameRaw);
-//			LOG.info(String.format("Matched name %s to fightId %s", fightNameRaw, fightData.getOid()));
-//
-//			fightRequest.setFightId(fightData.getFightId());
-//			ParseResponse fightResponse = new ParseResponse(fightRequest);
-//
-//			urlParseRequest = urlUtils.parse("http://mmadecisions.com/" + baseUrl);
-//			errorStr = urlParseRequest.getErrorStr();
-//			if (urlParseRequest.getSuccess()) {
-//				page = urlParseRequest.getPage();
-//				LOG.info("Completed FIGHTS Parse");
-//				boutPages = page.getByXPath(boutXpath);
-//				boutsFound = boutPages.size();
-//				fightResponse.setItemsFound(boutsFound);
-//				for (HtmlElement boutPage : boutPages) {
-//					String xPath = boutPage.getCanonicalXPath();
-//					DomAttr boutUrl = boutPage.getFirstByXPath(xPath + "/@href");
-//
-//					fightResponse.setItemsCompleted(fightResponse.getItemsCompleted() + 1);
-////				scrapeScoresFromBout(fightData, boutUrl.getValue(), fightRequest);
-//				}
-//				fightResponse.setStatus(HttpStatus.ACCEPTED);
-//				return fightResponse;
-//			} else {
-//				return errorService.handleParseError(errorStr, fightResponse);
-//			}
-//		} catch (Exception e) {
-//			ParseResponse fightResponse = new ParseResponse(fightRequest);
-//			errorStr = String.format(ERROR_SCRAPING_FIGHT, fightNameRaw);
-//			return errorService.handleParseError(errorStr, e, fightResponse);
-//		}
-//	}
-//
-//
-//
-//	public FighterBoutXRefData matchFighterBoutData(FighterData fighter, FightData fightData) {
-//		Optional<List<FighterBoutXRefData>> fighterXrefOpt;
-//		List<FighterBoutXRefData> fighterXrefList;
-//		FighterBoutXRefData fighterXref;
-//
-//		fighterXrefOpt = fighterXRefRepo.getFighterXRefByFighterOidFightOid(fighter.getOid(), fightData.getOid());
-//		if (fighterXrefOpt.isPresent()) {
-//			fighterXrefList = fighterXrefOpt.get();
-//			fighterXref = fighterXrefList.get(0);
-//			return fighterXref;
-//		} else {
-//			throw new IllegalArgumentException(String.format("Fighter %s bout data could not be found for fight %s",
-//					fighter.getFighterName(), fightData.getFightName()));
-//		}
-//	}
-//
-
+	@Transactional
+	public ParseResponse addManualMlOdds(AddMyBookieOddsRequest request) {
+		ParseResponse response = new ParseResponse();
+		response.setItemsFound(1);
+		try {
+			FighterBoutXRefData fbx = fighterXRefRepo.findByOid(request.getOid());
+			fbx.setMlOdds(request.getMlOdds());
+			fighterXRefRepo.save(fbx);
+			response.setItemsCompleted(1);
+			response.setStatus(HttpStatus.valueOf(200));
+			return response;
+		} catch (Exception e) {
+			response.setItemsCompleted(0);
+			response.addResponseMsg(HttpStatus.valueOf(500), e.getLocalizedMessage());
+			return response;
+		}
+	}
 }

@@ -60,6 +60,13 @@ public class ParseController {
 		ParseResponse response = boutService.scrapeBoutsFromFightId(fightId);
 		return new ResponseEntity<>(response, response.getStatus());
 	}
+	
+	@ApiOperation(value = "Parse bouts in a future fight")
+	@GetMapping("fights/{fightId}/bouts/future")
+	public ResponseEntity<ParseResponse> getFutureBouts(@PathVariable("fightId") String fightId) {
+		ParseResponse response = boutService.scrapeBoutsFromFutureFightId(fightId);
+		return new ResponseEntity<>(response, response.getStatus());
+	}
 
 	@ApiOperation(value = "Parse details in a bout")
 	@GetMapping("fights/{fightId}/bouts/{boutId}")

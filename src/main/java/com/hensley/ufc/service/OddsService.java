@@ -257,9 +257,9 @@ public class OddsService {
 	public void matchOddsFighterBoutByFighterName(List<FighterBoutXRefData> availableBouts,
 			Map<String, Double> fighterBoutOddsMap) {
 		for (FighterBoutXRefData availableBout : availableBouts) {
-			if (availableBout.getMlOdds() != null) {
-				continue;
-			}
+//			if (availableBout.getMlOdds() != null) {
+//				continue;
+//			}
 			List<Integer> scoreList = new ArrayList<>();
 			Map<Integer, Double> nameScores = new HashMap<>();
 			for (String oddsName : fighterBoutOddsMap.keySet()) {

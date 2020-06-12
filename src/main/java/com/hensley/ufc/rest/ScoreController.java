@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hensley.ufc.pojo.dto.fighter.FighterBoutEloScoresDto;
 import com.hensley.ufc.pojo.request.AddBoutRoundScoreRequest;
+import com.hensley.ufc.pojo.request.AddBoutWinProb;
+import com.hensley.ufc.pojo.request.AddMyBookieOddsRequest;
 import com.hensley.ufc.pojo.request.AddRoundMlScore;
 import com.hensley.ufc.pojo.response.GetResponse;
 import com.hensley.ufc.pojo.response.ParseResponse;
@@ -42,6 +44,13 @@ public class ScoreController {
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 	
+	@ApiOperation(value = "Fetch all fight IDs")
+	@PostMapping("bout/ml/add")
+	public ResponseEntity<ParseResponse> addBoutMlScores(@RequestBody AddBoutWinProb request) {
+		ParseResponse response = scoreService.addMlBoutScore(request);
+		return new ResponseEntity<>(response, response.getStatus());
+	}
+	
 	@ApiOperation(value = "Fetch Last Elo Rankings")
 	@GetMapping("elo/last/fighter/{fighterOid}/fight/{fightOid}")
 	public ResponseEntity<GetResponse> getLastEloData(@PathVariable("fighterOid") String fighterIdx, @PathVariable("fightOid") String fightIdx) {
@@ -67,6 +76,13 @@ public class ScoreController {
 	@GetMapping("elo/clear")
 	public ResponseEntity<ParseResponse> clearElo() {
 		ParseResponse response = scoreService.clearEloScores();
+		return new ResponseEntity<>(response, response.getStatus());
+	}
+	
+	@ApiOperation(value = "Update Elo Rankings")
+	@PostMapping("odds/myBookie/add")
+	public ResponseEntity<ParseResponse> updateMyBookieOdds(@RequestBody AddMyBookieOddsRequest request) {
+		ParseResponse response = scoreService.addManualMlOdds(request);
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 }
