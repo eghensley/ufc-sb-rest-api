@@ -69,14 +69,14 @@ public class FightService {
 	public GetResponse getFights() {
 		String errorString = null;
 		List<String> fightList = fightRepo.findFightIdsByDateDesc();
-		return new GetResponse(HttpStatus.ACCEPTED, errorString, fightList);
+		return new GetResponse(HttpStatus.OK, errorString, fightList);
 	}
 
 	@Transactional
 	public GetResponse getFightsWithScore() {
 		String errorString = null;
 		List<String> fightList = fightRepo.findFightIdsWithScore();
-		return new GetResponse(HttpStatus.ACCEPTED, errorString, fightList);
+		return new GetResponse(HttpStatus.OK, errorString, fightList);
 	}
 
 	@Transactional
@@ -107,14 +107,14 @@ public class FightService {
 			BasicFightDto fightDto = (BasicFightDto) mappingUtils.mapToDto(fightData, BasicFightDto.class);
 			response.add(fightDto);
 		}
-		return new GetResponse(HttpStatus.ACCEPTED, errorString, response);
+		return new GetResponse(HttpStatus.OK, errorString, response);
 	}
 
 	@Transactional
 	public GetResponse getFightsIdsByYear(Integer year) {
 		String errorString = null;
 		List<String> fightList = fightRepo.findFightIdsByYear(year);
-		return new GetResponse(HttpStatus.ACCEPTED, errorString, fightList);
+		return new GetResponse(HttpStatus.OK, errorString, fightList);
 	}
 	
 	@Transactional
@@ -129,11 +129,11 @@ public class FightService {
 			if (fightDataOpt.isPresent()) {
 				fightData = fightDataOpt.get();
 				fightDto = (FightDto) mappingUtils.mapToDto(fightData, FightDto.class);
-				return new GetResponse(HttpStatus.ACCEPTED, errorString, fightDto);
+				return new GetResponse(HttpStatus.OK, errorString, fightDto);
 			} else {
 				errorString = String.format(NO_FIGHTS_FOUND, fightId);
 				LOG.log(Level.WARNING, errorString);
-				return new GetResponse(HttpStatus.ACCEPTED, errorString, null);
+				return new GetResponse(HttpStatus.OK, errorString, null);
 			}
 		} catch (Exception e) {
 			errorString = e.getLocalizedMessage();

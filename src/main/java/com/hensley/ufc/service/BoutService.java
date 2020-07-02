@@ -728,7 +728,7 @@ public class BoutService {
 			DomText fighterNameHtml = boutDetailHTML.getFirstByXPath(fighterHtmlPath + "/div/h3/span/text()");
 
 			if (fighterNameHtml != null) {
-				fighterName = fighterNameHtml.asText().strip();
+				fighterName = fighterNameHtml.asText().trim();
 			}
 			if (fighterIdHtml != null) {
 				LOG.info(fighterIdHtml.asXml());
