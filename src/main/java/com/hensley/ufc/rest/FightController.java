@@ -46,7 +46,7 @@ public class FightController {
 	}
 	
 	@ApiOperation(value = "Fetch most recent 10 fights")
-	@GetMapping("all")
+	@GetMapping("recent")
 	public ResponseEntity<GetResponse> getMostRecentTenFights() {
 		GetResponse response = fightService.getFights(); 
 		return new ResponseEntity<>(response, response.getStatus());
