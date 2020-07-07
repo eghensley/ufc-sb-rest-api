@@ -73,6 +73,20 @@ public class FightService {
 	}
 
 	@Transactional
+	public GetResponse getRecentFights() {
+		String errorString = null;
+		List<BasicFightDto> fightDtoList = new ArrayList<>();
+		List<String> fightList = fightRepo.findFightIdsByDateDescLimitTen();
+		for (String fightId: fightList) {
+			Optional<FightData> fightDataOpt = fightRepo.findById(fightId);
+			BasicFightDto fightDto = (BasicFightDto) mappingUtils.mapToDto(fightDataOpt.get(), BasicFightDto.class);
+			fightDtoList.add(fightDto);
+		}
+		return new GetResponse(HttpStatus.OK, errorString, fightDtoList);
+	}
+
+	
+	@Transactional
 	public GetResponse getFightsWithScore() {
 		String errorString = null;
 		List<String> fightList = fightRepo.findFightIdsWithScore();

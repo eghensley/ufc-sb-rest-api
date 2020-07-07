@@ -23,6 +23,9 @@ public interface FightRepository extends JpaRepository<FightData, String> {
 	@Query(value = "select f.fight_id from ufc2.fight f order by f.fight_date desc", nativeQuery = true)
 	List<String> findFightIdsByDateDesc();
 	
+	@Query(value = "select f.fight_id from ufc2.fight f order by f.fight_date desc limit 10", nativeQuery = true)
+	List<String> findFightIdsByDateDescLimitTen();
+	
 	@Query(value = "select f.oid from ufc2.fight f where f.mma_dec_fight_url is not null", nativeQuery = true)
 	List<String> findFightIdsWithScore();
 

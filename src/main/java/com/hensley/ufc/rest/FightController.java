@@ -45,6 +45,13 @@ public class FightController {
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 	
+	@ApiOperation(value = "Fetch most recent 10 fights")
+	@GetMapping("all")
+	public ResponseEntity<GetResponse> getMostRecentTenFights() {
+		GetResponse response = fightService.getFights(); 
+		return new ResponseEntity<>(response, response.getStatus());
+	}
+	
 	@ApiOperation(value = "Fetch fights with score url")
 	@GetMapping("all/scoreUrl")
 	public ResponseEntity<GetResponse> getFightIdsWithScoreUrl() {
