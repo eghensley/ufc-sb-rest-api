@@ -78,7 +78,7 @@ public class FightService {
 		List<BasicFightDto> fightDtoList = new ArrayList<>();
 		List<String> fightList = fightRepo.findFightIdsByDateDescLimitTen();
 		for (String fightId: fightList) {
-			Optional<FightData> fightDataOpt = fightRepo.findById(fightId);
+			Optional<FightData> fightDataOpt = fightRepo.findByFightId(fightId);
 			if (fightDataOpt.isPresent()) {
 				FightData fightData = fightDataOpt.get();
 				BasicFightDto fightDto = (BasicFightDto) mappingUtils.mapToDto(fightData, BasicFightDto.class);
