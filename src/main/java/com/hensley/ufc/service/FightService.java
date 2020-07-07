@@ -79,8 +79,11 @@ public class FightService {
 		List<String> fightList = fightRepo.findFightIdsByDateDescLimitTen();
 		for (String fightId: fightList) {
 			Optional<FightData> fightDataOpt = fightRepo.findById(fightId);
-			BasicFightDto fightDto = (BasicFightDto) mappingUtils.mapToDto(fightDataOpt.get(), BasicFightDto.class);
-			fightDtoList.add(fightDto);
+			if (fightDataOpt.isPresent()) {
+				FightData fightData = fightDataOpt.get();
+				BasicFightDto fightDto = (BasicFightDto) mappingUtils.mapToDto(fightData, BasicFightDto.class);
+				fightDtoList.add(fightDto);
+			}
 		}
 		return new GetResponse(HttpStatus.OK, errorString, fightDtoList);
 	}
