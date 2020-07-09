@@ -89,12 +89,12 @@ public class RoundScoreService {
 					&& prevFbxData.get().get(0).getOffStrikeEloPre() != null) {
 				responseData = (FighterBoutEloScoresDto) mappingUtils.mapToDto(prevFbxData.get().get(0),
 						FighterBoutEloScoresDto.class);
-				return new GetResponse(HttpStatus.ACCEPTED, null, responseData);
+				return new GetResponse(HttpStatus.OK, null, responseData);
 			} else {
 				String noPreviousDataFound = String.format("No previous bout found for fighter %s before fight %s",
 						fighterOid, fightIdx);
 				responseData = new FighterBoutEloScoresDto();
-				return new GetResponse(HttpStatus.ACCEPTED, noPreviousDataFound, responseData);
+				return new GetResponse(HttpStatus.OK, noPreviousDataFound, responseData);
 			}
 		} catch (Exception e) {
 			errorString = e.getLocalizedMessage();

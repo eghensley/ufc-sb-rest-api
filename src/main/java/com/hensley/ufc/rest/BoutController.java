@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiOperation;
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("rest/bout")
-@Api(value="Fight System")
+@Api(value="Bout System")
 public class BoutController {
 
 
