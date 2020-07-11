@@ -178,15 +178,15 @@ public class FightService {
 						}
 						
 						
-						Double f1Diff = bout.getFighterBoutXRefs().get(0).getExpOdds() - bout.getFighterBoutXRefs().get(0).getMlOdds();
-						Double f2Diff = bout.getFighterBoutXRefs().get(1).getExpOdds() - bout.getFighterBoutXRefs().get(1).getMlOdds();
+						Double f1Diff = (bout.getFighterBoutXRefs().get(0).getExpOdds() * 100) - bout.getFighterBoutXRefs().get(0).getMlOdds();
+						Double f2Diff = (bout.getFighterBoutXRefs().get(1).getExpOdds() * 100) - bout.getFighterBoutXRefs().get(1).getMlOdds();
 						
 						boolean useF1 = f1Diff > f2Diff;
 						
 						if (useF1) {
 							betInfo.setOddsDiff(f1Diff);
 							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(0).getMlOdds());
-							betInfo.setPredProb(bout.getFighterBoutXRefs().get(0).getExpOdds());
+							betInfo.setPredProb(bout.getFighterBoutXRefs().get(0).getExpOdds() * 100);
 							betInfo.setPredWinner(bout.getFighterBoutXRefs().get(0).getFighter().getFighterName());
 							betInfo.setWagerWeight(oddDiffToWager(betInfo.getOddsDiff()));
 							if (f1Diff < 0) {
@@ -204,7 +204,7 @@ public class FightService {
 						} else {
 							betInfo.setOddsDiff(f2Diff);
 							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(1).getMlOdds());
-							betInfo.setPredProb(bout.getFighterBoutXRefs().get(1).getExpOdds());
+							betInfo.setPredProb(bout.getFighterBoutXRefs().get(1).getExpOdds() * 100);
 							betInfo.setPredWinner(bout.getFighterBoutXRefs().get(1).getFighter().getFighterName());
 							betInfo.setWagerWeight(oddDiffToWager(betInfo.getOddsDiff()));	
 							if (f2Diff < 0) {
