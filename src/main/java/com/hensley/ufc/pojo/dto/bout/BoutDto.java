@@ -27,6 +27,7 @@ public class BoutDto extends SuperAuditDto {
 	private List<FighterBoutXRefDto> fighterBoutXRefs;
 	private String mmaDecBoutUrl;
 	private GenderEnum gender;
+	private BoutBetDto betInfo;
 	
 	public BoutDto() {
 		
@@ -243,5 +244,20 @@ public class BoutDto extends SuperAuditDto {
 	public void setFightDate(Date fightDate) {
 		this.fightDate = fightDate;
 	}
+
+	/**
+	 * @return the betInfo
+	 */
+	public BoutBetDto getBetInfo() {
+		return betInfo;
+	}
+
+	/**
+	 * @param betInfo the betInfo to set
+	 */
+	public void addBetInfo(BoutBetDto betInfo) {
+		this.betInfo = betInfo;
+	}
+	
 	
 }

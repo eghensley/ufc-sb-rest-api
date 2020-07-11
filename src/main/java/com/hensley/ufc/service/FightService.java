@@ -18,7 +18,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.hensley.ufc.domain.FightData;
 import com.hensley.ufc.domain.LocationData;
+import com.hensley.ufc.enums.GenderEnum;
 import com.hensley.ufc.enums.ParseTargetEnum;
+import com.hensley.ufc.pojo.dto.bout.BoutBetDto;
+import com.hensley.ufc.pojo.dto.bout.BoutDto;
 import com.hensley.ufc.pojo.dto.fight.BasicFightDto;
 import com.hensley.ufc.pojo.dto.fight.FightDto;
 import com.hensley.ufc.pojo.request.ParseRequest;
@@ -26,6 +29,7 @@ import com.hensley.ufc.pojo.response.GetResponse;
 import com.hensley.ufc.pojo.response.ParseResponse;
 import com.hensley.ufc.pojo.response.UrlParseRequest;
 import com.hensley.ufc.repository.FightRepository;
+import com.hensley.ufc.repository.FighterBoutXRefRepository;
 import com.hensley.ufc.util.MappingUtils;
 import com.hensley.ufc.util.ParsingUtils;
 import com.hensley.ufc.util.UrlUtils;
@@ -53,9 +57,10 @@ public class FightService {
 	private final LocationService locationService;
 	private final MappingUtils mappingUtils;
 	private final ErrorService errorService;
+	private final FighterBoutXRefRepository fighterXRefRepo;
 
 	@Autowired
-	public FightService(FightRepository fightRepo, UrlUtils urlUtils, ParsingUtils parsingUtils,
+	public FightService(FighterBoutXRefRepository fighterXRefRepo, FightRepository fightRepo, UrlUtils urlUtils, ParsingUtils parsingUtils,
 			LocationService locationService, MappingUtils mappingUtils, ErrorService errorService) {
 		this.fightRepo = fightRepo;
 		this.urlUtils = urlUtils;
@@ -63,6 +68,7 @@ public class FightService {
 		this.locationService = locationService;
 		this.mappingUtils = mappingUtils;
 		this.errorService = errorService;
+		this.fighterXRefRepo = fighterXRefRepo;
 	}
 
 	@Transactional
@@ -146,6 +152,79 @@ public class FightService {
 			if (fightDataOpt.isPresent()) {
 				fightData = fightDataOpt.get();
 				fightDto = (FightDto) mappingUtils.mapToDto(fightData, FightDto.class);
+				for (BoutDto bout : fightDto.getBouts()) {
+					BoutBetDto betInfo = new BoutBetDto();
+					if (GenderEnum.FEMALE == bout.getGender()) {
+						betInfo.setBet(false);
+						betInfo.setNotes("Model does not currently predict for female fights");
+						bout.addBetInfo(betInfo);
+						continue;
+					}
+					try {						
+						Integer f1PrevFights = fighterXRefRepo.getCountPreviousFights(bout.getFighterBoutXRefs().get(0).getFighter().getOid(), fightDto.getOid());
+						Integer f2PrevFights = fighterXRefRepo.getCountPreviousFights(bout.getFighterBoutXRefs().get(1).getFighter().getOid(), fightDto.getOid());
+
+						if (f1PrevFights == 0) {
+							betInfo.setBet(false);
+							betInfo.setNotes(String.format("No previous UFC fights for %s", bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
+							bout.addBetInfo(betInfo);
+							continue;
+						}
+						if (f2PrevFights == 0) {
+							betInfo.setBet(false);
+							betInfo.setNotes(String.format("No previous UFC fights for %s", bout.getFighterBoutXRefs().get(1).getFighter().getFighterName()));
+							bout.addBetInfo(betInfo);
+							continue;
+						}
+						
+						
+						Double f1Diff = bout.getFighterBoutXRefs().get(0).getExpOdds() - bout.getFighterBoutXRefs().get(0).getMlOdds();
+						Double f2Diff = bout.getFighterBoutXRefs().get(1).getExpOdds() - bout.getFighterBoutXRefs().get(1).getMlOdds();
+						
+						boolean useF1 = f1Diff > f2Diff;
+						
+						if (useF1) {
+							betInfo.setOddsDiff(f1Diff);
+							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(0).getMlOdds());
+							betInfo.setPredProb(bout.getFighterBoutXRefs().get(0).getExpOdds());
+							betInfo.setPredWinner(bout.getFighterBoutXRefs().get(0).getFighter().getFighterName());
+							betInfo.setWagerWeight(oddDiffToWager(betInfo.getOddsDiff()));
+							if (f1Diff < 0) {
+								betInfo.setBet(false);
+								betInfo.setNotes("No advantage exists at current odds");
+							} else if (f1Diff < 0.0055954182392820885) {
+								betInfo.setBet(false);
+								betInfo.setNotes("Advantage below modal threshold");								
+							} else if (f1Diff > 20) {
+								betInfo.setBet(false);
+								betInfo.setNotes("Advantage above modal threshold");								
+							} else {
+								betInfo.setBet(true);
+							}
+						} else {
+							betInfo.setOddsDiff(f2Diff);
+							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(1).getMlOdds());
+							betInfo.setPredProb(bout.getFighterBoutXRefs().get(1).getExpOdds());
+							betInfo.setPredWinner(bout.getFighterBoutXRefs().get(1).getFighter().getFighterName());
+							betInfo.setWagerWeight(oddDiffToWager(betInfo.getOddsDiff()));	
+							if (f2Diff < 0) {
+								betInfo.setBet(false);
+								betInfo.setNotes("No advantage exists at current odds");
+							} else if (f2Diff < 0.0055954182392820885) {
+								betInfo.setBet(false);
+								betInfo.setNotes("Advantage below modal threshold");								
+							} else if (f2Diff > 20) {
+								betInfo.setBet(false);
+								betInfo.setNotes("Advantage above modal threshold");								
+							} else {
+								betInfo.setBet(true);
+							}
+						}
+						bout.addBetInfo(betInfo);
+					} catch (Exception ee) {
+						LOG.log(Level.WARNING, ee.getLocalizedMessage(), ee);
+					}
+				}
 				return new GetResponse(HttpStatus.OK, errorString, fightDto);
 			} else {
 				errorString = String.format(NO_FIGHTS_FOUND, fightId);
@@ -340,5 +419,9 @@ public class FightService {
 		} else {
 			return true;
 		}
+	}
+	
+	private Double oddDiffToWager(Double oddsDiff) {
+		return 0.37087827542170715 + (0.4999624097809326 * oddsDiff) + ((0.4999415451937916 * oddsDiff) * (0.4999415451937916 * oddsDiff));
 	}
 }
