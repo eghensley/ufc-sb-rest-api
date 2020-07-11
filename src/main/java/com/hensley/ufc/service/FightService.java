@@ -220,6 +220,11 @@ public class FightService {
 								betInfo.setBet(true);
 							}
 						}
+						
+						if (f1PrevFights < 4 || f2PrevFights < 4) {
+							betInfo.setBet(false);
+							betInfo.setNotes("Fighters do not meet threshold for number of past UFC appearances");
+						}
 						bout.addBetInfo(betInfo);
 					} catch (Exception ee) {
 						LOG.log(Level.WARNING, ee.getLocalizedMessage(), ee);
