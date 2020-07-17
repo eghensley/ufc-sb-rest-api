@@ -248,12 +248,13 @@ public class BoutDetailService {
 			LOG.info(tempIndex.toString());
 			LOG.info(rowName);
 			LOG.info(fighterName);
-			if (rowName.equals(fighterName)) {
+			if (rowName.equals(fighterName)
+					|| ("Zhalgas Zhumagulov".equals(rowName) && "Zhalgas Zhamagulov".contentEquals(fighterName))) {
 				return tempIndex;
 			}
 		}
 		LOG.log(Level.WARNING, roundItem.asXml());
-		LOG.log(Level.WARNING, fighterBout.toString());
+//		LOG.log(Level.WARNING, fighterBout.toString());
 		LOG.log(Level.WARNING, roundPath.toString());
 
 		throw new IllegalArgumentException("Could not match stat row to fighters");
@@ -375,8 +376,8 @@ public class BoutDetailService {
 					strikeData.setTkoKo(0);
 					strikeData.setSubmissionSuccessful(1);
 				} else if (FightMethodEnum.DOC_STOP.equals(finishTransfer.getMethod())) {
-				strikeData.setTkoKo(1);
-					strikeData.setSubmissionSuccessful(0);					
+					strikeData.setTkoKo(1);
+					strikeData.setSubmissionSuccessful(0);
 				} else {
 					throw new IllegalArgumentException("Failure to apply finish values.");
 				}
