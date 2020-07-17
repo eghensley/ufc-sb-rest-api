@@ -179,7 +179,14 @@ public class FightService {
 						
 						if (bout.getFighterBoutXRefs().get(0).getExpOdds() == null || bout.getFighterBoutXRefs().get(1).getExpOdds() == null) {
 							betInfo.setBet(false);
-							betInfo.setNotes(String.format("No odds available"));
+							betInfo.setNotes("No Expected odds available");
+							bout.addBetInfo(betInfo);
+							continue;							
+						}
+						
+						if (bout.getFighterBoutXRefs().get(0).getMlOdds() == null || bout.getFighterBoutXRefs().get(1).getMlOdds() == null) {
+							betInfo.setBet(false);
+							betInfo.setNotes("No Vegas odds available");
 							bout.addBetInfo(betInfo);
 							continue;							
 						}
