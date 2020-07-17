@@ -249,6 +249,10 @@ public class BoutDetailService {
 				return tempIndex;
 			}
 		}
+		LOG.log(Level.WARNING, roundItem.asXml());
+		LOG.log(Level.WARNING, fighterBout.toString());
+		LOG.log(Level.WARNING, roundPath.toString());
+
 		throw new IllegalArgumentException("Could not match stat row to fighters");
 	}
 

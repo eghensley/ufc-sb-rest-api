@@ -693,7 +693,7 @@ public class BoutService {
 		String finishDetails;
 
 		HtmlElement finishDetailHtml = boutDetailHTML.getFirstByXPath(boutSummaryHeaderPath + "/div[2]/p[2]");
-		LOG.info(finishDetailHtml.asXml());
+//		LOG.info(finishDetailHtml.asXml());
 		finishDetails = finishDetailHtml.asText().trim();
 		if (finishDetails == null) {
 			throw new IllegalArgumentException("Bout finish details failed to parse");
@@ -717,7 +717,7 @@ public class BoutService {
 			} else {
 				HtmlElement fighterOutcomeHtml = boutDetailHTML.getFirstByXPath(fighterHtmlPath + "/i");
 
-				LOG.info(fighterOutcomeHtml.asXml());
+//				LOG.info(fighterOutcomeHtml.asXml());
 				fighterOutcome = BoutOutcomeEnum.valueOf(fighterOutcomeHtml.asText().trim());
 				if (fighterOutcome == null) {
 					throw new IllegalArgumentException("Fighter outcome failed to parse");
@@ -731,7 +731,7 @@ public class BoutService {
 				fighterName = fighterNameHtml.asText().trim();
 			}
 			if (fighterIdHtml != null) {
-				LOG.info(fighterIdHtml.asXml());
+//				LOG.info(fighterIdHtml.asXml());
 				fighterId = fighterIdHtml.getValue().replace(FIGHTER_DETAIL_URL, "");
 			} else if ("Leo Kuntz".equals(fighterName)) {
 				fighterId = "6905d45bd71b50a9";
