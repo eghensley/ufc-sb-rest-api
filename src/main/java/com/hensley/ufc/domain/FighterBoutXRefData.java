@@ -543,4 +543,20 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 				&& Objects.equals(subGrapplingEloPre, other.subGrapplingEloPre);
 	}
 
+	@Override
+	public String toString() {
+		return "FighterBoutXRefData [bout=" + bout + ", fighter=" + fighter + ", boutDetails=" + boutDetails
+				+ ", mlOdds=" + mlOdds + ", expOdds=" + expOdds + ", bfoExpectedOutcomes=" + bfoExpectedOutcomes
+				+ ", outcome=" + outcome + ", offStrikeEloPre=" + offStrikeEloPre + ", defStrikeEloPre="
+				+ defStrikeEloPre + ", offGrapplingEloPre=" + offGrapplingEloPre + ", defGrapplingEloPre="
+				+ defGrapplingEloPre + ", offStrikeEloPost=" + offStrikeEloPost + ", defStrikeEloPost="
+				+ defStrikeEloPost + ", offGrapplingEloPost=" + offGrapplingEloPost + ", defGrapplingEloPost="
+				+ defGrapplingEloPost + ", powerStrikeEloPre=" + powerStrikeEloPre + ", chinStrikeEloPre="
+				+ chinStrikeEloPre + ", subGrapplingEloPre=" + subGrapplingEloPre + ", evasGrapplingEloPre="
+				+ evasGrapplingEloPre + ", powerStrikeEloPost=" + powerStrikeEloPost + ", chinStrikeEloPost="
+				+ chinStrikeEloPost + ", subGrapplingEloPost=" + subGrapplingEloPost + ", evasGrapplingEloPost="
+				+ evasGrapplingEloPost + "]";
+	}
+
+	
 }

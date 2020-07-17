@@ -245,6 +245,9 @@ public class BoutDetailService {
 			Integer tempIndex = iterator.nextIndex();
 			String rowName = iterator.next().asText().trim();
 			String fighterName = fighterBout.getFighter().getFighterName();
+			LOG.info(tempIndex.toString());
+			LOG.info(rowName);
+			LOG.info(fighterName);
 			if (rowName.equals(fighterName)) {
 				return tempIndex;
 			}
