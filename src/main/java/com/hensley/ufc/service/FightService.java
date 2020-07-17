@@ -177,6 +177,12 @@ public class FightService {
 							continue;
 						}
 						
+						if (bout.getFighterBoutXRefs().get(0).getExpOdds() == null || bout.getFighterBoutXRefs().get(1).getExpOdds() == null) {
+							betInfo.setBet(false);
+							betInfo.setNotes(String.format("No odds available"));
+							bout.addBetInfo(betInfo);
+							continue;							
+						}
 						
 						Double f1Diff = (bout.getFighterBoutXRefs().get(0).getExpOdds() * 100) - bout.getFighterBoutXRefs().get(0).getMlOdds();
 						Double f2Diff = (bout.getFighterBoutXRefs().get(1).getExpOdds() * 100) - bout.getFighterBoutXRefs().get(1).getMlOdds();
@@ -427,6 +433,6 @@ public class FightService {
 	}
 	
 	private Double oddDiffToWager(Double oddsDiff) {
-		return 0.37087827542170715 + (0.4999624097809326 * oddsDiff) + ((0.4999415451937916 * oddsDiff) * (0.4999415451937916 * oddsDiff));
+		return 0.37087827542170715 + (0.4999624097809326 * oddsDiff) + (0.4999415451937916 * (oddsDiff * oddsDiff));
 	}
 }
