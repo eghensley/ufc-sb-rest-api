@@ -141,6 +141,13 @@ public class FightService {
 	}
 	
 	@Transactional
+	public GetResponse resetFight(String fightOid) {
+		String errorString = null;
+		Object resp = fightRepo.resetFightByOid(fightOid);
+		return new GetResponse(HttpStatus.OK, errorString, resp);
+	}
+	
+	@Transactional
 	public GetResponse getFightDto(String fightId) {
 		Optional<FightData> fightDataOpt;
 		FightData fightData;
