@@ -237,7 +237,8 @@ public class FighterService {
 		dobRaw = dobHtml.asText().replace("DOB:", "").trim();
 		dob = parsingUtils.stringToDate(dobRaw);
 		if (dob == null) {
-			throw new IllegalArgumentException("Fighter DOB failed to parse");
+			LOG.warning("Fighter DOB failed to parse");
+			dob = null;
 		}
 		LOG.info(String.format("DOB: %s", dob));
 		fighterData.setDob(dob);

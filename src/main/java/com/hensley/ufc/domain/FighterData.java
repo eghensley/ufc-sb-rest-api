@@ -30,7 +30,7 @@ public class FighterData extends BaseAuditEntity implements Serializable {
 	private Integer reach;		
 	@Column(name = "HEIGHT", nullable = false)
 	private Integer height;	
-	@Column(name = "DOB", nullable = false)
+	@Column(name = "DOB", nullable = true)
 	private Date dob;	
 	@Column(name = "STANCE", nullable = true)
 	private FighterStanceEnum stance;		
