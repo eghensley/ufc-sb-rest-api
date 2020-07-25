@@ -239,11 +239,11 @@ public class BoutDetailService {
 	}
 
 	private Integer findFighterRow(HtmlElement roundItem, FighterBoutXRefData fighterBout, String roundPath) {
-		List<HtmlElement> roundFighterHtmlList = roundItem.getByXPath(roundPath + "/td[1]/p/a");
+//		List<HtmlElement> roundFighterHtmlList = roundItem.getByXPath(roundPath + "/td[1]/p/a");
 		
 		List<HtmlElement> roundFighterHtmlList2 = roundItem.getByXPath(roundPath + "/td[1]/p");
 
-		ListIterator<HtmlElement> iterator = roundFighterHtmlList.listIterator();
+		ListIterator<HtmlElement> iterator = roundFighterHtmlList2.listIterator();
 		while (iterator.hasNext()) {
 			Integer tempIndex = iterator.nextIndex();
 			String rowName = iterator.next().asText().trim();
@@ -303,10 +303,10 @@ public class BoutDetailService {
 				return tempIndex;
 			}
 		}
-		for (HtmlElement roundFighterHtmlListElement : roundFighterHtmlList) {
-			LOG.log(Level.WARNING, roundFighterHtmlListElement.asXml());
-			LOG.log(Level.WARNING, "~~~~");	
-		}
+//		for (HtmlElement roundFighterHtmlListElement : roundFighterHtmlList) {
+//			LOG.log(Level.WARNING, roundFighterHtmlListElement.asXml());
+//			LOG.log(Level.WARNING, "~~~~");	
+//		}
 		LOG.log(Level.WARNING, "~~~~~~~~~~~~~~~~~~~~~~~~");
 
 		for (HtmlElement roundFighterHtmlListElement2 : roundFighterHtmlList2) {
