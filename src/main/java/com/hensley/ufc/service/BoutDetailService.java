@@ -240,6 +240,9 @@ public class BoutDetailService {
 
 	private Integer findFighterRow(HtmlElement roundItem, FighterBoutXRefData fighterBout, String roundPath) {
 		List<HtmlElement> roundFighterHtmlList = roundItem.getByXPath(roundPath + "/td[1]/p/a");
+		
+		List<HtmlElement> roundFighterHtmlList2 = roundItem.getByXPath(roundPath + "/td[1]/p");
+
 		ListIterator<HtmlElement> iterator = roundFighterHtmlList.listIterator();
 		while (iterator.hasNext()) {
 			Integer tempIndex = iterator.nextIndex();
@@ -300,7 +303,12 @@ public class BoutDetailService {
 				return tempIndex;
 			}
 		}
+		LOG.log(Level.WARNING, roundFighterHtmlList.toString());
+		LOG.log(Level.WARNING, "~~~~");
+		LOG.log(Level.WARNING, roundFighterHtmlList2.toString());
+		LOG.log(Level.WARNING, "~~~~");
 		LOG.log(Level.WARNING, roundItem.asXml());
+		LOG.log(Level.WARNING, "~~~~");
 		LOG.log(Level.WARNING, roundPath.toString());
 
 		throw new IllegalArgumentException("Could not match stat row to fighters");
