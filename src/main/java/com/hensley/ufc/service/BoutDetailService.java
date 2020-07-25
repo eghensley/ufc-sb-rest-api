@@ -245,16 +245,56 @@ public class BoutDetailService {
 			Integer tempIndex = iterator.nextIndex();
 			String rowName = iterator.next().asText().trim();
 			String fighterName = fighterBout.getFighter().getFighterName();
-//			LOG.info(tempIndex.toString());
-//			LOG.info(rowName);
-//			LOG.info(fighterName);
 			if (rowName.equals(fighterName)
-					|| ("Zhalgas Zhumagulov".equals(rowName) && "Zhalgas Zhamagulov".contentEquals(fighterName))) {
+					|| ("Zhalgas Zhumagulov".equals(rowName) && "Zhalgas Zhamagulov".equals(fighterName)) 
+					|| ("Constantinos Philippou".equals(rowName) && "Costas Philippou".equals(fighterName))
+					|| ("Ben Alloway".equals(rowName) && "Benny Alloway".equals(fighterName))
+					|| ("Brad Scott".equals(rowName) && "Bradley Scott".equals(fighterName))
+					|| ("Antonio Rodrigo Nogueira".equals(rowName) && "Minotauro Nogueira".equals(fighterName))
+					|| ("Nicholas Musoke".equals(rowName) && "Nico Musoke".equals(fighterName))
+					|| ("Robert Whiteford".equals(rowName) && "Rob Whiteford".equals(fighterName))
+					|| ("Brad Scott".equals(rowName) && "Bradley Scott".equals(fighterName))
+					|| ("Rafael Cavalcante".equals(rowName) && "Rafael Feijao".equals(fighterName))
+					|| ("Josh Sampo".equals(rowName) && "Joshua Sampo".equals(fighterName))
+					|| ("William Macario".equals(rowName) && "William Patolino".equals(fighterName))
+					|| ("Ramiro Hernandez".equals(rowName) && "Junior Hernandez".equals(fighterName))
+					|| ("Lipeng Zhang".equals(rowName) && "Zhang Lipeng".equals(fighterName))
+					|| ("Anying Wang".equals(rowName) && "An Ying Wang".equals(fighterName))
+					|| ("Robert McDaniel".equals(rowName) && "Bubba McDaniel".equals(fighterName))
+					|| ("Edimilson Souza".equals(rowName) && "Kevin Souza".equals(fighterName))
+					|| ("Rafael Cavalcante".equals(rowName) && "Rafael Feijao".equals(fighterName))
+					|| ("Roldan Sangcha'an".equals(rowName) && "Roldan Sangcha-an".equals(fighterName))
+					|| ("Juan Manuel Puig".equals(rowName) && "Juan Puig".equals(fighterName))
+					|| ("Tiago dos Santos e Silva".equals(rowName) && "Tiago Trator".equals(fighterName))
+					|| ("Guangyou Ning".equals(rowName) && "Ning Guangyou".equals(fighterName))
+					|| ("Yuta Sasaki".equals(rowName) && "Ulka Sasaki".equals(fighterName))
+					|| ("Anying Wang".equals(rowName) && "An Ying Wang".equals(fighterName))
+					|| ("Wendell Oliveira Marques".equals(rowName) && "Wendell Oliveira".equals(fighterName))
+					|| ("Rodolfo Rubio Perez".equals(rowName) && "Rodolfo Rubio".equals(fighterName))
+					|| ("Humberto Brown Morrison".equals(rowName) && "Humberto Brown".equals(fighterName))
+					|| ("Heather Clark".equals(rowName) && "Heather Jo Clark".equals(fighterName))
+					|| ("Seo Hee Ham".equals(rowName) && "Seohee Ham".equals(fighterName))
+					|| ("Emily Kagan".equals(rowName) && "Emily Peters Kagan".equals(fighterName))
+					|| ("Timothy Johnson".equals(rowName) && "Tim Johnson".equals(fighterName))
+					|| ("Mirko Filipovic".equals(rowName) && "Mirko Cro Cop".equals(fighterName))
+					|| ("Aleksandra Albu".equals(rowName) && "Alexandra Albu".equals(fighterName))
+					|| ("Quinton Jackson".equals(rowName) && "Rampage Jackson".equals(fighterName))
+					|| ("Glaico Franca Moreira".equals(rowName) && "Glaico Franca".equals(fighterName))
+					|| ("Matheus Nicolau Pereira".equals(rowName) && "Matheus Nicolau".equals(fighterName))
+					|| ("Vernon Ramos Ho".equals(rowName) && "Vernon Ramos".equals(fighterName))
+					|| ("Alvaro Herrera Mendoza".equals(rowName) && "Alvaro Herrera".equals(fighterName))
+					|| ("Bruno Rodrigues".equals(rowName) && "Bruno Korea".equals(fighterName))
+					|| ("Marco Polo Reyes".equals(rowName) && "Polo Reyes".equals(fighterName))
+					|| ("Leonardo Guimaraes".equals(rowName) && "Leonardo Augusto Leleco".equals(fighterName))
+					|| ("Leonardo Guimaraes".equals(rowName) && "Leonardo Augusto Leleco".equals(fighterName))
+
+					
+				) {
+
 				return tempIndex;
 			}
 		}
 		LOG.log(Level.WARNING, roundItem.asXml());
-//		LOG.log(Level.WARNING, fighterBout.toString());
 		LOG.log(Level.WARNING, roundPath.toString());
 
 		throw new IllegalArgumentException("Could not match stat row to fighters");

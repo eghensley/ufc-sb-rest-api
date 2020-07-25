@@ -743,6 +743,12 @@ public class BoutService {
 				fighterId = "132f860d02953f4c";
 			} else if ("Maciej Jewtuszko".equals(fighterName)) {
 				fighterId = "6b5b9be990774f0e";
+			} else if ("Yoshiyuki Yoshida".equals(fighterName)) {
+				fighterId = "ab8900ae1f1dfd4c";
+			} else if ("Dustin Jacoby".equals(fighterName)) {
+				fighterId = "e4277e87a789d687";
+			} else if ("Chris Tickle".equals(fighterName)) {
+				fighterId = "1d1b85389a05df69";
 			} else {
 				fighterId = fighterService.fuzzyMatchFighterIdByName(fighterName);
 				LOG.info(String.format("Fighter ID (%s) missing from html... fell back to fuzzy match.", fighterId));
