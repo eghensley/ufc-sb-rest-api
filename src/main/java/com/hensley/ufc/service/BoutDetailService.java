@@ -303,13 +303,20 @@ public class BoutDetailService {
 				return tempIndex;
 			}
 		}
-		LOG.log(Level.WARNING, roundFighterHtmlList.toString());
-		LOG.log(Level.WARNING, "~~~~");
-		LOG.log(Level.WARNING, roundFighterHtmlList2.toString());
-		LOG.log(Level.WARNING, "~~~~");
+		for (HtmlElement roundFighterHtmlListElement : roundFighterHtmlList) {
+			LOG.log(Level.WARNING, roundFighterHtmlListElement.asXml());
+			LOG.log(Level.WARNING, "~~~~");	
+		}
+		LOG.log(Level.WARNING, "~~~~~~~~~~~~~~~~~~~~~~~~");
+
+		for (HtmlElement roundFighterHtmlListElement2 : roundFighterHtmlList2) {
+			LOG.log(Level.WARNING, roundFighterHtmlListElement2.asXml());
+			LOG.log(Level.WARNING, "~~~~");	
+		}
+		
+		LOG.log(Level.WARNING, "~~~~~~~~~~~~~~~~~~~~~~~~");
+
 		LOG.log(Level.WARNING, roundItem.asXml());
-		LOG.log(Level.WARNING, "~~~~");
-		LOG.log(Level.WARNING, roundPath.toString());
 
 		throw new IllegalArgumentException("Could not match stat row to fighters");
 	}
