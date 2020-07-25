@@ -335,6 +335,10 @@ public class BoutService {
 
 		try {
 			boutData = parseBoutBasic(boutItem);
+			if (boutData.getWeightClass() == null) {
+				LOG.info("Missing weight class.... defaulted to Catch Weight");
+				boutData.setWeightClass(WeightClassEnum.CW);
+			}
 			boutId = boutData.getBoutId();
 			
 			if ("0fcf42b68f2f0fa3".equals(boutId)) {
