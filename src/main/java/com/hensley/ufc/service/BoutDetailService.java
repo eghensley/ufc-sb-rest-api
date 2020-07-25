@@ -291,7 +291,9 @@ public class BoutDetailService {
 					|| ("Robert Sanchez".equals(rowName) && "Roberto Sanchez".equals(fighterName))
 					|| ("Azunna Anyanwu".equals(rowName) && "Zu Anyanwu".equals(fighterName))
 					|| ("Carlo Pedersoli Jr.".equals(rowName) && "Carlo Pedersoli".equals(fighterName))
-					|| ("Carlo Pedersoli Jr.".equals(rowName) && "Carlo Pedersoli".equals(fighterName))
+					|| ("Grigory Popov".equals(rowName) && "Grigorii Popov".equals(fighterName))
+					|| ("Jin Soo Son".equals(rowName) && "Jinsoo Son".equals(fighterName))
+					|| ("Jin Soo Son".equals(rowName) && "Jinsoo Son".equals(fighterName))
 					
 				) {
 
