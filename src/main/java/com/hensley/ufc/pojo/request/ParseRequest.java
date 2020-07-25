@@ -8,6 +8,7 @@ public class ParseRequest {
 	private String fightId;
 	private String boutId;
 	private String fighterId;
+	private String fighterBoutXrefOid;
 	
 	public ParseRequest() {
 		
@@ -20,6 +21,14 @@ public class ParseRequest {
 		this.fighterId = fighterId;
 	}
 
+	public ParseRequest(ParseTargetEnum target, String fightId, String boutId, String fighterId, String fighterBoutXrefOid) {
+		this.target = target;
+		this.fightId = fightId;
+		this.boutId = boutId;
+		this.fighterId = fighterId;
+		this.fighterBoutXrefOid = fighterBoutXrefOid;
+	}
+	
 	/**
 	 * @return the target
 	 */
@@ -75,5 +84,19 @@ public class ParseRequest {
 	public void setFighterId(String fighterId) {
 		this.fighterId = fighterId;
 	}
-	
+
+	/**
+	 * @return the fighterBoutXrefOid
+	 */
+	public String getFighterBoutXrefOid() {
+		return fighterBoutXrefOid;
+	}
+
+	/**
+	 * @param fighterBoutXrefOid the fighterBoutXrefOid to set
+	 */
+	public void setFighterBoutXrefOid(String fighterBoutXrefOid) {
+		this.fighterBoutXrefOid = fighterBoutXrefOid;
+	}
+
 }
