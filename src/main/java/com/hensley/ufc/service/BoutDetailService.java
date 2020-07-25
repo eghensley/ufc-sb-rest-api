@@ -311,6 +311,7 @@ public class BoutDetailService {
 
 		for (HtmlElement roundFighterHtmlListElement2 : roundFighterHtmlList2) {
 			LOG.log(Level.WARNING, roundFighterHtmlListElement2.asXml());
+			LOG.log(Level.WARNING, roundFighterHtmlListElement2.asText().trim());
 			LOG.log(Level.WARNING, "~~~~");	
 		}
 		
