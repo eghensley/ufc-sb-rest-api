@@ -739,6 +739,8 @@ public class BoutService {
 				fighterId = "e82d5f54daa85a7e";
 			} else if ("Lewis Gonzalez".equals(fighterName)) {
 				fighterId = "2ff2e6e5abea3e53";
+			} else if ("Goran Reljic".equals(fighterName)) {
+				fighterId = "132f860d02953f4c";
 			} else {
 				fighterId = fighterService.fuzzyMatchFighterIdByName(fighterName);
 				LOG.info(String.format("Fighter ID (%s) missing from html... fell back to fuzzy match.", fighterId));
