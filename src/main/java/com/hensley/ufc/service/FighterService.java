@@ -185,11 +185,15 @@ public class FighterService {
 		HtmlElement heightHtml = page.getFirstByXPath("/html/body/section/div/div/div[1]/ul/li[1]");
 		LOG.info(heightHtml.asXml());
 		heightRaw = heightHtml.asText().replace(" ", "").replace("\"", "").replace("Height:", "").split("'");
-		heightFeet = Integer.valueOf(heightRaw[0]);
-		heightInch = Integer.valueOf(heightRaw[1]);
-		height = (heightFeet * 12) + heightInch;
-		if (height <= 0) {
-			throw new IllegalArgumentException("Fighter height failed to parse");
+		if ("--".equals(heightRaw[0])) {
+			height = null;
+		} else {
+			heightFeet = Integer.valueOf(heightRaw[0]);
+			heightInch = Integer.valueOf(heightRaw[1]);
+			height = (heightFeet * 12) + heightInch;
+			if (height <= 0) {
+				throw new IllegalArgumentException("Fighter height failed to parse");
+			}
 		}
 		LOG.info(String.format("Height: %s", height));
 		fighterData.setHeight(height);

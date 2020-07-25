@@ -28,7 +28,7 @@ public class FighterData extends BaseAuditEntity implements Serializable {
 	private String fighterName;	
 	@Column(name = "REACH", nullable = true)
 	private Integer reach;		
-	@Column(name = "HEIGHT", nullable = false)
+	@Column(name = "HEIGHT", nullable = true)
 	private Integer height;	
 	@Column(name = "DOB", nullable = true)
 	private Date dob;	
