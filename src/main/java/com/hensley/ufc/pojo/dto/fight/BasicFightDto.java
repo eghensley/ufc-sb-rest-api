@@ -8,6 +8,7 @@ public class BasicFightDto {
 	private String fightName;
 	private Date fightDate;
 	private String oid;
+	private boolean completed;
 
 	public BasicFightDto() {
 		
@@ -67,6 +68,20 @@ public class BasicFightDto {
 	 */
 	public void setOid(String oid) {
 		this.oid = oid;
+	}
+
+	/**
+	 * @return the completed
+	 */
+	public boolean isCompleted() {
+		return completed;
+	}
+
+	/**
+	 * @param completed the completed to set
+	 */
+	public void setCompleted(boolean completed) {
+		this.completed = completed;
 	}
 	
 	
