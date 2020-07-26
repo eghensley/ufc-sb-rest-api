@@ -19,7 +19,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("rest/admin")
 @Api(value = "Admin System")
-public class AdminController {
+public class AdminUserController {
 
 	@Autowired
 	AdminService adminService;
