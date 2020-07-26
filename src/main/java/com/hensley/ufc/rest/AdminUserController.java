@@ -64,7 +64,7 @@ public class AdminUserController {
 	}
 	
 	@ApiOperation(value = "Fetch count of bouts missing data")
-	@GetMapping("missing/fighter/height")
+	@GetMapping("missing/bouts")
 	public ResponseEntity<GetResponse> getIncompleteBoutCount(@RequestHeader(value = "password", required = true) String password) {
 		if ("1234".equals(password)) {
 			GetResponse response = adminService.getMissingBoutCount();
