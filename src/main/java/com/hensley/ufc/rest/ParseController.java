@@ -8,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hensley.ufc.pojo.response.GetResponse;
 import com.hensley.ufc.pojo.response.ParseResponse;
 import com.hensley.ufc.service.BoutDetailService;
 import com.hensley.ufc.service.BoutService;
@@ -55,14 +57,14 @@ public class ParseController {
 		ParseResponse response = fightService.futFightScraper();
 		return new ResponseEntity<>(response, response.getStatus());
 	}
-	
+
 	@ApiOperation(value = "Parse bouts in a fight")
 	@GetMapping("fights/{fightId}/bouts")
 	public ResponseEntity<ParseResponse> getBouts(@PathVariable("fightId") String fightId) {
 		ParseResponse response = boutService.scrapeBoutsFromFightId(fightId);
 		return new ResponseEntity<>(response, response.getStatus());
 	}
-	
+
 	@ApiOperation(value = "Parse bouts in a future fight")
 	@GetMapping("fights/{fightId}/bouts/future")
 	public ResponseEntity<ParseResponse> getFutureBouts(@PathVariable("fightId") String fightId) {
@@ -131,11 +133,19 @@ public class ParseController {
 
 	@ApiOperation(value = "Parse fight odds")
 	@GetMapping("odds/fight/{fightId}/odds")
-	public ResponseEntity<ParseResponse> parseFightOdds(@PathVariable("fightId") String fightId) {
-		ParseResponse response = oddsService.scrapeOddsFromFightOid(fightId);
-		return new ResponseEntity<>(response, response.getStatus());
+	public ResponseEntity<ParseResponse> parseFightOdds(
+			@RequestHeader(value = "password", required = true) String password,
+			@PathVariable("fightId") String fightId) {
+		if ("1234".equals(password)) {
+			ParseResponse response = oddsService.scrapeOddsFromFightOid(fightId);
+			return new ResponseEntity<>(response, response.getStatus());
+		} else {
+			String errorMsg = "Admin login failed";
+			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
+			return new ResponseEntity<>(response, response.getStatus());
+		}
 	}
-	
+
 //	@ApiOperation(value = "Parse fight odds")
 //	@GetMapping("odds/fight/{fightId}/odds")
 //	public ResponseEntity<ParseResponse> parseFightOdds(@PathVariable("fightId") String fightId) {
