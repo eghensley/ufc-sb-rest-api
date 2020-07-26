@@ -1,5 +1,7 @@
 package com.hensley.ufc.service;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.http.HttpStatus;
@@ -41,7 +43,7 @@ public class AdminService {
 	@Transactional
 	public GetResponse getMissingBoutCount() {
 		String errorString = null;
-		Object res = adminRepo.findFightsMissingBoutData();
+		List<Object[]> res = adminRepo.findFightsMissingBoutData();
 		return new GetResponse(HttpStatus.ACCEPTED, errorString, res);
 	}
 }

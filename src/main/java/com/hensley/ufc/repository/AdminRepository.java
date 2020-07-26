@@ -1,5 +1,7 @@
 package com.hensley.ufc.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -33,5 +35,5 @@ public interface AdminRepository extends JpaRepository<FightData, String> {
 			"		 	b.fight_oid != (select oid from ufc2.fight f order by f.fight_date desc limit 1)\n" + 
 			"		 	and sd.oid is null)\n" + 
 			"	group by f1.fight_name", nativeQuery = true)
-	Object findFightsMissingBoutData();
+	List<Object[]> findFightsMissingBoutData();
 }
