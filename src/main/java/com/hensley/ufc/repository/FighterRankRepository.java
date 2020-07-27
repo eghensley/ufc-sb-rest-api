@@ -16,7 +16,7 @@ public interface FighterRankRepository extends JpaRepository<FighterRankData, St
 
 	List<FighterRankData> findByWeightClass(WeightClassEnum weightClass);
 	
-	@Query(value = "select * from ufc2.fighter_rank fr where fr.weight_class =: weightClass and fr.fighter_oid =: fighter_idx", nativeQuery = true )
+	@Query(value = "select * from ufc2.fighter_rank fr where fr.weight_class =:weightClass and fr.fighter_oid =:fighter_idx", nativeQuery = true )
 	Optional<FighterRankData> findByFighterOidAndWeightClass(@Param("fighterOid") String fighterOid, @Param("weightClass") Integer weightClass);
 
 	
