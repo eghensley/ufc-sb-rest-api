@@ -46,4 +46,11 @@ public class AdminService {
 		List<Object[]> res = adminRepo.findFightsMissingBoutData();
 		return new GetResponse(HttpStatus.ACCEPTED, errorString, res);
 	}
+	
+	@Transactional
+	public GetResponse clearFightBouts(String fightOid) {
+		String errorString = null;
+		Object res = adminRepo.resetFightByOid(fightOid);
+		return new GetResponse(HttpStatus.ACCEPTED, errorString, res);
+	}
 }

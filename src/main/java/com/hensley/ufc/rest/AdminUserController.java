@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +27,8 @@ public class AdminUserController {
 
 	@ApiOperation(value = "Fetch count of fighters missing age")
 	@GetMapping("missing/fighter/age")
-	public ResponseEntity<GetResponse> getMissingAgeCount(@RequestHeader(value = "password", required = true) String password) {
+	public ResponseEntity<GetResponse> getMissingAgeCount(
+			@RequestHeader(value = "password", required = true) String password) {
 		if ("1234".equals(password)) {
 			GetResponse response = adminService.getMissingDob();
 			return new ResponseEntity<>(response, response.getStatus());
@@ -39,7 +41,8 @@ public class AdminUserController {
 
 	@ApiOperation(value = "Fetch count of fighters missing reach")
 	@GetMapping("missing/fighter/reach")
-	public ResponseEntity<GetResponse> getMissingReachCount(@RequestHeader(value = "password", required = true) String password) {
+	public ResponseEntity<GetResponse> getMissingReachCount(
+			@RequestHeader(value = "password", required = true) String password) {
 		if ("1234".equals(password)) {
 			GetResponse response = adminService.getMissingReach();
 			return new ResponseEntity<>(response, response.getStatus());
@@ -52,7 +55,8 @@ public class AdminUserController {
 
 	@ApiOperation(value = "Fetch count of fighters missing height")
 	@GetMapping("missing/fighter/height")
-	public ResponseEntity<GetResponse> getMissingHeightCount(@RequestHeader(value = "password", required = true) String password) {
+	public ResponseEntity<GetResponse> getMissingHeightCount(
+			@RequestHeader(value = "password", required = true) String password) {
 		if ("1234".equals(password)) {
 			GetResponse response = adminService.getMissingHeight();
 			return new ResponseEntity<>(response, response.getStatus());
@@ -62,10 +66,11 @@ public class AdminUserController {
 			return new ResponseEntity<>(response, response.getStatus());
 		}
 	}
-	
+
 	@ApiOperation(value = "Fetch count of bouts missing data")
 	@GetMapping("missing/bouts")
-	public ResponseEntity<GetResponse> getIncompleteBoutCount(@RequestHeader(value = "password", required = true) String password) {
+	public ResponseEntity<GetResponse> getIncompleteBoutCount(
+			@RequestHeader(value = "password", required = true) String password) {
 		if ("1234".equals(password)) {
 			GetResponse response = adminService.getMissingBoutCount();
 			return new ResponseEntity<>(response, response.getStatus());
@@ -76,4 +81,17 @@ public class AdminUserController {
 		}
 	}
 
+	@ApiOperation(value = "Reset bouts for fight")
+	@GetMapping("reset/fight/{fightOid}")
+	public ResponseEntity<GetResponse> resetBouts(@RequestHeader(value = "password", required = true) String password,
+			@PathVariable("fightOid") String fightOid) {
+		if ("1234".equals(password)) {
+			GetResponse response = adminService.clearFightBouts(fightOid);
+			return new ResponseEntity<>(response, response.getStatus());
+		} else {
+			String errorMsg = "Admin login failed";
+			GetResponse response = new GetResponse(HttpStatus.FORBIDDEN, errorMsg, null);
+			return new ResponseEntity<>(response, response.getStatus());
+		}
+	}
 }

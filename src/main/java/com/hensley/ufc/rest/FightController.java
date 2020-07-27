@@ -66,10 +66,4 @@ public class FightController {
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 	
-	@ApiOperation(value = "Fetch fights without score url")
-	@GetMapping("reset/fight/{fightOid}")
-	public ResponseEntity<GetResponse> resetFightInfo(@PathVariable("fightOid") String fightOid) {
-		GetResponse response = fightService.resetFight(fightOid); 
-		return new ResponseEntity<>(response, response.getStatus());
-	}
 }

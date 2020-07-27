@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.hensley.ufc.domain.FightData;
@@ -36,4 +37,7 @@ public interface AdminRepository extends JpaRepository<FightData, String> {
 			"		 	and sd.oid is null)\n" + 
 			"	group by f1.fight_name", nativeQuery = true)
 	List<Object[]> findFightsMissingBoutData();
+	
+	@Query(value = "call ufc2.clear_fight_info(:fightOid);", nativeQuery = true)
+	Object resetFightByOid(@Param("fightOid") String fightOid);
 }
