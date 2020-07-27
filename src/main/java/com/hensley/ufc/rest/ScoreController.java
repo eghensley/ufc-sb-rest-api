@@ -73,16 +73,29 @@ public class ScoreController {
 
 	@ApiOperation(value = "Update Elo Rankings")
 	@PostMapping("elo/update")
-	public ResponseEntity<ParseResponse> updateElo(@RequestBody FighterBoutEloScoresDto request) {
-		ParseResponse response = scoreService.addEloScore(request);
-		return new ResponseEntity<>(response, response.getStatus());
+	public ResponseEntity<ParseResponse> updateElo(@RequestHeader(value = "password", required = true) String password,
+			@RequestBody FighterBoutEloScoresDto request) {
+		if ("1234".equals(password)) {
+			ParseResponse response = scoreService.addEloScore(request);
+			return new ResponseEntity<>(response, response.getStatus());
+		} else {
+			String errorMsg = "Admin login failed";
+			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
+			return new ResponseEntity<>(response, response.getStatus());
+		}
 	}
 
 	@ApiOperation(value = "Clear Elo Rankings")
 	@GetMapping("elo/clear")
-	public ResponseEntity<ParseResponse> clearElo() {
-		ParseResponse response = scoreService.clearEloScores();
-		return new ResponseEntity<>(response, response.getStatus());
+	public ResponseEntity<ParseResponse> clearElo(@RequestHeader(value = "password", required = true) String password) {
+		if ("1234".equals(password)) {
+			ParseResponse response = scoreService.clearEloScores();
+			return new ResponseEntity<>(response, response.getStatus());
+		} else {
+			String errorMsg = "Admin login failed";
+			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
+			return new ResponseEntity<>(response, response.getStatus());
+		}
 	}
 
 	@ApiOperation(value = "Update Elo Rankings")
