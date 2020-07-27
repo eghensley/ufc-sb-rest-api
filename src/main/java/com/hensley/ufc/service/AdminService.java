@@ -55,16 +55,18 @@ public class AdminService {
 	
 	@Transactional
 	public GetResponse clearFightBouts(String fightOid) {
-//		Query q = em.createNativeQuery("SELECT a.firstname, a.lastname FROM Author a");
-//		
-//		
-//		StoredProcedureQuery storedProcedure = em.createStoredProcedureQuery("clear_fight_info");
-//		// set parameters
-//		storedProcedure.registerStoredProcedureParameter("fight_idx", String.class, ParameterMode.IN);
-//		storedProcedure.setParameter("fight_idx", fightOid);
-//		// execute SP
-//		storedProcedure.execute();
-		Object res = adminRepo.resetFightByOid(fightOid);
+//		Query q = em.createNativeQuery("call ufc2.clear_fight_info(:fightOid)");
+//		q.setParameter("fightOid", fightOid);
+//		q.
+		
+		StoredProcedureQuery storedProcedure = em.createStoredProcedureQuery("clear_fight_info");
+		// set parameters
+		storedProcedure.registerStoredProcedureParameter("fight_idx", String.class, ParameterMode.IN);
+		storedProcedure.setParameter("fight_idx", fightOid);
+		// execute SP
+		storedProcedure.execute();
+//		Object res = adminRepo.resetFightByOid(fightOid);
+		Object res = null;
 		String errorString = null;
 		return new GetResponse(HttpStatus.ACCEPTED, errorString, res);
 	}
