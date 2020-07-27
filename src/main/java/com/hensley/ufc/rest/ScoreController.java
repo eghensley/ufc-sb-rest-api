@@ -1,6 +1,7 @@
 package com.hensley.ufc.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,16 +34,21 @@ public class ScoreController {
 	@Autowired
 	RoundScoreService scoreService;
 
+	@Value("${credentials.admin.password}")
+	private String loginKey;
+
+	private static String loginFailed = "Admin login failed";
+
 	@ApiOperation(value = "Add Round scores")
 	@PostMapping("bout/{boutOid}/round/add")
 	public ResponseEntity<ParseResponse> addRoundScores(
-			@RequestHeader(value = "password", required = true) String password,
+			@RequestHeader(value = "password", required = true) String attemptedPassword,
 			@PathVariable("boutOid") String boutOid, @RequestBody AddBoutRoundScoreRequest request) {
-		if ("1234".equals(password)) {
+		if (loginKey.equals(attemptedPassword)) {
 			ParseResponse response = scoreService.addManualBoutScore(request);
 			return new ResponseEntity<>(response, response.getStatus());
 		} else {
-			String errorMsg = "Admin login failed";
+			String errorMsg = loginFailed;
 			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
 			return new ResponseEntity<>(response, response.getStatus());
 		}
@@ -51,12 +57,13 @@ public class ScoreController {
 	@ApiOperation(value = "Add round ML scores")
 	@PostMapping("bout/round/ml/add")
 	public ResponseEntity<ParseResponse> addRoundMlScores(
-			@RequestHeader(value = "password", required = true) String password, @RequestBody AddRoundMlScore request) {
-		if ("1234".equals(password)) {
+			@RequestHeader(value = "password", required = true) String attemptedPassword,
+			@RequestBody AddRoundMlScore request) {
+		if (loginKey.equals(attemptedPassword)) {
 			ParseResponse response = scoreService.addMlRoundScore(request);
 			return new ResponseEntity<>(response, response.getStatus());
 		} else {
-			String errorMsg = "Admin login failed";
+			String errorMsg = loginFailed;
 			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
 			return new ResponseEntity<>(response, response.getStatus());
 		}
@@ -65,12 +72,13 @@ public class ScoreController {
 	@ApiOperation(value = "Add bout scores")
 	@PostMapping("bout/ml/add")
 	public ResponseEntity<ParseResponse> addBoutMlScores(
-			@RequestHeader(value = "password", required = true) String password, @RequestBody AddBoutWinProb request) {
-		if ("1234".equals(password)) {
+			@RequestHeader(value = "password", required = true) String attemptedPassword,
+			@RequestBody AddBoutWinProb request) {
+		if (loginKey.equals(attemptedPassword)) {
 			ParseResponse response = scoreService.addMlBoutScore(request);
 			return new ResponseEntity<>(response, response.getStatus());
 		} else {
-			String errorMsg = "Admin login failed";
+			String errorMsg = loginFailed;
 			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
 			return new ResponseEntity<>(response, response.getStatus());
 		}
@@ -94,13 +102,14 @@ public class ScoreController {
 
 	@ApiOperation(value = "Update Elo Rankings")
 	@PostMapping("elo/update")
-	public ResponseEntity<ParseResponse> updateElo(@RequestHeader(value = "password", required = true) String password,
+	public ResponseEntity<ParseResponse> updateElo(
+			@RequestHeader(value = "password", required = true) String attemptedPassword,
 			@RequestBody FighterBoutEloScoresDto request) {
-		if ("1234".equals(password)) {
+		if (loginKey.equals(attemptedPassword)) {
 			ParseResponse response = scoreService.addEloScore(request);
 			return new ResponseEntity<>(response, response.getStatus());
 		} else {
-			String errorMsg = "Admin login failed";
+			String errorMsg = loginFailed;
 			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
 			return new ResponseEntity<>(response, response.getStatus());
 		}
@@ -108,12 +117,13 @@ public class ScoreController {
 
 	@ApiOperation(value = "Clear Elo Rankings")
 	@GetMapping("elo/clear")
-	public ResponseEntity<ParseResponse> clearElo(@RequestHeader(value = "password", required = true) String password) {
-		if ("1234".equals(password)) {
+	public ResponseEntity<ParseResponse> clearElo(
+			@RequestHeader(value = "password", required = true) String attemptedPassword) {
+		if (loginKey.equals(attemptedPassword)) {
 			ParseResponse response = scoreService.clearEloScores();
 			return new ResponseEntity<>(response, response.getStatus());
 		} else {
-			String errorMsg = "Admin login failed";
+			String errorMsg = loginFailed;
 			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
 			return new ResponseEntity<>(response, response.getStatus());
 		}
@@ -122,13 +132,13 @@ public class ScoreController {
 	@ApiOperation(value = "Update Elo Rankings")
 	@PostMapping("odds/myBookie/add")
 	public ResponseEntity<ParseResponse> updateMyBookieOdds(
-			@RequestHeader(value = "password", required = true) String password,
+			@RequestHeader(value = "password", required = true) String attemptedPassword,
 			@RequestBody AddMyBookieOddsRequest request) {
-		if ("1234".equals(password)) {
+		if (loginKey.equals(attemptedPassword)) {
 			ParseResponse response = scoreService.addManualMlOdds(request);
 			return new ResponseEntity<>(response, response.getStatus());
 		} else {
-			String errorMsg = "Admin login failed";
+			String errorMsg = loginFailed;
 			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
 			return new ResponseEntity<>(response, response.getStatus());
 		}

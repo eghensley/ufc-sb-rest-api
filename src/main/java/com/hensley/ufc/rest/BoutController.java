@@ -1,6 +1,7 @@
 package com.hensley.ufc.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,6 +29,11 @@ public class BoutController {
 
 	@Autowired
 	BoutService boutService;
+
+	@Value("${credentials.admin.password}")
+	private String loginKey;
+
+	private static String loginFailed = "Admin login failed";
 
 	@ApiOperation(value = "Fetch all bouts")
 	@GetMapping("all")
@@ -81,13 +87,13 @@ public class BoutController {
 	@ApiOperation(value = "Add future bout info")
 	@PostMapping("future/summary/add")
 	public ResponseEntity<ParseResponse> addFutureBoutSummaryInfo(
-			@RequestHeader(value = "password", required = true) String password,
+			@RequestHeader(value = "password", required = true) String attemptedPassword,
 			@RequestBody AddFutureBoutSummary request) {
-		if ("1234".equals(password)) {
+		if (loginKey.equals(attemptedPassword)) {
 			ParseResponse response = boutService.addFutBoutSum(request);
 			return new ResponseEntity<>(response, response.getStatus());
 		} else {
-			String errorMsg = "Admin login failed";
+			String errorMsg = loginFailed;
 			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
 			return new ResponseEntity<>(response, response.getStatus());
 		}

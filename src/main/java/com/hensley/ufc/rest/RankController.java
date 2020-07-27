@@ -1,6 +1,7 @@
 package com.hensley.ufc.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,16 +31,20 @@ public class RankController {
 	@Autowired
 	FighterRankService rankService;
 
+	@Value("${credentials.admin.password}")
+	private String loginKey;
+	private static String loginFailed = "Admin login failed";
+
 	@ApiOperation(value = "Update fighter ranking")
 	@PostMapping("update")
 	public ResponseEntity<ParseResponse> addRoundScores(
-			@RequestHeader(value = "password", required = true) String password,
+			@RequestHeader(value = "password", required = true) String attemptedPassword,
 			@RequestBody FighterRankElementDto reqPayload) {
-		if ("1234".equals(password)) {
+		if (loginKey.equals(attemptedPassword)) {
 			ParseResponse response = rankService.updateFighterRanking(reqPayload);
 			return new ResponseEntity<>(response, response.getStatus());
 		} else {
-			String errorMsg = "Admin login failed";
+			String errorMsg = loginFailed;
 			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
 			return new ResponseEntity<>(response, response.getStatus());
 		}
