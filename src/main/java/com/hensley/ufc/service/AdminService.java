@@ -55,7 +55,7 @@ public class AdminService {
 	
 	@Transactional
 	public GetResponse clearFightBouts(String fightOid) {
-		Query q = em.createNativeQuery("call ufc2.clear_fight_info_funct(:fightOid)");
+		Query q = em.createNativeQuery("select ufc2.clear_fight_info_funct(:fightOid)");
 		q.setParameter("fightOid", fightOid);
 		q.executeUpdate();
 		
