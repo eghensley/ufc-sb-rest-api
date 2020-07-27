@@ -64,7 +64,7 @@ public class AdminService {
 			    .registerStoredProcedureParameter(1, 
 			    		String.class, ParameterMode.IN)
 			    .registerStoredProcedureParameter(2, 
-			        Long.class, ParameterMode.OUT)
+			        Integer.class, ParameterMode.OUT)
 			    .setParameter(1, fightOid);
 
 		query.getResultList();
