@@ -2,6 +2,9 @@ package com.hensley.ufc.service;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureQuery;
 import javax.transaction.Transactional;
 
 import org.springframework.http.HttpStatus;
@@ -14,9 +17,11 @@ import com.hensley.ufc.repository.AdminRepository;
 public class AdminService {
 
 	private final AdminRepository adminRepo;
+	private final EntityManager em;
 	
-	public AdminService(AdminRepository adminRepo) {
+	public AdminService(AdminRepository adminRepo, EntityManager em) {
 		this.adminRepo = adminRepo;
+		this.em = em;
 	}
 	
 	@Transactional
@@ -49,8 +54,14 @@ public class AdminService {
 	
 	@Transactional
 	public GetResponse clearFightBouts(String fightOid) {
+		StoredProcedureQuery storedProcedure = em.createStoredProcedureQuery("clear_fight_info");
+		// set parameters
+		storedProcedure.registerStoredProcedureParameter("fight_idx", String.class, ParameterMode.IN);
+		storedProcedure.setParameter("fight_idx", fightOid);
+		// execute SP
+		storedProcedure.execute();
+		
 		String errorString = null;
-		Object res = adminRepo.resetFightByOid(fightOid);
-		return new GetResponse(HttpStatus.ACCEPTED, errorString, res);
+		return new GetResponse(HttpStatus.ACCEPTED, errorString, true);
 	}
 }
