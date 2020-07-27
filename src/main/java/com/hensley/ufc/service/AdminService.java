@@ -55,10 +55,20 @@ public class AdminService {
 	
 	@Transactional
 	public GetResponse clearFightBouts(String fightOid) {
-		Query q = em.createNativeQuery("select ufc2.clear_fight_info_funct(:fightOid)");
-		q.setParameter("fightOid", fightOid);
-		q.executeUpdate();
+//		Query q = em.createNativeQuery("select ufc2.clear_fight_info_funct(:fightOid)");
+//		q.setParameter("fightOid", fightOid);
+//		q.();
 		
+		StoredProcedureQuery query = em
+			    .createStoredProcedureQuery("ufc2.clear_fight_info_funct")
+			    .registerStoredProcedureParameter(1, 
+			    		String.class, ParameterMode.IN)
+			    .registerStoredProcedureParameter(2, 
+			        Long.class, ParameterMode.OUT)
+			    .setParameter(1, fightOid);
+
+		query.getResultList();
+			
 //		StoredProcedureQuery storedProcedure = em.createStoredProcedureQuery("clear_fight_info");
 //		// set parameters
 //		storedProcedure.registerStoredProcedureParameter("fight_idx", String.class, ParameterMode.IN);
