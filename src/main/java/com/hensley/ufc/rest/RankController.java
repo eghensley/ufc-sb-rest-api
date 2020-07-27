@@ -32,7 +32,9 @@ public class RankController {
 
 	@ApiOperation(value = "Update fighter ranking")
 	@PostMapping("update")
-	public ResponseEntity<ParseResponse> addRoundScores(@RequestHeader(value = "password", required = true) String password, @RequestBody FighterRankElementDto reqPayload) {
+	public ResponseEntity<ParseResponse> addRoundScores(
+			@RequestHeader(value = "password", required = true) String password,
+			@RequestBody FighterRankElementDto reqPayload) {
 		if ("1234".equals(password)) {
 			ParseResponse response = rankService.updateFighterRanking(reqPayload);
 			return new ResponseEntity<>(response, response.getStatus());

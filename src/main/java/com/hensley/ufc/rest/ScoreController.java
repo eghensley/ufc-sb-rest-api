@@ -33,26 +33,47 @@ public class ScoreController {
 	@Autowired
 	RoundScoreService scoreService;
 
-	@ApiOperation(value = "Fetch all fight IDs")
+	@ApiOperation(value = "Add Round scores")
 	@PostMapping("bout/{boutOid}/round/add")
-	public ResponseEntity<ParseResponse> addRoundScores(@PathVariable("boutOid") String boutOid,
-			@RequestBody AddBoutRoundScoreRequest request) {
-		ParseResponse response = scoreService.addManualBoutScore(request);
-		return new ResponseEntity<>(response, response.getStatus());
+	public ResponseEntity<ParseResponse> addRoundScores(
+			@RequestHeader(value = "password", required = true) String password,
+			@PathVariable("boutOid") String boutOid, @RequestBody AddBoutRoundScoreRequest request) {
+		if ("1234".equals(password)) {
+			ParseResponse response = scoreService.addManualBoutScore(request);
+			return new ResponseEntity<>(response, response.getStatus());
+		} else {
+			String errorMsg = "Admin login failed";
+			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
+			return new ResponseEntity<>(response, response.getStatus());
+		}
 	}
 
-	@ApiOperation(value = "Fetch all fight IDs")
+	@ApiOperation(value = "Add round ML scores")
 	@PostMapping("bout/round/ml/add")
-	public ResponseEntity<ParseResponse> addRoundMlScores(@RequestBody AddRoundMlScore request) {
-		ParseResponse response = scoreService.addMlRoundScore(request);
-		return new ResponseEntity<>(response, response.getStatus());
+	public ResponseEntity<ParseResponse> addRoundMlScores(
+			@RequestHeader(value = "password", required = true) String password, @RequestBody AddRoundMlScore request) {
+		if ("1234".equals(password)) {
+			ParseResponse response = scoreService.addMlRoundScore(request);
+			return new ResponseEntity<>(response, response.getStatus());
+		} else {
+			String errorMsg = "Admin login failed";
+			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
+			return new ResponseEntity<>(response, response.getStatus());
+		}
 	}
 
-	@ApiOperation(value = "Fetch all fight IDs")
+	@ApiOperation(value = "Add bout scores")
 	@PostMapping("bout/ml/add")
-	public ResponseEntity<ParseResponse> addBoutMlScores(@RequestBody AddBoutWinProb request) {
-		ParseResponse response = scoreService.addMlBoutScore(request);
-		return new ResponseEntity<>(response, response.getStatus());
+	public ResponseEntity<ParseResponse> addBoutMlScores(
+			@RequestHeader(value = "password", required = true) String password, @RequestBody AddBoutWinProb request) {
+		if ("1234".equals(password)) {
+			ParseResponse response = scoreService.addMlBoutScore(request);
+			return new ResponseEntity<>(response, response.getStatus());
+		} else {
+			String errorMsg = "Admin login failed";
+			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
+			return new ResponseEntity<>(response, response.getStatus());
+		}
 	}
 
 	@ApiOperation(value = "Fetch Last Elo Rankings")
