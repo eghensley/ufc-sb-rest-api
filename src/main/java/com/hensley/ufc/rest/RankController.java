@@ -1,12 +1,14 @@
 package com.hensley.ufc.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,11 +30,17 @@ public class RankController {
 	@Autowired
 	FighterRankService rankService;
 
-	@ApiOperation(value = "Fetch all fight IDs")
+	@ApiOperation(value = "Update fighter ranking")
 	@PostMapping("update")
-	public ResponseEntity<ParseResponse> addRoundScores(@RequestBody FighterRankElementDto reqPayload) {
-		ParseResponse response = rankService.updateFighterRanking(reqPayload);
-		return new ResponseEntity<>(response, response.getStatus());
+	public ResponseEntity<ParseResponse> addRoundScores(@RequestHeader(value = "password", required = true) String password, @RequestBody FighterRankElementDto reqPayload) {
+		if ("1234".equals(password)) {
+			ParseResponse response = rankService.updateFighterRanking(reqPayload);
+			return new ResponseEntity<>(response, response.getStatus());
+		} else {
+			String errorMsg = "Admin login failed";
+			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
+			return new ResponseEntity<>(response, response.getStatus());
+		}
 	}
 
 	@ApiOperation(value = "Get rankings by weight class")
