@@ -62,8 +62,7 @@ public class FighterRankService {
 	public GetResponse getRankForWeightClassAndFighter(WeightClassEnum weightClass, String fighterOid) {
 		String errorString = null;
 		FighterRankElementDto response = new FighterRankElementDto();
-		Optional<FighterRankData> savedRankOpt = fighterRankRepo.findByFighterOidAndWeightClass(fighterOid,
-				weightClass.getDbKey());
+		Optional<FighterRankData> savedRankOpt = fighterRankRepo.findByWeightClassAndFighterOid(weightClass, fighterOid);
 		if (savedRankOpt.isPresent()) {
 			FighterRankElementDto fighterRankDto = (FighterRankElementDto) mappingUtils.mapToDto(savedRankOpt.get(),
 					FighterRankElementDto.class);
@@ -84,8 +83,8 @@ public class FighterRankService {
 		ParseResponse response = new ParseResponse(req, 1, 0, HttpStatus.OK, null);
 
 		try {
-			Optional<FighterRankData> savedRankOpt = fighterRankRepo.findByFighterOidAndWeightClass(
-					reqPayload.getFighter().getOid(), reqPayload.getWeightClass().getDbKey());
+			Optional<FighterRankData> savedRankOpt = fighterRankRepo.findByWeightClassAndFighterOid(
+					reqPayload.getWeightClass(), reqPayload.getFighter().getOid());
 			if (savedRankOpt.isPresent()) {
 				LOG.info("existing rank found");
 				FighterRankData savedRank = savedRankOpt.get();
