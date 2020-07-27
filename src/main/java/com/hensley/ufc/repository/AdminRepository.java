@@ -38,6 +38,6 @@ public interface AdminRepository extends JpaRepository<FightData, String> {
 			"	group by f1.fight_name", nativeQuery = true)
 	List<Object[]> findFightsMissingBoutData();
 	
-	@Query(value = "call ufc2.clear_fight_info(:fightOid);", nativeQuery = true)
+	@Query(value = "call ufc2.clear_fight_info(:fightOid)", nativeQuery = true)
 	Object resetFightByOid(@Param("fightOid") String fightOid);
 }
