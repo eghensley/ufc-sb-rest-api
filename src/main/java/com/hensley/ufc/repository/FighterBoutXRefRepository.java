@@ -41,6 +41,15 @@ public interface FighterBoutXRefRepository extends JpaRepository<FighterBoutXRef
 			"			 		where f2.oid =:fightIdx" + 
 			"			) ", nativeQuery = true)
 	Integer getCountPreviousFights(@Param("fighterIdx") String fighterIdx, @Param("fightIdx") String fightIdx);
+
+	@Query(value = "select count(fbx.oid) \n" + 
+			"	from ufc2.fighter_bout_xref fbx \n" + 
+			"		join ufc2.bout b \n" + 
+			"			on fbx.bout_oid = b.oid \n" + 
+			"		join ufc2.fight f \n" + 
+			"			on b.fight_oid = f.oid \n" + 
+			"		where fbx.fighter_oid =:fighterIdx", nativeQuery = true)
+	Integer getCountFights(@Param("fighterIdx") String fighterIdx);
 	
 	FighterBoutXRefData findByOid(String oid);
 }

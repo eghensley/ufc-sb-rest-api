@@ -100,6 +100,13 @@ public class ScoreController {
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 
+	@ApiOperation(value = "Fetch Count of Elo Rankings")
+	@GetMapping("elo/fighter/{fighterOid}/count")
+	public ResponseEntity<GetResponse> getCountFights(@PathVariable("fighterOid") String fighterIdx) {
+		GetResponse response = scoreService.getCountFights(fighterIdx);
+		return new ResponseEntity<>(response, response.getStatus());
+	}
+	
 	@ApiOperation(value = "Update Elo Rankings")
 	@PostMapping("elo/update")
 	public ResponseEntity<ParseResponse> updateElo(

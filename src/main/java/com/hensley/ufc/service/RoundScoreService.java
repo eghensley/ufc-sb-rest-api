@@ -115,6 +115,18 @@ public class RoundScoreService {
 		}
 	}
 
+	public GetResponse getCountFights(String fighterOid) {
+		String errorString;
+		try {
+			Integer prevFightCounts = fighterXRefRepo.getCountFights(fighterOid);
+			return new GetResponse(HttpStatus.ACCEPTED, null, prevFightCounts);
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			LOG.log(Level.SEVERE, errorString);
+			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
+		}
+	}
+	
 	@Transactional
 	public ParseResponse clearEloScores() {
 		ParseRequest request = new ParseRequest(ParseTargetEnum.ROUNDS, null, null, null);
