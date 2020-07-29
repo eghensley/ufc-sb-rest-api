@@ -258,10 +258,32 @@ public class FightService {
 							}
 						}
 						
-						if (f1PrevFights < prevFightFloor || f2PrevFights < prevFightFloor || f1PrevFights > prevFightCeiling || f2PrevFights < prevFightCeiling) {
+						if (f1PrevFights < prevFightFloor) {
 							betInfo.setBet(false);
-							betInfo.setNotes("Fighters do not meet threshold for number of past UFC appearances");
+							String msg = String.format("%s has %s fights, less than required %s", bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(), f1PrevFights, prevFightFloor);
+							LOG.info(msg);
+							betInfo.setNotes(msg);
 						}
+						if (f2PrevFights < prevFightFloor) {
+							betInfo.setBet(false);
+							String msg = String.format("%s has %s fights, less than required %s", bout.getFighterBoutXRefs().get(1).getFighter().getFighterName(), f2PrevFights, prevFightFloor);
+							LOG.info(msg);
+							betInfo.setNotes(msg);
+						}
+
+						if (f1PrevFights > prevFightCeiling) {
+							betInfo.setBet(false);
+							String msg = String.format("%s has %s fights, more than ceiling of %s", bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(), f1PrevFights, prevFightCeiling);
+							LOG.info(msg);
+							betInfo.setNotes(msg);
+						}
+						if (f2PrevFights > prevFightCeiling) {
+							betInfo.setBet(false);
+							String msg = String.format("%s has %s fights, more than ceiling of %s", bout.getFighterBoutXRefs().get(1).getFighter().getFighterName(), f2PrevFights, prevFightCeiling);
+							LOG.info(msg);
+							betInfo.setNotes(msg);
+						}
+												
 						bout.addBetInfo(betInfo);
 					} catch (Exception ee) {
 						LOG.log(Level.WARNING, ee.getLocalizedMessage(), ee);
