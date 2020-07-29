@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +60,29 @@ public class FightService {
 	private final ErrorService errorService;
 	private final FighterBoutXRefRepository fighterXRefRepo;
 
+	@Value("${parameters.bet.diff_ceiling}")
+	private Double diffCeiling;
+	@Value("${parameters.bet.diff_floor}")
+	private Double diffFloor;
+	@Value("${parameters.bet.prev_fight_floor}")
+	private Integer prevFightFloor;
+	@Value("${parameters.bet.prev_fight_ceiling}")
+	private Integer prevFightCeiling;
+	@Value("${parameters.bet.bet_intercept}")
+	private Double betIntercept;
+	@Value("${parameters.bet.conf_diff_lin}")
+	private Double confDiffLin;
+	@Value("${parameters.bet.conf_diff_quad}")
+	private Double confDiffQuad;
+	@Value("${parameters.bet.num_fight_lin}")
+	private Double numFightLin;
+	@Value("${parameters.bet.num_fight_quad}")
+	private Double numFightQuad;
+	@Value("${parameters.bet.bet_ceiling}")
+	private Integer betCeiling;	
+	@Value("${parameters.bet.bet_female}")
+	private Boolean betFemale;		
+	
 	@Autowired
 	public FightService(FighterBoutXRefRepository fighterXRefRepo, FightRepository fightRepo, UrlUtils urlUtils, ParsingUtils parsingUtils,
 			LocationService locationService, MappingUtils mappingUtils, ErrorService errorService) {
@@ -154,7 +178,7 @@ public class FightService {
 				fightDto = (FightDto) mappingUtils.mapToDto(fightData, FightDto.class);
 				for (BoutDto bout : fightDto.getBouts()) {
 					BoutBetDto betInfo = new BoutBetDto();
-					if (GenderEnum.FEMALE == bout.getGender()) {
+					if (Boolean.FALSE.equals(betFemale) && GenderEnum.FEMALE == bout.getGender()) {
 						betInfo.setBet(false);
 						betInfo.setNotes("Model does not currently predict for female fights");
 						bout.addBetInfo(betInfo);
@@ -201,14 +225,14 @@ public class FightService {
 							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(0).getMlOdds());
 							betInfo.setPredProb(bout.getFighterBoutXRefs().get(0).getExpOdds() * 100);
 							betInfo.setPredWinner(bout.getFighterBoutXRefs().get(0).getFighter().getFighterName());
-							betInfo.setWagerWeight(oddDiffToWager(betInfo.getOddsDiff()));
+							betInfo.setWagerWeight(oddDiffToWager(betInfo.getOddsDiff(), f1PrevFights, f2PrevFights));
 							if (f1Diff < 0) {
 								betInfo.setBet(false);
 								betInfo.setNotes("No advantage exists at current odds");
-							} else if (f1Diff < 0.0055954182392820885) {
+							} else if (f1Diff < diffFloor) {
 								betInfo.setBet(false);
 								betInfo.setNotes("Advantage below modal threshold");								
-							} else if (f1Diff > 20) {
+							} else if (f1Diff > diffCeiling) {
 								betInfo.setBet(false);
 								betInfo.setNotes("Advantage above modal threshold");								
 							} else {
@@ -219,7 +243,7 @@ public class FightService {
 							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(1).getMlOdds());
 							betInfo.setPredProb(bout.getFighterBoutXRefs().get(1).getExpOdds() * 100);
 							betInfo.setPredWinner(bout.getFighterBoutXRefs().get(1).getFighter().getFighterName());
-							betInfo.setWagerWeight(oddDiffToWager(betInfo.getOddsDiff()));	
+							betInfo.setWagerWeight(oddDiffToWager(betInfo.getOddsDiff(), f1PrevFights, f2PrevFights));	
 							if (f2Diff < 0) {
 								betInfo.setBet(false);
 								betInfo.setNotes("No advantage exists at current odds");
@@ -234,7 +258,7 @@ public class FightService {
 							}
 						}
 						
-						if (f1PrevFights < 4 || f2PrevFights < 4) {
+						if (f1PrevFights < prevFightFloor || f2PrevFights < prevFightFloor || f1PrevFights > prevFightCeiling || f2PrevFights < prevFightCeiling) {
 							betInfo.setBet(false);
 							betInfo.setNotes("Fighters do not meet threshold for number of past UFC appearances");
 						}
@@ -439,7 +463,13 @@ public class FightService {
 		}
 	}
 	
-	private Double oddDiffToWager(Double oddsDiff) {
-		return 0.37087827542170715 + (0.4999624097809326 * oddsDiff) + (0.4999415451937916 * (oddsDiff * oddsDiff));
+	private Double oddDiffToWager(Double oddsDiff, Integer nFight1, Integer nFight2) {
+		Double bet = betIntercept + (confDiffLin * oddsDiff) + (confDiffQuad * (oddsDiff * oddsDiff)) + (numFightLin * nFight1) + (numFightQuad * (nFight1 * nFight1)) + (numFightLin * nFight2) + (numFightQuad * (nFight2 * nFight2));
+		if (bet > betCeiling) {
+			return betCeiling.doubleValue();
+		} else {
+			return bet;
+		}
+	
 	}
 }
