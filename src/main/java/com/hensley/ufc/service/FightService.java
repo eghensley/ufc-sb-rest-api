@@ -24,6 +24,7 @@ import com.hensley.ufc.enums.ParseTargetEnum;
 import com.hensley.ufc.pojo.dto.bout.BoutBetDto;
 import com.hensley.ufc.pojo.dto.bout.BoutDto;
 import com.hensley.ufc.pojo.dto.fight.BasicFightDto;
+import com.hensley.ufc.pojo.dto.fight.FightBetDto;
 import com.hensley.ufc.pojo.dto.fight.FightDto;
 import com.hensley.ufc.pojo.request.ParseRequest;
 import com.hensley.ufc.pojo.response.GetResponse;
@@ -165,6 +166,32 @@ public class FightService {
 	}
 	
 	@Transactional
+	public GetResponse getFightBetDto(String fightId) {
+		Optional<FightData> fightDataOpt;
+		FightData fightData;
+		FightBetDto fightDto;
+		String errorString = null;
+
+		try {
+			fightDataOpt = fightRepo.findByFightId(fightId);
+			if (fightDataOpt.isPresent()) {
+				fightData = fightDataOpt.get();
+				fightDto = (FightBetDto) mappingUtils.mapToDto(fightData, FightBetDto.class);
+				return new GetResponse(HttpStatus.OK, errorString, fightDto);
+			} else {
+				errorString = String.format(NO_FIGHTS_FOUND, fightId);
+				LOG.log(Level.WARNING, errorString);
+				return new GetResponse(HttpStatus.OK, errorString, null);
+			}
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			LOG.log(Level.SEVERE, errorString, e);
+			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
+		}
+	}				
+				
+				
+	@Transactional
 	public GetResponse getFightDto(String fightId) {
 		Optional<FightData> fightDataOpt;
 		FightData fightData;
@@ -299,7 +326,6 @@ public class FightService {
 			errorString = e.getLocalizedMessage();
 			LOG.log(Level.SEVERE, errorString, e);
 			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
-
 		}
 	}
 

@@ -99,7 +99,19 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 	private Double subGrapplingEloPost;
 	
 	@Column(name = "EVAS_GRAP_ELO_POST")
-	private Double evasGrapplingEloPost;
+	private Double evasGrapplingEloPost;	
+	
+	@Column(name = "F_BET_MADE")
+	private Boolean betMade;
+	
+	@Column(name = "F_BET_PRED")
+	private Boolean betPredicted;
+	
+	@Column(name = "BET_AMOUNT")
+	private Double betAmount;
+	
+	@Column(name = "BET_RESULT")
+	private Double betResult;
 	
 	public FighterBoutXRefData() {
 
@@ -497,15 +509,71 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 		this.expOdds = expOdds;
 	}
 
+	/**
+	 * @return the betMade
+	 */
+	public Boolean getBetMade() {
+		return betMade;
+	}
+
+	/**
+	 * @param betMade the betMade to set
+	 */
+	public void setBetMade(Boolean betMade) {
+		this.betMade = betMade;
+	}
+
+	/**
+	 * @return the betPredicted
+	 */
+	public Boolean getBetPredicted() {
+		return betPredicted;
+	}
+
+	/**
+	 * @param betPredicted the betPredicted to set
+	 */
+	public void setBetPredicted(Boolean betPredicted) {
+		this.betPredicted = betPredicted;
+	}
+
+	/**
+	 * @return the betAmount
+	 */
+	public Double getBetAmount() {
+		return betAmount;
+	}
+
+	/**
+	 * @param betAmount the betAmount to set
+	 */
+	public void setBetAmount(Double betAmount) {
+		this.betAmount = betAmount;
+	}
+
+	/**
+	 * @return the betResult
+	 */
+	public Double getBetResult() {
+		return betResult;
+	}
+
+	/**
+	 * @param betResult the betResult to set
+	 */
+	public void setBetResult(Double betResult) {
+		this.betResult = betResult;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(bfoExpectedOutcomes, bout, boutDetails, chinStrikeEloPost,
-				chinStrikeEloPre, defGrapplingEloPost, defGrapplingEloPre, defStrikeEloPost, defStrikeEloPre,
-				evasGrapplingEloPost, evasGrapplingEloPre, expOdds, fighter, mlOdds, offGrapplingEloPost,
-				offGrapplingEloPre, offStrikeEloPost, offStrikeEloPre, outcome, powerStrikeEloPost, powerStrikeEloPre,
-				subGrapplingEloPost, subGrapplingEloPre);
+		result = prime * result + Objects.hash(betAmount, betMade, betPredicted, betResult, bfoExpectedOutcomes, bout,
+				boutDetails, chinStrikeEloPost, chinStrikeEloPre, defGrapplingEloPost, defGrapplingEloPre,
+				defStrikeEloPost, defStrikeEloPre, evasGrapplingEloPost, evasGrapplingEloPre, expOdds, fighter, mlOdds,
+				offGrapplingEloPost, offGrapplingEloPre, offStrikeEloPost, offStrikeEloPre, outcome, powerStrikeEloPost,
+				powerStrikeEloPre, subGrapplingEloPost, subGrapplingEloPre);
 		return result;
 	}
 
@@ -521,7 +589,9 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 			return false;
 		}
 		FighterBoutXRefData other = (FighterBoutXRefData) obj;
-		return Objects.equals(bfoExpectedOutcomes, other.bfoExpectedOutcomes) && Objects.equals(bout, other.bout)
+		return Objects.equals(betAmount, other.betAmount) && Objects.equals(betMade, other.betMade)
+				&& Objects.equals(betPredicted, other.betPredicted) && Objects.equals(betResult, other.betResult)
+				&& Objects.equals(bfoExpectedOutcomes, other.bfoExpectedOutcomes) && Objects.equals(bout, other.bout)
 				&& Objects.equals(boutDetails, other.boutDetails)
 				&& Objects.equals(chinStrikeEloPost, other.chinStrikeEloPost)
 				&& Objects.equals(chinStrikeEloPre, other.chinStrikeEloPre)
@@ -542,21 +612,5 @@ public class FighterBoutXRefData extends BaseAuditEntity implements Serializable
 				&& Objects.equals(subGrapplingEloPost, other.subGrapplingEloPost)
 				&& Objects.equals(subGrapplingEloPre, other.subGrapplingEloPre);
 	}
-
-	@Override
-	public String toString() {
-		return "FighterBoutXRefData [bout=" + bout + ", fighter=" + fighter + ", boutDetails=" + boutDetails
-				+ ", mlOdds=" + mlOdds + ", expOdds=" + expOdds + ", bfoExpectedOutcomes=" + bfoExpectedOutcomes
-				+ ", outcome=" + outcome + ", offStrikeEloPre=" + offStrikeEloPre + ", defStrikeEloPre="
-				+ defStrikeEloPre + ", offGrapplingEloPre=" + offGrapplingEloPre + ", defGrapplingEloPre="
-				+ defGrapplingEloPre + ", offStrikeEloPost=" + offStrikeEloPost + ", defStrikeEloPost="
-				+ defStrikeEloPost + ", offGrapplingEloPost=" + offGrapplingEloPost + ", defGrapplingEloPost="
-				+ defGrapplingEloPost + ", powerStrikeEloPre=" + powerStrikeEloPre + ", chinStrikeEloPre="
-				+ chinStrikeEloPre + ", subGrapplingEloPre=" + subGrapplingEloPre + ", evasGrapplingEloPre="
-				+ evasGrapplingEloPre + ", powerStrikeEloPost=" + powerStrikeEloPost + ", chinStrikeEloPost="
-				+ chinStrikeEloPost + ", subGrapplingEloPost=" + subGrapplingEloPost + ", evasGrapplingEloPost="
-				+ evasGrapplingEloPost + "]";
-	}
-
 	
 }

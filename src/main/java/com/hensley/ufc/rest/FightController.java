@@ -36,7 +36,13 @@ public class FightController {
 		GetResponse response = fightService.getFightDto(fightId); 
 		return new ResponseEntity<>(response, response.getStatus());
 	}
-	
+
+	@ApiOperation(value = "Fetch fight bet details by Id")
+	@GetMapping("{fightId}/details/bet")
+	public ResponseEntity<GetResponse> getFightBetsById(@PathVariable("fightId") String fightId) {
+		GetResponse response = fightService.getFightBetDto(fightId); 
+		return new ResponseEntity<>(response, response.getStatus());
+	}
 	
 	@ApiOperation(value = "Fetch all fight IDs")
 	@GetMapping("all")
