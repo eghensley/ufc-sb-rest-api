@@ -248,6 +248,7 @@ public class FightService {
 						boolean useF1 = f1Diff > f2Diff;
 						
 						if (useF1) {
+							System.out.println(String.format("%s vs %s", bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(), bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
 							betInfo.setOddsDiff(f1Diff);
 							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(0).getMlOdds());
 							betInfo.setPredProb(bout.getFighterBoutXRefs().get(0).getExpOdds() * 100);
@@ -266,6 +267,7 @@ public class FightService {
 								betInfo.setBet(true);
 							}
 						} else {
+							System.out.println(String.format("%s vs %s", bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(), bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
 							betInfo.setOddsDiff(f2Diff);
 							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(1).getMlOdds());
 							betInfo.setPredProb(bout.getFighterBoutXRefs().get(1).getExpOdds() * 100);
@@ -512,6 +514,10 @@ public class FightService {
 	}
 	
 	private Double oddDiffToWager(Double oddsDiff, Integer nFight1, Integer nFight2) {
+		System.out.println(oddsDiff);
+		System.out.println(nFight1);
+		System.out.println(nFight2);
+
 		Double bet = betIntercept + (confDiffLin * oddsDiff) + (confDiffQuad * (oddsDiff * oddsDiff)) + (numFightLin * nFight1) + (numFightQuad * (nFight1 * nFight1)) + (numFightLin * nFight2) + (numFightQuad * (nFight2 * nFight2));
 		if (bet > betCeiling) {
 			return betCeiling.doubleValue();
