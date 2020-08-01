@@ -274,10 +274,10 @@ public class FightService {
 							if (f2Diff < 0) {
 								betInfo.setBet(false);
 								betInfo.setNotes("No advantage exists at current odds");
-							} else if (f2Diff < 0.0055954182392820885) {
+							} else if (f2Diff < diffFloor) {
 								betInfo.setBet(false);
 								betInfo.setNotes("Advantage below modal threshold");								
-							} else if (f2Diff > 20) {
+							} else if (f2Diff > diffCeiling) {
 								betInfo.setBet(false);
 								betInfo.setNotes("Advantage above modal threshold");								
 							} else {
