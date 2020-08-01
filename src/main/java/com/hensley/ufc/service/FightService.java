@@ -539,10 +539,10 @@ public class FightService {
 
 		Double conf_diff_lin_comp = confDiffLin * oddsDiff;
 		Double conf_diff_quad_comp = confDiffQuad * (oddsDiff * oddsDiff);
-		Double f1_num_fight_lin_comp = numFightLin * nFight1;
-		Double f2_num_fight_lin_comp = numFightLin * nFight2;
-		Double f1_num_fight_quad_comp = numFightQuad * (nFight1 * nFight1);
-		Double f2_num_fight_quad_comp = numFightQuad * (nFight1 * nFight1);
+		Double f1_num_fight_lin_comp = numFightLin * nFight1 * 2;
+		Double f2_num_fight_lin_comp = numFightLin * nFight2 * 2;
+		Double f1_num_fight_quad_comp = numFightQuad * (nFight1 * nFight1) * 2;
+		Double f2_num_fight_quad_comp = numFightQuad * (nFight1 * nFight1) * 2;
 
         System.out.println(conf_diff_lin_comp);
         System.out.println(conf_diff_quad_comp);
@@ -553,8 +553,8 @@ public class FightService {
         System.out.println(betIntercept + conf_diff_lin_comp + conf_diff_quad_comp + f1_num_fight_lin_comp + f2_num_fight_lin_comp + f1_num_fight_quad_comp + f2_num_fight_quad_comp);
 
 		Double bet = betIntercept + (confDiffLin * oddsDiff) + (confDiffQuad * (oddsDiff * oddsDiff))
-				+ (numFightLin * nFight1) + (numFightQuad * (nFight1 * nFight1)) + (numFightLin * nFight2)
-				+ (numFightQuad * (nFight2 * nFight2));
+				+ (numFightLin * nFight1 * 2) + (numFightQuad * (nFight1 * nFight1) * 2) + (numFightLin * nFight2 * 2)
+				+ (numFightQuad * (nFight2 * nFight2) * 2);
 		
 		System.out.println(bet);
 		if (bet > betCeiling) {
