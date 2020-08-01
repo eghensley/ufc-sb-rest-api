@@ -80,13 +80,14 @@ public class FightService {
 	@Value("${parameters.bet.num_fight_quad}")
 	private Double numFightQuad;
 	@Value("${parameters.bet.bet_ceiling}")
-	private Integer betCeiling;	
+	private Integer betCeiling;
 	@Value("${parameters.bet.bet_female}")
-	private Boolean betFemale;		
-	
+	private Boolean betFemale;
+
 	@Autowired
-	public FightService(FighterBoutXRefRepository fighterXRefRepo, FightRepository fightRepo, UrlUtils urlUtils, ParsingUtils parsingUtils,
-			LocationService locationService, MappingUtils mappingUtils, ErrorService errorService) {
+	public FightService(FighterBoutXRefRepository fighterXRefRepo, FightRepository fightRepo, UrlUtils urlUtils,
+			ParsingUtils parsingUtils, LocationService locationService, MappingUtils mappingUtils,
+			ErrorService errorService) {
 		this.fightRepo = fightRepo;
 		this.urlUtils = urlUtils;
 		this.parsingUtils = parsingUtils;
@@ -108,7 +109,7 @@ public class FightService {
 		String errorString = null;
 		List<BasicFightDto> fightDtoList = new ArrayList<>();
 		List<String> fightList = fightRepo.findFightIdsByDateDescLimitTen();
-		for (String fightId: fightList) {
+		for (String fightId : fightList) {
 			Optional<FightData> fightDataOpt = fightRepo.findByFightId(fightId);
 			if (fightDataOpt.isPresent()) {
 				FightData fightData = fightDataOpt.get();
@@ -119,7 +120,6 @@ public class FightService {
 		return new GetResponse(HttpStatus.OK, errorString, fightDtoList);
 	}
 
-	
 	@Transactional
 	public GetResponse getFightsWithScore() {
 		String errorString = null;
@@ -164,7 +164,7 @@ public class FightService {
 		List<String> fightList = fightRepo.findFightIdsByYear(year);
 		return new GetResponse(HttpStatus.OK, errorString, fightList);
 	}
-	
+
 	@Transactional
 	public GetResponse getFightBetDto(String fightId) {
 		Optional<FightData> fightDataOpt;
@@ -188,9 +188,8 @@ public class FightService {
 			LOG.log(Level.SEVERE, errorString, e);
 			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
 		}
-	}				
-				
-				
+	}
+
 	@Transactional
 	public GetResponse getFightDto(String fightId) {
 		Optional<FightData> fightDataOpt;
@@ -211,44 +210,54 @@ public class FightService {
 						bout.addBetInfo(betInfo);
 						continue;
 					}
-					try {						
-						Integer f1PrevFights = fighterXRefRepo.getCountPreviousFights(bout.getFighterBoutXRefs().get(0).getFighter().getOid(), fightDto.getOid());
-						Integer f2PrevFights = fighterXRefRepo.getCountPreviousFights(bout.getFighterBoutXRefs().get(1).getFighter().getOid(), fightDto.getOid());
+					try {
+						Integer f1PrevFights = fighterXRefRepo.getCountPreviousFights(
+								bout.getFighterBoutXRefs().get(0).getFighter().getOid(), fightDto.getOid());
+						Integer f2PrevFights = fighterXRefRepo.getCountPreviousFights(
+								bout.getFighterBoutXRefs().get(1).getFighter().getOid(), fightDto.getOid());
 
 						if (f1PrevFights == 0) {
 							betInfo.setBet(false);
-							betInfo.setNotes(String.format("No previous UFC fights for %s", bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
+							betInfo.setNotes(String.format("No previous UFC fights for %s",
+									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
 							bout.addBetInfo(betInfo);
 							continue;
 						}
 						if (f2PrevFights == 0) {
 							betInfo.setBet(false);
-							betInfo.setNotes(String.format("No previous UFC fights for %s", bout.getFighterBoutXRefs().get(1).getFighter().getFighterName()));
+							betInfo.setNotes(String.format("No previous UFC fights for %s",
+									bout.getFighterBoutXRefs().get(1).getFighter().getFighterName()));
 							bout.addBetInfo(betInfo);
 							continue;
 						}
-						
-						if (bout.getFighterBoutXRefs().get(0).getExpOdds() == null || bout.getFighterBoutXRefs().get(1).getExpOdds() == null) {
+
+						if (bout.getFighterBoutXRefs().get(0).getExpOdds() == null
+								|| bout.getFighterBoutXRefs().get(1).getExpOdds() == null) {
 							betInfo.setBet(false);
 							betInfo.setNotes("No Expected odds available");
 							bout.addBetInfo(betInfo);
-							continue;							
+							continue;
 						}
-						
-						if (bout.getFighterBoutXRefs().get(0).getMlOdds() == null || bout.getFighterBoutXRefs().get(1).getMlOdds() == null) {
+
+						if (bout.getFighterBoutXRefs().get(0).getMlOdds() == null
+								|| bout.getFighterBoutXRefs().get(1).getMlOdds() == null) {
 							betInfo.setBet(false);
 							betInfo.setNotes("No Vegas odds available");
 							bout.addBetInfo(betInfo);
-							continue;							
+							continue;
 						}
-						
-						Double f1Diff = (bout.getFighterBoutXRefs().get(0).getExpOdds() * 100) - bout.getFighterBoutXRefs().get(0).getMlOdds();
-						Double f2Diff = (bout.getFighterBoutXRefs().get(1).getExpOdds() * 100) - bout.getFighterBoutXRefs().get(1).getMlOdds();
-						
+
+						Double f1Diff = (bout.getFighterBoutXRefs().get(0).getExpOdds() * 100)
+								- bout.getFighterBoutXRefs().get(0).getMlOdds();
+						Double f2Diff = (bout.getFighterBoutXRefs().get(1).getExpOdds() * 100)
+								- bout.getFighterBoutXRefs().get(1).getMlOdds();
+
 						boolean useF1 = f1Diff > f2Diff;
-						
+
 						if (useF1) {
-							System.out.println(String.format("%s vs %s", bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(), bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
+							System.out.println(String.format("%s vs %s",
+									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(),
+									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
 							betInfo.setOddsDiff(f1Diff);
 							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(0).getMlOdds());
 							betInfo.setPredProb(bout.getFighterBoutXRefs().get(0).getExpOdds() * 100);
@@ -259,60 +268,70 @@ public class FightService {
 								betInfo.setNotes("No advantage exists at current odds");
 							} else if (f1Diff < diffFloor * 100) {
 								betInfo.setBet(false);
-								betInfo.setNotes("Advantage below modal threshold");								
+								betInfo.setNotes("Advantage below modal threshold");
 							} else if (f1Diff > diffCeiling * 100) {
 								betInfo.setBet(false);
-								betInfo.setNotes("Advantage above modal threshold");								
+								betInfo.setNotes("Advantage above modal threshold");
 							} else {
 								betInfo.setBet(true);
 							}
 						} else {
-							System.out.println(String.format("%s vs %s", bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(), bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
+							System.out.println(String.format("%s vs %s",
+									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(),
+									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
 							betInfo.setOddsDiff(f2Diff);
 							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(1).getMlOdds());
 							betInfo.setPredProb(bout.getFighterBoutXRefs().get(1).getExpOdds() * 100);
 							betInfo.setPredWinner(bout.getFighterBoutXRefs().get(1).getFighter().getFighterName());
-							betInfo.setWagerWeight(oddDiffToWager(betInfo.getOddsDiff(), f1PrevFights, f2PrevFights));	
+							betInfo.setWagerWeight(oddDiffToWager(betInfo.getOddsDiff(), f1PrevFights, f2PrevFights));
 							if (f2Diff < 0) {
 								betInfo.setBet(false);
 								betInfo.setNotes("No advantage exists at current odds");
 							} else if (f2Diff < diffFloor * 100) {
 								betInfo.setBet(false);
-								betInfo.setNotes("Advantage below modal threshold");								
+								betInfo.setNotes("Advantage below modal threshold");
 							} else if (f2Diff > diffCeiling * 100) {
 								betInfo.setBet(false);
-								betInfo.setNotes("Advantage above modal threshold");								
+								betInfo.setNotes("Advantage above modal threshold");
 							} else {
 								betInfo.setBet(true);
 							}
 						}
-						
+
 						if (f1PrevFights < prevFightFloor) {
 							betInfo.setBet(false);
-							String msg = String.format("%s has %s fights, less than required %s", bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(), f1PrevFights, prevFightFloor);
+							String msg = String.format("%s has %s fights, less than required %s",
+									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(), f1PrevFights,
+									prevFightFloor);
 							LOG.info(msg);
 							betInfo.setNotes(msg);
 						}
 						if (f2PrevFights < prevFightFloor) {
 							betInfo.setBet(false);
-							String msg = String.format("%s has %s fights, less than required %s", bout.getFighterBoutXRefs().get(1).getFighter().getFighterName(), f2PrevFights, prevFightFloor);
+							String msg = String.format("%s has %s fights, less than required %s",
+									bout.getFighterBoutXRefs().get(1).getFighter().getFighterName(), f2PrevFights,
+									prevFightFloor);
 							LOG.info(msg);
 							betInfo.setNotes(msg);
 						}
 
 						if (f1PrevFights > prevFightCeiling) {
 							betInfo.setBet(false);
-							String msg = String.format("%s has %s fights, more than ceiling of %s", bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(), f1PrevFights, prevFightCeiling);
+							String msg = String.format("%s has %s fights, more than ceiling of %s",
+									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(), f1PrevFights,
+									prevFightCeiling);
 							LOG.info(msg);
 							betInfo.setNotes(msg);
 						}
 						if (f2PrevFights > prevFightCeiling) {
 							betInfo.setBet(false);
-							String msg = String.format("%s has %s fights, more than ceiling of %s", bout.getFighterBoutXRefs().get(1).getFighter().getFighterName(), f2PrevFights, prevFightCeiling);
+							String msg = String.format("%s has %s fights, more than ceiling of %s",
+									bout.getFighterBoutXRefs().get(1).getFighter().getFighterName(), f2PrevFights,
+									prevFightCeiling);
 							LOG.info(msg);
 							betInfo.setNotes(msg);
 						}
-												
+
 						bout.addBetInfo(betInfo);
 					} catch (Exception ee) {
 						LOG.log(Level.WARNING, ee.getLocalizedMessage(), ee);
@@ -386,7 +405,7 @@ public class FightService {
 		}
 
 	}
-	
+
 	@Transactional
 	public ParseResponse fightScraper() {
 		UrlParseRequest urlParseRequest;
@@ -512,18 +531,37 @@ public class FightService {
 			return true;
 		}
 	}
-	
+
 	private Double oddDiffToWager(Double oddsDiff, Integer nFight1, Integer nFight2) {
 		System.out.println(oddsDiff);
 		System.out.println(nFight1);
 		System.out.println(nFight2);
 
-		Double bet = betIntercept + (confDiffLin * oddsDiff) + (confDiffQuad * (oddsDiff * oddsDiff)) + (numFightLin * nFight1) + (numFightQuad * (nFight1 * nFight1)) + (numFightLin * nFight2) + (numFightQuad * (nFight2 * nFight2));
+		Double conf_diff_lin_comp = confDiffLin * oddsDiff;
+		Double conf_diff_quad_comp = confDiffQuad * (oddsDiff * oddsDiff);
+		Double f1_num_fight_lin_comp = numFightLin * nFight1;
+		Double f2_num_fight_lin_comp = numFightLin * nFight2;
+		Double f1_num_fight_quad_comp = numFightQuad * (nFight1 * nFight1);
+		Double f2_num_fight_quad_comp = numFightQuad * (nFight1 * nFight1);
+
+        System.out.println(conf_diff_lin_comp);
+        System.out.println(conf_diff_quad_comp);
+        System.out.println(f1_num_fight_lin_comp);
+        System.out.println(f2_num_fight_lin_comp);
+        System.out.println(f1_num_fight_quad_comp);
+        System.out.println(f2_num_fight_quad_comp);
+        System.out.println(betIntercept + conf_diff_lin_comp + conf_diff_quad_comp + f1_num_fight_lin_comp + f2_num_fight_lin_comp + f1_num_fight_quad_comp + f2_num_fight_quad_comp);
+
+		Double bet = betIntercept + (confDiffLin * oddsDiff) + (confDiffQuad * (oddsDiff * oddsDiff))
+				+ (numFightLin * nFight1) + (numFightQuad * (nFight1 * nFight1)) + (numFightLin * nFight2)
+				+ (numFightQuad * (nFight2 * nFight2));
+		
+		System.out.println(bet);
 		if (bet > betCeiling) {
 			return betCeiling.doubleValue();
 		} else {
 			return bet;
 		}
-	
+
 	}
 }
