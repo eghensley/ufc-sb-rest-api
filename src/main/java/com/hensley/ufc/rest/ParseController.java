@@ -23,7 +23,7 @@ import com.hensley.ufc.service.RoundScoreService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = {"http://localhost:8080", "http://207.237.93.29:8080"})
 @RestController
 @RequestMapping("parse")
 @Api(value = "Parsing System")

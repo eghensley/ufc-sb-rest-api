@@ -1,5 +1,5 @@
 package com.hensley.ufc.enums;
 
 public enum ParseTargetEnum {
-	FIGHTS, BOUTS, ROUNDS, RANK;
+	FIGHTS, BOUTS, ROUNDS, RANK, BET;
 }

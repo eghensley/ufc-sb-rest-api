@@ -38,4 +38,6 @@ public interface FightRepository extends JpaRepository<FightData, String> {
 	@Query(value = "select f.fight_id from ufc2.fight f where EXTRACT(YEAR FROM f.fight_date)=:year ORDER BY f.fight_date asc", nativeQuery = true)
 	List<String> findFightIdsByYear(@Param("year") Integer year);
 	
+	@Query(value = "select f.fight_id from ufc2.fight f where f.fight_date > '2020-07-10' ORDER BY f.fight_date asc", nativeQuery = true)
+	List<String> findBetFights();
 }

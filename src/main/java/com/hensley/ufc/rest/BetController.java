@@ -13,35 +13,35 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hensley.ufc.enums.WeightClassEnum;
-import com.hensley.ufc.pojo.dto.rank.FighterRankElementDto;
+import com.hensley.ufc.pojo.dto.fighter.FighterXrefBetHistDto;
 import com.hensley.ufc.pojo.response.GetResponse;
 import com.hensley.ufc.pojo.response.ParseResponse;
-import com.hensley.ufc.service.FighterRankService;
+import com.hensley.ufc.service.BetService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @CrossOrigin(origins = {"http://localhost:8080", "http://207.237.93.29:8080"})
 @RestController
-@RequestMapping("ranks")
-@Api(value = "Rank System")
-public class RankController {
-
-	@Autowired
-	FighterRankService rankService;
+@RequestMapping("bet")
+@Api(value = "Bet System")
+public class BetController {
 
 	@Value("${credentials.admin.password}")
 	private String loginKey;
-	private static String loginFailed = "Admin login failed";
 
-	@ApiOperation(value = "Update fighter ranking")
+	@Autowired
+	BetService betService;
+	
+	private static String loginFailed = "Admin login failed";
+	
+	@ApiOperation(value = "Update fighter bet")
 	@PostMapping("update")
-	public ResponseEntity<ParseResponse> addRoundScores(
+	public ResponseEntity<ParseResponse> addBet(
 			@RequestHeader(value = "password", required = true) String attemptedPassword,
-			@RequestBody FighterRankElementDto reqPayload) {
+			@RequestBody FighterXrefBetHistDto reqPayload) {
 		if (loginKey.equals(attemptedPassword)) {
-			ParseResponse response = rankService.updateFighterRanking(reqPayload);
+			ParseResponse response = betService.updateFighterBet(reqPayload);
 			return new ResponseEntity<>(response, response.getStatus());
 		} else {
 			String errorMsg = loginFailed;
@@ -50,12 +50,18 @@ public class RankController {
 		}
 	}
 
-	@ApiOperation(value = "Get rankings by weight class")
-	@GetMapping("weightClass/{weightClassVal}")
-	public ResponseEntity<GetResponse> getWeightClassRankings(
-			@PathVariable("weightClassVal") WeightClassEnum weightClassVal) {
-		GetResponse response = rankService.getRanksForWeightClass(weightClassVal);
+	@ApiOperation(value = "Get bet for oid")
+	@GetMapping("oid/{xRefOid}")
+	public ResponseEntity<GetResponse> getBoutBet(
+			@PathVariable("xRefOid") String xRefOid) {
+		GetResponse response = betService.getBetForBout(xRefOid);
 		return new ResponseEntity<>(response, response.getStatus());
 	}
-
+	
+	@ApiOperation(value = "Get bet history")
+	@GetMapping("history")
+	public ResponseEntity<GetResponse> getFightBetsById() {
+		GetResponse response = betService.getFightBetDto(); 
+		return new ResponseEntity<>(response, response.getStatus());
+	}
 }

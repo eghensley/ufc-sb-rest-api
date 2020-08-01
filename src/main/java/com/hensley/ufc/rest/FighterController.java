@@ -13,7 +13,7 @@ import com.hensley.ufc.service.FighterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = {"http://localhost:8080", "http://207.237.93.29:8080"})
 @RestController
 @RequestMapping("rest/fighter")
 @Api(value = "Fight System")
