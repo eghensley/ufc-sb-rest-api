@@ -18,6 +18,7 @@ public class DataSourceConfiguration {
     return new CloudFactory().getCloud();
   }
 
+  
   @Bean
   @ConfigurationProperties()
   public DataSource dataSource() {

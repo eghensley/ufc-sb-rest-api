@@ -34,6 +34,7 @@ com/hensley/ufc/repository/FighterRepository.class
 com/hensley/ufc/domain/SigStrikeTargetData.class
 com/hensley/ufc/enums/BoutOutcomeEnum.class
 com/hensley/ufc/domain/FightData.class
+META-INF/spring-configuration-metadata.json
 com/hensley/ufc/domain/BoutData.class
 com/hensley/ufc/service/BoutDetailService.class
 com/hensley/ufc/pojo/dto/fight/FightBetDto.class
