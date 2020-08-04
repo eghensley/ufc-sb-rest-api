@@ -1,7 +1,9 @@
 applications:
   - name: ufc-rest-api-sb
-    memory: 768M
+    memory: 1536M
     random-route: false
+    instances: 4
+    disk_quota: 20G
     path: target/ufc-0.0.1-SNAPSHOT.jar
     env:
       SPRING_PROFILES_ACTIVE: local
