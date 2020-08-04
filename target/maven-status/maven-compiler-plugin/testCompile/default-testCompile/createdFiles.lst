@@ -4,7 +4,6 @@ com/hensley/ufc/pojo/response/TestSuite.class
 com/hensley/ufc/repository/mock/CountryRepositoryMock.class
 com/hensley/ufc/pojo/response/GeneralApiResponseTest.class
 com/hensley/ufc/domain/BaseAuditEntityTest.class
-com/hensley/ufc/util/TestSuite.class
 com/hensley/ufc/domain/FightDataTest.class
 com/hensley/ufc/domain/LocationDataTest.class
 com/hensley/ufc/pojo/response/ParseResponseTest.class
@@ -12,7 +11,6 @@ com/hensley/ufc/domain/CountryDataTest.class
 com/hensley/ufc/service/TestSuite.class
 com/hensley/ufc/pojo/dto/CountryDtoTest.class
 com/hensley/ufc/domain/TestSuite.class
-com/hensley/ufc/util/ParsingUtilsTest.class
 com/hensley/ufc/repository/mock/LocationRepositoryMock.class
 com/hensley/ufc/pojo/dto/SuperAuditDtoTest.class
 com/hensley/ufc/service/LocationServiceTest.class
