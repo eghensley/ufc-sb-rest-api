@@ -7,13 +7,11 @@
 /home/ehens86/git/ufc-sb-rest-api/src/test/java/com/hensley/ufc/domain/LocationDataTest.java
 /home/ehens86/git/ufc-sb-rest-api/src/test/java/com/hensley/ufc/domain/TestSuite.java
 /home/ehens86/git/ufc-sb-rest-api/src/test/java/com/hensley/ufc/service/LocationServiceTest.java
-/home/ehens86/git/ufc-sb-rest-api/src/test/java/com/hensley/ufc/util/TestSuite.java
 /home/ehens86/git/ufc-sb-rest-api/src/test/java/com/hensley/ufc/domain/CountryDataTest.java
 /home/ehens86/git/ufc-sb-rest-api/src/test/java/com/hensley/ufc/pojo/dto/CountryDtoTest.java
 /home/ehens86/git/ufc-sb-rest-api/src/test/java/com/hensley/ufc/pojo/response/TestSuite.java
 /home/ehens86/git/ufc-sb-rest-api/src/test/java/com/hensley/ufc/pojo/dto/TestSuite.java
 /home/ehens86/git/ufc-sb-rest-api/src/test/java/com/hensley/ufc/domain/FightDataTest.java
 /home/ehens86/git/ufc-sb-rest-api/src/test/java/com/hensley/ufc/domain/BaseAuditEntityTest.java
-/home/ehens86/git/ufc-sb-rest-api/src/test/java/com/hensley/ufc/util/ParsingUtilsTest.java
 /home/ehens86/git/ufc-sb-rest-api/src/test/java/com/hensley/ufc/pojo/dto/LocationDtoTest.java
 /home/ehens86/git/ufc-sb-rest-api/src/test/java/com/hensley/ufc/pojo/dto/SuperAuditDtoTest.java
