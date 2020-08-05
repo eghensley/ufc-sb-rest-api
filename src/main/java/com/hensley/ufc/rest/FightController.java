@@ -17,7 +17,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("rest/fight")
 @Api(value="Fight System")
-@CrossOrigin(origins = {"http://localhost:8080", "http://207.237.93.29:8080"})
+@CrossOrigin()
 public class FightController {
 
 	@Autowired

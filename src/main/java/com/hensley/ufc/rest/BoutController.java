@@ -21,7 +21,7 @@ import com.hensley.ufc.service.BoutService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@CrossOrigin(origins = {"http://localhost:8080", "http://207.237.93.29:8080"})
+@CrossOrigin()
 @RestController
 @RequestMapping("rest/bout")
 @Api(value = "Bout System")

@@ -21,7 +21,7 @@ import com.hensley.ufc.service.BetService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@CrossOrigin(origins = {"http://localhost:8080", "http://207.237.93.29:8080"})
+@CrossOrigin()
 @RestController
 @RequestMapping("bet")
 @Api(value = "Bet System")
