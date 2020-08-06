@@ -7,3 +7,4 @@ applications:
     path: target/ufc-0.0.1-SNAPSHOT.jar
     env:
       SPRING_PROFILES_ACTIVE: local
+      JAVA_OPTS: '-Djavax.net.ssl.trustStore=/home/vcap/app/BOOT-INF/classes/cloudfoundry.truststore'
