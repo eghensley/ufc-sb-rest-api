@@ -7,8 +7,11 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -21,9 +24,12 @@ import com.hensley.ufc.domain.FightData;
 import com.hensley.ufc.domain.LocationData;
 import com.hensley.ufc.enums.GenderEnum;
 import com.hensley.ufc.enums.ParseTargetEnum;
+import com.hensley.ufc.pojo.common.ApiRequestTracker;
+import com.hensley.ufc.pojo.dto.bet.AllBetHistoryDto;
 import com.hensley.ufc.pojo.dto.bout.BoutBetDto;
 import com.hensley.ufc.pojo.dto.bout.BoutDto;
 import com.hensley.ufc.pojo.dto.fight.BasicFightDto;
+import com.hensley.ufc.pojo.dto.fight.BasicFightInfoDto;
 import com.hensley.ufc.pojo.dto.fight.FightBetDto;
 import com.hensley.ufc.pojo.dto.fight.FightDto;
 import com.hensley.ufc.pojo.request.ParseRequest;
@@ -191,6 +197,31 @@ public class FightService {
 	}
 
 	@Transactional
+	public GetResponse getFightBasicDto(ApiRequestTracker req) {
+		Optional<FightData> fightDataOpt;
+		FightData fightData;
+		BasicFightInfoDto fightDto;
+		String errorString = null;
+
+		try {
+			fightDataOpt = fightRepo.findByFightId(req.getFightId());
+			if (fightDataOpt.isPresent()) {
+				fightData = fightDataOpt.get();
+				fightDto = (BasicFightInfoDto) mappingUtils.mapToDto(fightData, BasicFightInfoDto.class);
+				return new GetResponse(HttpStatus.OK, errorString, fightDto);
+			} else {
+				errorString = String.format(NO_FIGHTS_FOUND, req.getFightId());
+				LOG.log(Level.WARNING, errorString);
+				return new GetResponse(HttpStatus.OK, errorString, null);
+			}
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			LOG.log(Level.SEVERE, errorString, e);
+			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
+		}
+	}
+	
+	@Transactional
 	public GetResponse getFightDto(String fightId) {
 		Optional<FightData> fightDataOpt;
 		FightData fightData;
@@ -255,9 +286,9 @@ public class FightService {
 						boolean useF1 = f1Diff > f2Diff;
 
 						if (useF1) {
-							System.out.println(String.format("%s vs %s",
-									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(),
-									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
+//							System.out.println(String.format("%s vs %s",
+//									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(),
+//									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
 							betInfo.setOddsDiff(f1Diff);
 							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(0).getMlOdds());
 							betInfo.setPredProb(bout.getFighterBoutXRefs().get(0).getExpOdds() * 100);
@@ -276,9 +307,9 @@ public class FightService {
 								betInfo.setBet(true);
 							}
 						} else {
-							System.out.println(String.format("%s vs %s",
-									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(),
-									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
+//							System.out.println(String.format("%s vs %s",
+//									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(),
+//									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
 							betInfo.setOddsDiff(f2Diff);
 							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(1).getMlOdds());
 							betInfo.setPredProb(bout.getFighterBoutXRefs().get(1).getExpOdds() * 100);
@@ -349,7 +380,7 @@ public class FightService {
 			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
 		}
 	}
-
+	
 	@Transactional
 	public ParseResponse futFightScraper() {
 		UrlParseRequest urlParseRequest;

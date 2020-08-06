@@ -19,10 +19,12 @@ public enum WeightClassEnum {
 	CW("Catch Weight", GenderEnum.MALE, 0, 0, 12);
 
     private static final Map<String, WeightClassEnum> BY_DESCRIPTION = new HashMap<>();
+    private static final Map<Integer, WeightClassEnum> BY_DB_KEY = new HashMap<>();
 
     static {
         for (WeightClassEnum e : values()) {
         	BY_DESCRIPTION.put(e.description, e);
+        	BY_DB_KEY.put(e.dbKey, e);
         }
     }
      
@@ -42,6 +44,10 @@ public enum WeightClassEnum {
 
     public static WeightClassEnum valueOfDesc(String description) {
         return BY_DESCRIPTION.get(description);
+    }
+    
+    public static WeightClassEnum valueOfDbKey(Integer dbKey) {
+        return BY_DB_KEY.get(dbKey);
     }
     
     public Integer getWeight() {

@@ -1,6 +1,7 @@
 package com.hensley.ufc.pojo.dto.bout;
 
 public class BoutBetDto {
+	private String oid;
 	private String predWinner;
 	private boolean bet;
 	private Double predProb;
@@ -8,6 +9,7 @@ public class BoutBetDto {
 	private Double oddsDiff;
 	private Double wagerWeight;
 	private String notes;
+	private String boutName;
 	
 	public BoutBetDto() {
 		
@@ -110,6 +112,33 @@ public class BoutBetDto {
 	public void setNotes(String notes) {
 		this.notes = notes;
 	}
-	
+
+	/**
+	 * @return the oid
+	 */
+	public String getOid() {
+		return oid;
+	}
+
+	/**
+	 * @param oid the oid to set
+	 */
+	public void setOid(String oid) {
+		this.oid = oid;
+	}
+
+	/**
+	 * @return the boutName
+	 */
+	public String getBoutName() {
+		return boutName;
+	}
+
+	/**
+	 * @param boutName the boutName to set
+	 */
+	public void setBoutName(String boutName) {
+		this.boutName = boutName;
+	}
 	
 }

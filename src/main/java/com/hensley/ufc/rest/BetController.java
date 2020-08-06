@@ -13,10 +13,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hensley.ufc.enums.common.ErrorEnum;
+import com.hensley.ufc.enums.common.FunctionEnum;
+import com.hensley.ufc.pojo.common.ApiRequestTracker;
 import com.hensley.ufc.pojo.dto.fighter.FighterXrefBetHistDto;
 import com.hensley.ufc.pojo.response.GetResponse;
 import com.hensley.ufc.pojo.response.ParseResponse;
 import com.hensley.ufc.service.BetService;
+import com.hensley.ufc.service.CommonService;
+import com.hensley.ufc.service.ErrorService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,9 +37,16 @@ public class BetController {
 
 	@Autowired
 	BetService betService;
+
+	@Autowired
+	CommonService commonService;
+
+	@Autowired
+	ErrorService errorService;
 	
 	private static String loginFailed = "Admin login failed";
-	
+	private static String CONTROLLER_ERROR = "%s [%s] Request Failed with %s";
+
 	@ApiOperation(value = "Update fighter bet")
 	@PostMapping("update")
 	public ResponseEntity<ParseResponse> addBet(
@@ -52,16 +64,56 @@ public class BetController {
 
 	@ApiOperation(value = "Get bet for oid")
 	@GetMapping("oid/{xRefOid}")
-	public ResponseEntity<GetResponse> getBoutBet(
-			@PathVariable("xRefOid") String xRefOid) {
+	public ResponseEntity<GetResponse> getBoutBet(@PathVariable("xRefOid") String xRefOid) {
 		GetResponse response = betService.getBetForBout(xRefOid);
 		return new ResponseEntity<>(response, response.getStatus());
 	}
-	
+
 	@ApiOperation(value = "Get bet history")
 	@GetMapping("history")
 	public ResponseEntity<GetResponse> getFightBetsById() {
-		GetResponse response = betService.getFightBetDto(); 
+		GetResponse response = betService.getFightBetDto();
 		return new ResponseEntity<>(response, response.getStatus());
+	}
+
+	@ApiOperation(value = "Get direct bet history")
+	@GetMapping("history/v2")
+	public ResponseEntity<GetResponse> getBetHistory() {
+		ApiRequestTracker req = new ApiRequestTracker();
+
+		try {
+			req.setPath("bet/history/v2");
+			req.setFunction(FunctionEnum.GET_BET_HIST);
+			commonService.preHookProcessing(req);
+			GetResponse response = betService.getBetHistory(req);
+			return new ResponseEntity<>(response, response.getStatus());
+		} catch (Exception e) {
+			String errorMsg = String.format(CONTROLLER_ERROR, req.getFunction().getName(), req.getFunction().getApiMethod(), e.getLocalizedMessage());
+			String errorName = e.getClass().getName();
+			req.setErrorStr(errorName, errorMsg, ErrorEnum.UNCAUGHT_CONTROLLER_ERROR);
+			errorService.log(req);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@ApiOperation(value = "Get direct bet table")
+	@GetMapping("table/fight/{fightId}")
+	public ResponseEntity<GetResponse> getBetTable(@PathVariable("fightId") String fightId) {
+		ApiRequestTracker req = new ApiRequestTracker();
+
+		try {
+			req.setPath("table/fight/{fightId}");
+			req.setFunction(FunctionEnum.GET_BET_TBL);
+			req.setFightId(fightId);
+			commonService.preHookProcessing(req);
+			GetResponse response = betService.getBetPreds(req);
+			return new ResponseEntity<>(response, response.getStatus());
+		} catch (Exception e) {
+			String errorMsg = String.format(CONTROLLER_ERROR, req.getFunction().getName(), req.getFunction().getApiMethod(), e.getLocalizedMessage());
+			String errorName = e.getClass().getName();
+			req.setErrorStr(errorName, errorMsg, ErrorEnum.UNCAUGHT_CONTROLLER_ERROR);
+			errorService.log(req);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
