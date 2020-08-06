@@ -132,14 +132,20 @@ public class FighterRankService {
 	public GetResponse getBasicRanks(ApiRequestTracker req, WeightClassEnum weightClass) {
 		String errorString = null;
 		try {
-			String queryStr = "	select f.fighter_name as \"fighterName\", fbx.off_strike_elo_post as \"offStrikeEloPost\", fbx.def_strike_elo_post as \"defStrikeEloPost\", fbx.off_grap_elo_post as \"offGrapplingEloPost\", fbx.def_grap_elo_post as \"defGrapplingEloPost\" \n" + 
+			String queryStr = "	select ff.oid as \"fighterOid\", ff.fighter_name as \"fighterName\", fbx.off_strike_elo_post as \"offStrikeEloPost\", fbx.def_strike_elo_post as \"defStrikeEloPost\", fbx.off_grap_elo_post as \"offGrapplingEloPost\", fbx.def_grap_elo_post as \"defGrapplingEloPost\" \n" + 
 					"	from ufc2.fighter_rank fr \n" + 
 					"		join ufc2.fighter_bout_xref fbx \n" + 
 					"			on fbx.oid = fr.fighter_boutxref_oid \n" + 
-					"		join ufc2.fighter f \n" + 
-					"			on f.oid = fr.fighter_oid \n" + 
+					"		join ufc2.fighter ff \n" + 
+					"			on ff.oid = fr.fighter_oid \n" + 
+					"		join ufc2.bout b \n" +
+					"			on b.oid = fbx.bout_oid \n" +
+					"		join ufc2.fight f \n" +
+					"			on f.oid = b.fight_oid \n" +
 					"	where fr.weight_class=:weightClassKey \n" + 
-					"	and fr.version > 5";
+					"	and fr.version > 3 " +
+					"   and f.fight_date > now() - interval '2 year' \n" +
+					"	and fbx.exp_odds is not null";
 			Query query = em.createNativeQuery(queryStr);
 			query.setParameter("weightClassKey", weightClass.dbKey);
 			query.unwrap(org.hibernate.query.NativeQuery.class)

@@ -1,6 +1,7 @@
 package com.hensley.ufc.pojo.dto.rank;
 
 public class FighterRankBasicDto {
+	private String fighterOid;
 	private String fighterName;
 	private Double offStrikeEloPost;
 	private Double defStrikeEloPost;
@@ -79,6 +80,20 @@ public class FighterRankBasicDto {
 	 */
 	public void setDefGrapplingEloPost(Double defGrapplingEloPost) {
 		this.defGrapplingEloPost = defGrapplingEloPost;
+	}
+
+	/**
+	 * @return the fighterOid
+	 */
+	public String getFighterOid() {
+		return fighterOid;
+	}
+
+	/**
+	 * @param fighterOid the fighterOid to set
+	 */
+	public void setFighterOid(String fighterOid) {
+		this.fighterOid = fighterOid;
 	}
 	
 	
