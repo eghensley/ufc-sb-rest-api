@@ -3,10 +3,14 @@ package com.hensley.ufc.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 
+import org.hibernate.transform.Transformers;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +19,8 @@ import com.hensley.ufc.domain.FighterData;
 import com.hensley.ufc.domain.FighterRankData;
 import com.hensley.ufc.enums.ParseTargetEnum;
 import com.hensley.ufc.enums.WeightClassEnum;
+import com.hensley.ufc.pojo.common.ApiRequestTracker;
+import com.hensley.ufc.pojo.dto.rank.FighterRankBasicDto;
 import com.hensley.ufc.pojo.dto.rank.FighterRankElementDto;
 import com.hensley.ufc.pojo.request.ParseRequest;
 import com.hensley.ufc.pojo.response.GetResponse;
@@ -34,8 +40,9 @@ public class FighterRankService {
 	private final FighterBoutXRefRepository fighterBoutXRefRepo;
 	private final ErrorService errorService;
 	private final FighterRepository fighterRepo;
+	private final EntityManager em;
 
-	public FighterRankService(FighterRepository fighterRepo, ErrorService errorService,
+	public FighterRankService(EntityManager em, FighterRepository fighterRepo, ErrorService errorService,
 			FighterRankRepository fighterRankRepo, MappingUtils mappingUtils,
 			FighterBoutXRefRepository fighterBoutXRefRepo) {
 		this.fighterRankRepo = fighterRankRepo;
@@ -43,6 +50,7 @@ public class FighterRankService {
 		this.fighterBoutXRefRepo = fighterBoutXRefRepo;
 		this.errorService = errorService;
 		this.fighterRepo = fighterRepo;
+		this.em = em;
 	}
 
 	@Transactional
@@ -118,5 +126,34 @@ public class FighterRankService {
 			return errorService.handleParseError(errorStr, e, response);
 		}
 	}
+	
+	@SuppressWarnings("deprecation")
+	@Transactional
+	public GetResponse getBasicRanks(ApiRequestTracker req, WeightClassEnum weightClass) {
+		String errorString = null;
+		try {
+			String queryStr = "	select f.fighter_name as \"fighterName\", fbx.off_strike_elo_post as \"offStrikeEloPost\", fbx.def_strike_elo_post as \"defStrikeEloPost\", fbx.off_grap_elo_post as \"offGrapplingEloPost\", fbx.def_grap_elo_post as \"defGrapplingEloPost\" \n" + 
+					"	from ufc2.fighter_rank fr \n" + 
+					"		join ufc2.fighter_bout_xref fbx \n" + 
+					"			on fbx.oid = fr.fighter_boutxref_oid \n" + 
+					"		join ufc2.fighter f \n" + 
+					"			on f.oid = fr.fighter_oid \n" + 
+					"	where fr.weight_class=:weightClassKey \n" + 
+					"	and fr.version > 5";
+			Query query = em.createNativeQuery(queryStr);
+			query.setParameter("weightClassKey", weightClass.dbKey);
+			query.unwrap(org.hibernate.query.NativeQuery.class)
+					.setResultTransformer(Transformers.aliasToBean(FighterRankBasicDto.class));
+			@SuppressWarnings("unchecked")
+			List<FighterRankBasicDto> res = query.getResultList();
+			return new GetResponse(HttpStatus.OK, errorString, res);
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			LOG.log(Level.SEVERE, errorString, e);
+			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
+		}
+	}
+	
+
 
 }

@@ -1,7 +1,7 @@
 package com.hensley.ufc.enums.common;
 
 public enum ControllerEnum {
-	BT("BET"), FT("FIGHT");
+	BT("BET"), FT("FIGHT"), RK("RANKS");
 	
 	private String controllerName;
 	

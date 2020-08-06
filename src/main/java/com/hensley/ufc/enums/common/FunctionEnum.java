@@ -5,6 +5,8 @@ public enum FunctionEnum {
 	GET_BET_TBL(RestEnum.GET, ControllerEnum.BT, "Get Bet Table", false),
 	GET_BASIC_FIGHT(RestEnum.GET, ControllerEnum.FT, "Get Basic Fight Details", false),
 
+	GET_WC_RANKS(RestEnum.GET, ControllerEnum.RK, "Get Rank Table", false),
+
 	;
 	
 	private RestEnum apiMethod;
