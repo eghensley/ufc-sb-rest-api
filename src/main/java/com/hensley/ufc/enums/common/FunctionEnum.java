@@ -3,6 +3,7 @@ package com.hensley.ufc.enums.common;
 public enum FunctionEnum {
 	GET_BET_HIST(RestEnum.GET, ControllerEnum.BT, "Get Bet History", false),
 	GET_BET_TBL(RestEnum.GET, ControllerEnum.BT, "Get Bet Table", false),
+	GET_PAST_BET_TBL(RestEnum.GET, ControllerEnum.BT, "Get Past Bet Table", false),
 	GET_BASIC_FIGHT(RestEnum.GET, ControllerEnum.FT, "Get Basic Fight Details", false),
 
 	GET_WC_RANKS(RestEnum.GET, ControllerEnum.RK, "Get Rank Table", false),

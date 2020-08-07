@@ -116,4 +116,25 @@ public class BetController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@ApiOperation(value = "Get past direct bet table")
+	@GetMapping("table/fight/{fightId}/past")
+	public ResponseEntity<GetResponse> getPastBetTable(@PathVariable("fightId") String fightId) {
+		ApiRequestTracker req = new ApiRequestTracker();
+
+		try {
+			req.setPath("table/fight/{fightId}/past");
+			req.setFunction(FunctionEnum.GET_PAST_BET_TBL);
+			req.setFightId(fightId);
+			commonService.preHookProcessing(req);
+			GetResponse response = betService.getFightBetResult(req);
+			return new ResponseEntity<>(response, response.getStatus());
+		} catch (Exception e) {
+			String errorMsg = String.format(CONTROLLER_ERROR, req.getFunction().getName(), req.getFunction().getApiMethod(), e.getLocalizedMessage());
+			String errorName = e.getClass().getName();
+			req.setErrorStr(errorName, errorMsg, ErrorEnum.UNCAUGHT_CONTROLLER_ERROR);
+			errorService.log(req);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

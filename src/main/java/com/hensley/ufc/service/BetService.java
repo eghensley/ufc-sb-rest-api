@@ -25,6 +25,7 @@ import com.hensley.ufc.enums.ParseTargetEnum;
 import com.hensley.ufc.pojo.common.ApiRequestTracker;
 import com.hensley.ufc.pojo.dto.bet.AllBetHistoryDto;
 import com.hensley.ufc.pojo.dto.bet.FightBetDto;
+import com.hensley.ufc.pojo.dto.bet.SingleFightBetResultDto;
 import com.hensley.ufc.pojo.dto.bout.BoutBetDto;
 import com.hensley.ufc.pojo.dto.fight.FightBetHistoryDto;
 import com.hensley.ufc.pojo.dto.fighter.FighterXrefBetHistDto;
@@ -163,6 +164,32 @@ public class BetService {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
+	@Transactional
+	public GetResponse getFightBetResult(ApiRequestTracker req) {
+		String errorString = null;
+		try {
+			String queryStr = "	select fbx.f_bet_made as \"bet\", b.oid as \"oid\", ff.fighter_name as \"predWinner\", fbx.ml_odds as \"vegasOdds\", fbx.exp_odds as \"predProb\", fbx.bet_amount as \"wagerWeight\", fbx.bet_result as \"betResult\" \n" + 
+					"	from ufc2.fighter_bout_xref fbx \n" + 
+					"	join ufc2.bout b on b.oid = fbx.bout_oid \n" + 
+					"	join ufc2.fight f on f.oid = b.fight_oid \n" + 
+					"	join ufc2.fighter ff on ff.oid = fbx.fighter_oid\n" + 
+					"	where fbx.f_bet_made is true\n" + 
+					"	and f.fight_id =:fightIdx";
+			Query query = em.createNativeQuery(queryStr);
+			query.setParameter("fightIdx", req.getFightId());
+			query.unwrap(org.hibernate.query.NativeQuery.class)
+					.setResultTransformer(Transformers.aliasToBean(SingleFightBetResultDto.class));
+			@SuppressWarnings("unchecked")
+			List<SingleFightBetResultDto> res = query.getResultList();
+			return new GetResponse(HttpStatus.OK, errorString, res);
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			LOG.log(Level.SEVERE, errorString, e);
+			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
+		}
+	}
+	
 	@SuppressWarnings("deprecation")
 	@Transactional
 	public GetResponse getBetPreds(ApiRequestTracker req) {
