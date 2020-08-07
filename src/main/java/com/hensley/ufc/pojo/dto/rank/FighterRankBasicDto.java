@@ -7,6 +7,10 @@ public class FighterRankBasicDto {
 	private Double defStrikeEloPost;
 	private Double offGrapplingEloPost;
 	private Double defGrapplingEloPost;
+	private Double powerStrikeEloPost;
+	private Double chinStrikeEloPost;
+	private Double subGrapplingEloPost;
+	private Double evasGrapplingEloPost;
 	
 	public FighterRankBasicDto() {
 		
@@ -94,6 +98,62 @@ public class FighterRankBasicDto {
 	 */
 	public void setFighterOid(String fighterOid) {
 		this.fighterOid = fighterOid;
+	}
+
+	/**
+	 * @return the powerStrikeEloPost
+	 */
+	public Double getPowerStrikeEloPost() {
+		return powerStrikeEloPost;
+	}
+
+	/**
+	 * @param powerStrikeEloPost the powerStrikeEloPost to set
+	 */
+	public void setPowerStrikeEloPost(Double powerStrikeEloPost) {
+		this.powerStrikeEloPost = powerStrikeEloPost;
+	}
+
+	/**
+	 * @return the chinStrikeEloPost
+	 */
+	public Double getChinStrikeEloPost() {
+		return chinStrikeEloPost;
+	}
+
+	/**
+	 * @param chinStrikeEloPost the chinStrikeEloPost to set
+	 */
+	public void setChinStrikeEloPost(Double chinStrikeEloPost) {
+		this.chinStrikeEloPost = chinStrikeEloPost;
+	}
+
+	/**
+	 * @return the subGrapplingEloPost
+	 */
+	public Double getSubGrapplingEloPost() {
+		return subGrapplingEloPost;
+	}
+
+	/**
+	 * @param subGrapplingEloPost the subGrapplingEloPost to set
+	 */
+	public void setSubGrapplingEloPost(Double subGrapplingEloPost) {
+		this.subGrapplingEloPost = subGrapplingEloPost;
+	}
+
+	/**
+	 * @return the evasGrapplingEloPost
+	 */
+	public Double getEvasGrapplingEloPost() {
+		return evasGrapplingEloPost;
+	}
+
+	/**
+	 * @param evasGrapplingEloPost the evasGrapplingEloPost to set
+	 */
+	public void setEvasGrapplingEloPost(Double evasGrapplingEloPost) {
+		this.evasGrapplingEloPost = evasGrapplingEloPost;
 	}
 	
 	

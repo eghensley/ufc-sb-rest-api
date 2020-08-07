@@ -70,7 +70,7 @@ public class RankController {
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 	
-	@ApiOperation(value = "Get direct bet table")
+	@ApiOperation(value = "Get direct weight class ranks")
 	@GetMapping("weightClass/{weightClassVal}/basic")
 	public ResponseEntity<GetResponse> getBetTable(@PathVariable("weightClassVal") WeightClassEnum weightClassVal) {
 		ApiRequestTracker req = new ApiRequestTracker();

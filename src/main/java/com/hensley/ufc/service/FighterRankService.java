@@ -132,7 +132,7 @@ public class FighterRankService {
 	public GetResponse getBasicRanks(ApiRequestTracker req, WeightClassEnum weightClass) {
 		String errorString = null;
 		try {
-			String queryStr = "	select ff.oid as \"fighterOid\", ff.fighter_name as \"fighterName\", fbx.off_strike_elo_post as \"offStrikeEloPost\", fbx.def_strike_elo_post as \"defStrikeEloPost\", fbx.off_grap_elo_post as \"offGrapplingEloPost\", fbx.def_grap_elo_post as \"defGrapplingEloPost\" \n" + 
+			String queryStr = "	select ff.oid as \"fighterOid\", ff.fighter_name as \"fighterName\", fbx.off_strike_elo_post as \"offStrikeEloPost\", fbx.def_strike_elo_post as \"defStrikeEloPost\", fbx.off_grap_elo_post as \"offGrapplingEloPost\", fbx.def_grap_elo_post as \"defGrapplingEloPost\", fbx.power_strike_elo_post as \"powerStrikeEloPost\", fbx.chin_strike_elo_post as \"chinStrikeEloPost\", fbx.sub_grap_elo_post as \"subGrapplingEloPost\", fbx.evas_grap_elo_post as \"evasGrapplingEloPost\" \n" + 
 					"	from ufc2.fighter_rank fr \n" + 
 					"		join ufc2.fighter_bout_xref fbx \n" + 
 					"			on fbx.oid = fr.fighter_boutxref_oid \n" + 
