@@ -240,7 +240,7 @@ public class BoutDetailService {
 
 	private Integer findFighterRow(HtmlElement roundItem, FighterBoutXRefData fighterBout, String roundPath) {
 //		List<HtmlElement> roundFighterHtmlList = roundItem.getByXPath(roundPath + "/td[1]/p/a");
-		
+
 		List<HtmlElement> roundFighterHtmlList2 = roundItem.getByXPath(roundPath + "/td[1]/p");
 
 		ListIterator<HtmlElement> iterator = roundFighterHtmlList2.listIterator();
@@ -249,7 +249,7 @@ public class BoutDetailService {
 			String rowName = iterator.next().asText().trim();
 			String fighterName = fighterBout.getFighter().getFighterName();
 			if (rowName.equals(fighterName)
-					|| ("Zhalgas Zhumagulov".equals(rowName) && "Zhalgas Zhamagulov".equals(fighterName)) 
+					|| ("Zhalgas Zhumagulov".equals(rowName) && "Zhalgas Zhamagulov".equals(fighterName))
 					|| ("Constantinos Philippou".equals(rowName) && "Costas Philippou".equals(fighterName))
 					|| ("Ben Alloway".equals(rowName) && "Benny Alloway".equals(fighterName))
 					|| ("Brad Scott".equals(rowName) && "Bradley Scott".equals(fighterName))
@@ -296,25 +296,21 @@ public class BoutDetailService {
 					|| ("Carlo Pedersoli Jr.".equals(rowName) && "Carlo Pedersoli".equals(fighterName))
 					|| ("Grigory Popov".equals(rowName) && "Grigorii Popov".equals(fighterName))
 					|| ("Jin Soo Son".equals(rowName) && "Jinsoo Son".equals(fighterName))
-					|| ("Jin Soo Son".equals(rowName) && "Jinsoo Son".equals(fighterName))
-					
-				) {
-
+					|| ("Alexander Munoz".equals(rowName) && "Alex Munoz".equals(fighterName))
+					|| ("Ali AlQaisi".equals(rowName) && "Ali Qaisi".equals(fighterName))
+			) {
 				return tempIndex;
 			}
 		}
-//		for (HtmlElement roundFighterHtmlListElement : roundFighterHtmlList) {
-//			LOG.log(Level.WARNING, roundFighterHtmlListElement.asXml());
-//			LOG.log(Level.WARNING, "~~~~");	
-//		}
+
 		LOG.log(Level.WARNING, "~~~~~~~~~~~~~~~~~~~~~~~~");
 
 		for (HtmlElement roundFighterHtmlListElement2 : roundFighterHtmlList2) {
 			LOG.log(Level.WARNING, roundFighterHtmlListElement2.asXml());
 			LOG.log(Level.WARNING, roundFighterHtmlListElement2.asText().trim());
-			LOG.log(Level.WARNING, "~~~~");	
+			LOG.log(Level.WARNING, "~~~~");
 		}
-		
+
 		LOG.log(Level.WARNING, "~~~~~~~~~~~~~~~~~~~~~~~~");
 
 		LOG.log(Level.WARNING, roundItem.asXml());

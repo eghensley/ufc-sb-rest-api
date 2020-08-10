@@ -26,7 +26,7 @@ public class BasicFighterBoutXrefDto {
 //	private Double chinStrikeEloPost;
 //	private Double subGrapplingEloPost;
 //	private Double evasGrapplingEloPost;
-//	private Double expOdds;
+	private Double expOdds;
 
 	public BasicFighterBoutXrefDto() {
 
@@ -311,19 +311,19 @@ public class BasicFighterBoutXrefDto {
 //	public void setEvasGrapplingEloPost(Double evasGrapplingEloPost) {
 //		this.evasGrapplingEloPost = evasGrapplingEloPost;
 //	}
-//
-//	/**
-//	 * @return the expOdds
-//	 */
-//	public Double getExpOdds() {
-//		return expOdds;
-//	}
-//
-//	/**
-//	 * @param expOdds the expOdds to set
-//	 */
-//	public void setExpOdds(Double expOdds) {
-//		this.expOdds = expOdds;
-//	}
+
+	/**
+	 * @return the expOdds
+	 */
+	public Double getExpOdds() {
+		return expOdds;
+	}
+
+	/**
+	 * @param expOdds the expOdds to set
+	 */
+	public void setExpOdds(Double expOdds) {
+		this.expOdds = expOdds;
+	}
 	
 }

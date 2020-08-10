@@ -142,8 +142,15 @@ public class FighterRankService {
 					"			on b.oid = fbx.bout_oid \n" +
 					"		join ufc2.fight f \n" +
 					"			on f.oid = b.fight_oid \n" +
+					"		join (select fbx2.fighter_oid as fighterOid2, count(fbx2.oid) as wcFightCount \n" +
+					"				from ufc2.fighter_bout_xref fbx2 \n" +
+					"				join ufc2.bout b2 \n" +
+					"					on b2.oid = fbx2.bout_oid \n" +
+					"				where b2.weight_class = :weightClassKey \n" +
+					"				group by fbx2.fighter_oid) wcfc \n" +
+					"			on wcfc.fighterOid2 = ff.oid \n" +
 					"	where fr.weight_class=:weightClassKey \n" + 
-					"	and fr.version > 3 " +
+					"	and wcfc.wcFightCount > 3 " +
 					"   and f.fight_date > now() - interval '2 year' \n" +
 					"	and fbx.exp_odds is not null";
 			Query query = em.createNativeQuery(queryStr);

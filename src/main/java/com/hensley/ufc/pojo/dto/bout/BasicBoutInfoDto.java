@@ -20,7 +20,8 @@ public class BasicBoutInfoDto extends SuperAuditDto {
 	private Integer schedRounds;
 	private List<BasicFighterBoutXrefDto> fighterBoutXRefs;
 	private GenderEnum gender;
-	
+	private String finishDetails;
+
 	public BasicBoutInfoDto() {
 		
 	}
@@ -157,6 +158,20 @@ public class BasicBoutInfoDto extends SuperAuditDto {
 	 */
 	public void setFightDate(Date fightDate) {
 		this.fightDate = fightDate;
+	}
+
+	/**
+	 * @return the finishDetails
+	 */
+	public String getFinishDetails() {
+		return finishDetails;
+	}
+
+	/**
+	 * @param finishDetails the finishDetails to set
+	 */
+	public void setFinishDetails(String finishDetails) {
+		this.finishDetails = finishDetails;
 	}
 	
 	

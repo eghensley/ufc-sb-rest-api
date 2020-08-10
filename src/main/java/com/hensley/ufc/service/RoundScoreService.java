@@ -103,6 +103,29 @@ public class RoundScoreService {
 		}
 	}
 
+	public GetResponse getFightFBX(String fighterOid, String fightIdx) {
+		FighterBoutEloScoresDto responseData;
+		String errorString;
+		try {
+			Optional<List<FighterBoutXRefData>> prevFbxData = fighterXRefRepo.getFightFBX(fighterOid, fightIdx);
+			if (prevFbxData.isPresent() && !CollectionUtils.isEmpty(prevFbxData.get())
+					&& prevFbxData.get().get(0).getOffStrikeEloPre() != null) {
+				responseData = (FighterBoutEloScoresDto) mappingUtils.mapToDto(prevFbxData.get().get(0),
+						FighterBoutEloScoresDto.class);
+				return new GetResponse(HttpStatus.OK, null, responseData);
+			} else {
+				String noPreviousDataFound = String.format("No previous bout found for fighter %s before fight %s",
+						fighterOid, fightIdx);
+				responseData = new FighterBoutEloScoresDto();
+				return new GetResponse(HttpStatus.OK, noPreviousDataFound, responseData);
+			}
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			LOG.log(Level.SEVERE, errorString);
+			return new GetResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorString, null);
+		}
+	}
+	
 	public GetResponse getCountLastFights(String fighterOid, String fightIdx) {
 		String errorString;
 		try {
