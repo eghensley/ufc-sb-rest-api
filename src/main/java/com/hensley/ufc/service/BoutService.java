@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +26,12 @@ import com.hensley.ufc.domain.FighterBoutXRefData;
 import com.hensley.ufc.domain.StrikeData;
 import com.hensley.ufc.enums.BoutOutcomeEnum;
 import com.hensley.ufc.enums.FightMethodEnum;
+import com.hensley.ufc.enums.GenderEnum;
 import com.hensley.ufc.enums.ParseTargetEnum;
 import com.hensley.ufc.enums.WeightClassEnum;
+import com.hensley.ufc.pojo.dto.bout.BoutBetDto;
 import com.hensley.ufc.pojo.dto.bout.BoutDataDto;
+import com.hensley.ufc.pojo.dto.bout.BoutDetailDto;
 import com.hensley.ufc.pojo.dto.bout.BoutDto;
 import com.hensley.ufc.pojo.dto.bout.BoutSummaryDto;
 import com.hensley.ufc.pojo.dto.fighter.FighterBoutXRefDto;
@@ -41,6 +45,7 @@ import com.hensley.ufc.pojo.response.ParseResponse;
 import com.hensley.ufc.pojo.response.UrlParseRequest;
 import com.hensley.ufc.repository.BoutRepository;
 import com.hensley.ufc.repository.FightRepository;
+import com.hensley.ufc.repository.FighterBoutXRefRepository;
 import com.hensley.ufc.util.MappingUtils;
 import com.hensley.ufc.util.UrlUtils;
 
@@ -71,22 +76,47 @@ public class BoutService {
 
 	private static final String BOUT_HTML_XPATH = "/html/body/section/div/div/table/tbody/tr";
 
+	@Value("${parameters.bet.diff_ceiling}")
+	private Double diffCeiling;
+	@Value("${parameters.bet.diff_floor}")
+	private Double diffFloor;
+	@Value("${parameters.bet.prev_fight_floor}")
+	private Integer prevFightFloor;
+	@Value("${parameters.bet.prev_fight_ceiling}")
+	private Integer prevFightCeiling;
+	@Value("${parameters.bet.bet_intercept}")
+	private Double betIntercept;
+	@Value("${parameters.bet.conf_diff_lin}")
+	private Double confDiffLin;
+	@Value("${parameters.bet.conf_diff_quad}")
+	private Double confDiffQuad;
+	@Value("${parameters.bet.num_fight_lin}")
+	private Double numFightLin;
+	@Value("${parameters.bet.num_fight_quad}")
+	private Double numFightQuad;
+	@Value("${parameters.bet.bet_ceiling}")
+	private Integer betCeiling;
+	@Value("${parameters.bet.bet_female}")
+	private Boolean betFemale;
+	
 	private final UrlUtils urlUtils;
 	private final BoutRepository boutRepo;
 	private final FightRepository fightRepo;
 	private final MappingUtils mappingUtils;
 	private final FighterService fighterService;
 	private final ErrorService errorService;
+	private final FighterBoutXRefRepository fighterXRefRepo;
 
 	@Autowired
 	BoutService(UrlUtils urlUtils, BoutRepository boutRepo, FightRepository fightRepo, MappingUtils mappingUtils,
-			FighterService fighterService, ErrorService errorService) {
+			FighterService fighterService, ErrorService errorService, FighterBoutXRefRepository fighterXRefRepo) {
 		this.urlUtils = urlUtils;
 		this.boutRepo = boutRepo;
 		this.fightRepo = fightRepo;
 		this.mappingUtils = mappingUtils;
 		this.fighterService = fighterService;
 		this.errorService = errorService;
+		this.fighterXRefRepo = fighterXRefRepo;
 	}
 
 	@Transactional
@@ -140,15 +170,155 @@ public class BoutService {
 	public GetResponse getBoutDto(String boutId) {
 		Optional<BoutData> boutDataOpt;
 		BoutData boutData;
-		BoutDto boutDto;
+		BoutDetailDto bout;
 		String errorString = null;
-
+		
 		try {
 			boutDataOpt = boutRepo.findByBoutId(boutId);
 			if (boutDataOpt.isPresent()) {
 				boutData = boutDataOpt.get();
-				boutDto = (BoutDto) mappingUtils.mapToDto(boutData, BoutDto.class);
-				return new GetResponse(HttpStatus.ACCEPTED, errorString, boutDto);
+				bout = (BoutDetailDto) mappingUtils.mapToDto(boutData, BoutDetailDto.class);
+				BoutBetDto betInfo = new BoutBetDto();
+				if (Boolean.FALSE.equals(betFemale) && GenderEnum.FEMALE == bout.getGender()) {
+					betInfo.setBet(false);
+					betInfo.setNotes("Model does not currently predict for female fights");
+					bout.addBetInfo(betInfo);
+				} else {
+					try {
+						Integer f1PrevFights = fighterXRefRepo.getCountPreviousFights(
+								bout.getFighterBoutXRefs().get(0).getFighter().getOid(), boutData.getFightOid());
+						Integer f2PrevFights = fighterXRefRepo.getCountPreviousFights(
+								bout.getFighterBoutXRefs().get(1).getFighter().getOid(), boutData.getFightOid());
+	
+						if (f1PrevFights == 0) {
+							betInfo.setBet(false);
+							betInfo.setNotes(String.format("No previous UFC fights for %s",
+									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName()));
+							bout.addBetInfo(betInfo);
+							return new GetResponse(HttpStatus.ACCEPTED, errorString, bout);
+						}
+						if (f2PrevFights == 0) {
+							betInfo.setBet(false);
+							betInfo.setNotes(String.format("No previous UFC fights for %s",
+									bout.getFighterBoutXRefs().get(1).getFighter().getFighterName()));
+							bout.addBetInfo(betInfo);
+							return new GetResponse(HttpStatus.ACCEPTED, errorString, bout);
+						}
+	
+						if (bout.getFighterBoutXRefs().get(0).getExpOdds() == null
+								|| bout.getFighterBoutXRefs().get(1).getExpOdds() == null) {
+							betInfo.setBet(false);
+							betInfo.setNotes("No Expected odds available");
+							bout.addBetInfo(betInfo);
+							return new GetResponse(HttpStatus.ACCEPTED, errorString, bout);
+						}
+	
+						if (bout.getFighterBoutXRefs().get(0).getMlOdds() == null
+								|| bout.getFighterBoutXRefs().get(1).getMlOdds() == null) {
+							betInfo.setBet(false);
+							betInfo.setNotes("No Vegas odds available");
+							bout.addBetInfo(betInfo);
+							return new GetResponse(HttpStatus.ACCEPTED, errorString, bout);
+						}
+	
+						Double f1Diff = (bout.getFighterBoutXRefs().get(0).getExpOdds() * 100)
+								- bout.getFighterBoutXRefs().get(0).getMlOdds();
+						Double f2Diff = (bout.getFighterBoutXRefs().get(1).getExpOdds() * 100)
+								- bout.getFighterBoutXRefs().get(1).getMlOdds();
+	
+						boolean useF1 = f1Diff > f2Diff;
+	
+						if (useF1) {
+							betInfo.setOddsDiff(f1Diff);
+							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(0).getMlOdds());
+							betInfo.setPredProb(bout.getFighterBoutXRefs().get(0).getExpOdds() * 100);
+							betInfo.setPredWinner(bout.getFighterBoutXRefs().get(0).getFighter().getFighterName());
+							betInfo.setWagerWeight(oddDiffToWager(betInfo.getOddsDiff(), f1PrevFights, f2PrevFights));
+							if (f1Diff < 0) {
+								betInfo.setBet(false);
+								betInfo.setNotes("No advantage exists at current odds");
+							} else if (f1Diff < diffFloor * 100) {
+								betInfo.setBet(false);
+								betInfo.setNotes("Advantage below model threshold");
+							} else if (f1Diff > diffCeiling * 100) {
+								betInfo.setBet(false);
+								betInfo.setNotes("Advantage above model threshold");
+							} else {
+								betInfo.setBet(true);
+							}
+							
+						} else {
+							betInfo.setOddsDiff(f2Diff);
+							betInfo.setVegasOdds(bout.getFighterBoutXRefs().get(1).getMlOdds());
+							betInfo.setPredProb(bout.getFighterBoutXRefs().get(1).getExpOdds() * 100);
+							betInfo.setPredWinner(bout.getFighterBoutXRefs().get(1).getFighter().getFighterName());
+							betInfo.setWagerWeight(oddDiffToWager(betInfo.getOddsDiff(), f1PrevFights, f2PrevFights));
+							if (f2Diff < 0) {
+								betInfo.setBet(false);
+								betInfo.setNotes("No advantage exists at current odds");
+							} else if (f2Diff < diffFloor * 100) {
+								betInfo.setBet(false);
+								betInfo.setNotes("Advantage below model threshold");
+							} else if (f2Diff > diffCeiling * 100) {
+								betInfo.setBet(false);
+								betInfo.setNotes("Advantage above model threshold");
+							} else {
+								betInfo.setBet(true);
+							}
+						}
+	
+						if (f1PrevFights < prevFightFloor) {
+							betInfo.setBet(false);
+							String msg = String.format("%s has %s UFC fights, less than required %s",
+									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(), f1PrevFights,
+									prevFightFloor);
+							LOG.info(msg);
+							betInfo.setNotes(msg);
+						}
+						if (f2PrevFights < prevFightFloor) {
+							betInfo.setBet(false);
+							String msg = String.format("%s has %s UFC fights, less than required %s",
+									bout.getFighterBoutXRefs().get(1).getFighter().getFighterName(), f2PrevFights,
+									prevFightFloor);
+							LOG.info(msg);
+							betInfo.setNotes(msg);
+						}
+	
+						if (f1PrevFights > prevFightCeiling) {
+							betInfo.setBet(false);
+							String msg = String.format("%s has %s UFC fights, more than ceiling of %s",
+									bout.getFighterBoutXRefs().get(0).getFighter().getFighterName(), f1PrevFights,
+									prevFightCeiling);
+							LOG.info(msg);
+							betInfo.setNotes(msg);
+						}
+						if (f2PrevFights > prevFightCeiling) {
+							betInfo.setBet(false);
+							String msg = String.format("%s has %s UFC fights, more than ceiling of %s",
+									bout.getFighterBoutXRefs().get(1).getFighter().getFighterName(), f2PrevFights,
+									prevFightCeiling);
+							LOG.info(msg);
+							betInfo.setNotes(msg);
+						}
+
+						if (useF1) {
+							if (betInfo.isBet() && Boolean.TRUE != boutData.getFighterBoutXRefs().get(0).getBetMade()) {
+								betInfo.setBet(false);
+								betInfo.setNotes("Algorithm bet overridden due to weigh-in or late replacement");
+							}
+						} else {
+							if (betInfo.isBet() && Boolean.TRUE != boutData.getFighterBoutXRefs().get(1).getBetMade()) {
+								betInfo.setBet(false);
+								betInfo.setNotes("Algorithm bet overridden due to weigh-in or late replacement");								
+							}
+						}
+						
+						bout.addBetInfo(betInfo);
+					} catch (Exception ee) {
+						LOG.log(Level.WARNING, ee.getLocalizedMessage(), ee);
+					}
+				}
+				return new GetResponse(HttpStatus.ACCEPTED, errorString, bout);
 			} else {
 				errorString = String.format(NO_BOUTS_FOUND, boutId);
 				LOG.log(Level.WARNING, errorString);
@@ -790,5 +960,19 @@ public class BoutService {
 			response.addResponseMsg(HttpStatus.valueOf(500), e.getLocalizedMessage());
 			return response;
 		}
+	}
+	
+	private Double oddDiffToWager(Double oddsDiff, Integer nFight1, Integer nFight2) {
+
+		Double bet = betIntercept + (confDiffLin * oddsDiff) + (confDiffQuad * (oddsDiff * oddsDiff))
+				+ (numFightLin * nFight1 * 2) + (numFightQuad * (nFight1 * nFight1) * 2) + (numFightLin * nFight2 * 2)
+				+ (numFightQuad * (nFight2 * nFight2) * 2);
+		
+		if (bet > betCeiling) {
+			return betCeiling.doubleValue();
+		} else {
+			return bet;
+		}
+
 	}
 }
