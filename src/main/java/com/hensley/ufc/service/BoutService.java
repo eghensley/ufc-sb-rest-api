@@ -167,6 +167,23 @@ public class BoutService {
 	}
 
 	@Transactional
+	public GetResponse getFullBoutDetails(String boutId) {
+		String errorString = "";
+		List<BoutSummaryDto> resp = new ArrayList<>();
+		Optional<BoutData> boutDataOpt = boutRepo.findByBoutId(boutId);
+
+		if (boutDataOpt.isPresent()) {
+			BoutDto boutDto = (BoutDto) mappingUtils.mapToDto(boutDataOpt.get(), BoutDto.class);
+
+			return new GetResponse(HttpStatus.ACCEPTED, errorString, boutDto);
+		} else {
+			errorString = String.format(NO_BOUTS_FOUND, boutId);
+			LOG.log(Level.WARNING, errorString);
+			return new GetResponse(HttpStatus.ACCEPTED, errorString, null);
+		}
+	}
+	
+	@Transactional
 	public GetResponse getBoutDto(String boutId) {
 		Optional<BoutData> boutDataOpt;
 		BoutData boutData;

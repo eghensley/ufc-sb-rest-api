@@ -62,6 +62,13 @@ public class BoutController {
 		GetResponse response = boutService.getBoutDto(boutId);
 		return new ResponseEntity<>(response, response.getStatus());
 	}
+	
+	@ApiOperation(value = "Fetch full detailed bout info by Id")
+	@GetMapping("{boutId}/full")
+	public ResponseEntity<GetResponse> getBoutFullDetailsById(@PathVariable("boutId") String boutId) {
+		GetResponse response = boutService.getFullBoutDetails(boutId);
+		return new ResponseEntity<>(response, response.getStatus());
+	}
 
 	@ApiOperation(value = "Fetch detailed bout info by Id")
 	@GetMapping("{boutId}/data")
