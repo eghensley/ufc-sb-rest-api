@@ -493,6 +493,71 @@ public class FightService {
 
 	}
 
+	
+	@Transactional
+	public ParseResponse nonUfcfightScraper(String fightId) {
+		UrlParseRequest urlParseRequest;
+
+		String baseUrl = String.format("http://www.ufcstats.com/event-details/%s", fightId);
+
+		HtmlPage page;
+		String errorStr = null;
+
+		ParseRequest request = new ParseRequest(ParseTargetEnum.FIGHTS, fightId, null, null);
+		ParseResponse response = new ParseResponse(request);
+
+		try {
+			if (!ifNewFight(fightId)) {
+				LOG.info(String.format(SKIP_FIGHT_ALREADY_SAVED_MESSAGE, fightId));
+				errorStr = String.format(SKIP_FIGHT_ALREADY_SAVED_MESSAGE, fightId);
+				return errorService.handleParseError(errorStr, response);
+			} else {
+				LOG.info(String.format(ADD_FIGHT_NOT_ALREADY_SAVED_MESSAGE, fightId));
+				urlParseRequest = urlUtils.parse(baseUrl);
+				errorStr = urlParseRequest.getErrorStr();
+				if (urlParseRequest.getSuccess()) {
+					page = urlParseRequest.getPage();
+					LOG.info("Completed FIGHTS Parse");
+
+					HtmlElement fightLocHtml = page.getFirstByXPath("/html/body/section/div/div/div[1]/ul/li[2]");
+					String[] locArray = fightLocHtml.asText().split(",");
+					LocationData location = locationService.matchLocationToModel(locArray);
+					HtmlElement fightTitleHtml = page.getFirstByXPath("/html/body/section/div/h2/span");
+					String fightName = fightTitleHtml.asText();
+					if (fightName == null) {
+						throw new IllegalArgumentException("Fight name failed to parse");
+					}
+					LOG.info(String.format("Fight Name: %s", fightName));
+					HtmlElement fightDateHtml = page.getFirstByXPath("/html/body/section/div/div/div[1]/ul/li[1]");
+					String fightDateHtmlTxt = fightDateHtml.asText().replace("Date: ", "");
+					Date fightDate = parsingUtils.stringToDate(fightDateHtmlTxt);
+					if (fightDate == null) {
+						throw new IllegalArgumentException("Fight date failed to parse");
+					}
+					LOG.info(String.format("Fight Date: %s", fightDate));
+					
+					FightData fightData = new FightData(fightId, fightName, fightDate, location);
+					fightRepo.save(fightData);				
+					
+					response.setItemsFound(1);
+					LOG.info(String.format("%s item found", response.getItemsFound()));
+
+
+					LOG.log(Level.INFO,
+							String.format(COMPLETION_MESSAGE, response.getItemsFound(), response.getItemsCompleted()));
+					response.addResponseMsg(HttpStatus.OK, errorStr);
+					return response;
+				} else {
+					return errorService.handleParseError(errorStr, response);
+				}
+			}
+		} catch (Exception e) {
+			errorStr = String.format("Error adding fight to DB");
+			return errorService.handleParseError(errorStr, e, response);
+		}
+	}
+	
+	
 	public boolean parseFightDetails(HtmlElement fightHtml) {
 		String fightPath = fightHtml.getCanonicalXPath();
 		String fightId;
@@ -564,30 +629,10 @@ public class FightService {
 	}
 
 	private Double oddDiffToWager(Double oddsDiff, Integer nFight1, Integer nFight2) {
-		System.out.println(oddsDiff);
-		System.out.println(nFight1);
-		System.out.println(nFight2);
-
-		Double conf_diff_lin_comp = confDiffLin * oddsDiff;
-		Double conf_diff_quad_comp = confDiffQuad * (oddsDiff * oddsDiff);
-		Double f1_num_fight_lin_comp = numFightLin * nFight1 * 2;
-		Double f2_num_fight_lin_comp = numFightLin * nFight2 * 2;
-		Double f1_num_fight_quad_comp = numFightQuad * (nFight1 * nFight1) * 2;
-		Double f2_num_fight_quad_comp = numFightQuad * (nFight1 * nFight1) * 2;
-
-        System.out.println(conf_diff_lin_comp);
-        System.out.println(conf_diff_quad_comp);
-        System.out.println(f1_num_fight_lin_comp);
-        System.out.println(f2_num_fight_lin_comp);
-        System.out.println(f1_num_fight_quad_comp);
-        System.out.println(f2_num_fight_quad_comp);
-        System.out.println(betIntercept + conf_diff_lin_comp + conf_diff_quad_comp + f1_num_fight_lin_comp + f2_num_fight_lin_comp + f1_num_fight_quad_comp + f2_num_fight_quad_comp);
-
 		Double bet = betIntercept + (confDiffLin * oddsDiff) + (confDiffQuad * (oddsDiff * oddsDiff))
 				+ (numFightLin * nFight1 * 2) + (numFightQuad * (nFight1 * nFight1) * 2) + (numFightLin * nFight2 * 2)
 				+ (numFightQuad * (nFight2 * nFight2) * 2);
 		
-		System.out.println(bet);
 		if (bet > betCeiling) {
 			return betCeiling.doubleValue();
 		} else {

@@ -40,8 +40,8 @@ public class RoundStrikeDto {
 	private Double offSubmissionAccuracy;
 	private Double defSubmissionAccuracy;
 
-	private Integer offPassSuccessful;
-	private Integer defPassSuccessful;
+	private Integer offControlTime;
+	private Integer defControlTime;
 
 	private Integer offReversalSuccessful;
 	private Integer defReversalSuccessful;
@@ -132,7 +132,7 @@ public class RoundStrikeDto {
 		this.defTakedownAttempted = defStats.getTakedownAttempted();
 		this.defTakedownSuccessful = defStats.getTakedownSuccessful();
 		this.defSubmissionAttempted = defStats.getSubmissionAttempted();
-		this.defPassSuccessful = defStats.getPassSuccessful();
+		this.defControlTime = defStats.getControlTime();
 		this.defReversalSuccessful = defStats.getReversalSuccessful();
 		this.defTkoKo = defStats.getTkoKo();
 		this.defSubmissionSuccessful = defStats.getSubmissionSuccessful();
@@ -351,22 +351,22 @@ public class RoundStrikeDto {
 	/**
 	 * @return the passSuccessful
 	 */
-	public Integer getOffPassSuccessful() {
-		return this.offPassSuccessful;
+	public Integer getOffControlTime() {
+		return this.offControlTime;
 	}
 
 	/**
 	 * @return the defPassSuccessful
 	 */
-	public Integer getDefPassSuccessful() {
-		return defPassSuccessful;
+	public Integer getDefControlTime() {
+		return defControlTime;
 	}
 
 	/**
 	 * @param passSuccessful the passSuccessful to set
 	 */
-	public void setPassSuccessful(Integer passSuccessful) {
-		this.offPassSuccessful = passSuccessful;
+	public void setControlTime(Integer controlTime) {
+		this.offControlTime = controlTime;
 	}
 
 	/**

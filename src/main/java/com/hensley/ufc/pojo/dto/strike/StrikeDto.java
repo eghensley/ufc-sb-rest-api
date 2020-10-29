@@ -11,7 +11,7 @@ public class StrikeDto {
 	private Integer takedownSuccessful;
 	private Double takedownAccuracy;
 	private Integer submissionAttempted;
-	private Integer passSuccessful;
+	private Integer controlTime;
 	private Integer reversalSuccessful;
 	private Integer tkoKo;
 	private Integer submissionSuccessful;
@@ -147,17 +147,17 @@ public class StrikeDto {
 	}
 
 	/**
-	 * @return the passSuccessful
+	 * @return the controlTime
 	 */
-	public Integer getPassSuccessful() {
-		return passSuccessful;
+	public Integer getControlTime() {
+		return controlTime;
 	}
 
 	/**
-	 * @param passSuccessful the passSuccessful to set
+	 * @param controlTime the controlTime to set
 	 */
-	public void setPassSuccessful(Integer passSuccessful) {
-		this.passSuccessful = passSuccessful;
+	public void setControlTime(Integer controlTime) {
+		this.controlTime = controlTime;
 	}
 
 	/**

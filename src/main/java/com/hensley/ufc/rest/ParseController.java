@@ -234,5 +234,20 @@ public class ParseController {
 			return new ResponseEntity<>(response, response.getStatus());
 		}
 	}
+	
+	@ApiOperation(value = "Parse non ufc fight")
+	@GetMapping("nonufc/fight/{fightId}")
+	public ResponseEntity<ParseResponse> parseNonUfcFight(
+			@RequestHeader(value = "password", required = true) String attemptedPassword,
+			@PathVariable("fightId") String fightId) {
+		if (loginKey.equals(attemptedPassword)) {
+			ParseResponse response = fightService.nonUfcfightScraper(fightId);
+			return new ResponseEntity<>(response, response.getStatus());
+		} else {
+			String errorMsg = loginFailed;
+			ParseResponse response = new ParseResponse(null, 1, 0, HttpStatus.FORBIDDEN, errorMsg);
+			return new ResponseEntity<>(response, response.getStatus());
+		}
+	}
 
 }

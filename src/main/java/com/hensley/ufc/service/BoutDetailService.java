@@ -224,7 +224,7 @@ public class BoutDetailService {
 			parseKnockdowns(roundItem, roundPath, strikeData, fighterRow);
 			parseTakedowns(roundItem, roundPath, strikeData, fighterRow);
 			parseSubmission(roundItem, roundPath, strikeData, fighterRow);
-			parsePass(roundItem, roundPath, strikeData, fighterRow);
+			parseControlTime(roundItem, roundPath, strikeData, fighterRow);
 			parseReversal(roundItem, roundPath, strikeData, fighterRow);
 			parseTotStrikes(roundItem, roundPath, strikeData, fighterRow);
 			parseKoSub(strikeData, finishTransfer, roundParsed);
@@ -297,7 +297,18 @@ public class BoutDetailService {
 					|| ("Grigory Popov".equals(rowName) && "Grigorii Popov".equals(fighterName))
 					|| ("Jin Soo Son".equals(rowName) && "Jinsoo Son".equals(fighterName))
 					|| ("Alexander Munoz".equals(rowName) && "Alex Munoz".equals(fighterName))
-					|| ("Ali AlQaisi".equals(rowName) && "Ali Qaisi".equals(fighterName))
+					|| ("Ali AlQaisi".equals(rowName) && "Ali Qaisi".equals(fighterName)) 
+					|| ("Zhang Tiequan".equals(rowName) && "Tiequan Zhang".equals(fighterName)) 
+					|| ("Li Jingliang".equals(rowName) && "Jingliang Li".equals(fighterName))
+					|| ("Bibulatov Magomed".equals(rowName) && "Magomed Bibulatov".equals(fighterName))
+					|| ("Song Kenan".equals(rowName) && "Kenan Song".equals(fighterName))
+					|| ("Wu Yanan".equals(rowName) && "Yanan Wu".equals(fighterName))
+					|| ("Yan Xiaonan".equals(rowName) && "Xiaonan Yan".equals(fighterName))
+					|| ("Pingyuan Liu".equals(rowName) && "Liu Pingyuan".equals(fighterName))	
+					|| ("Zhang Weili".equals(rowName) && "Weili Zhang".equals(fighterName))			
+					|| ("Inoue Mizuki".equals(rowName) && "Mizuki Inoue".equals(fighterName))					
+					|| ("Batgerel Danaa".equals(rowName) && "Danaa Batgerel".equals(fighterName))					
+
 			) {
 				return tempIndex;
 			}
@@ -395,24 +406,34 @@ public class BoutDetailService {
 		strikeData.setSubmissionAttempted(submissionAttempt);
 	}
 
-	private void parsePass(HtmlElement roundItem, String roundPath, StrikeData strikeData, Integer fighterRow) {
-		Integer pass;
-		DomText passHtml = roundItem.getFirstByXPath(roundPath + String.format("/td[9]/p[%s]/text()", fighterRow + 1));
-		pass = Integer.valueOf(passHtml.asText().trim());
-
-		if (pass == null) {
-			throw new IllegalArgumentException("Round pass failed to parse");
+	private void parseControlTime(HtmlElement roundItem, String roundPath, StrikeData strikeData, Integer fighterRow) {
+		Integer controlTime;
+		Integer controlTimeMinutes;
+		Integer controlTimeSeconds;
+		
+		DomText controlTimeHtml = roundItem.getFirstByXPath(roundPath + String.format("/td[10]/p[%s]/text()", fighterRow + 1));
+		
+		if (controlTimeHtml == null) {
+			throw new IllegalArgumentException("Round control time failed to parse");
 		}
 
-		LOG.info(String.format("Round pass: %s", pass));
+		if ("--".equals(controlTimeHtml.asText().trim())) {
+			controlTime = 0;
+		} else {
+			controlTimeMinutes = Integer.valueOf(controlTimeHtml.asText().trim().split(":")[0]);
+			controlTimeSeconds = Integer.valueOf(controlTimeHtml.asText().trim().split(":")[1]);
+			controlTime = (controlTimeMinutes * 60) + controlTimeSeconds;
+		}
+		
+		LOG.info(String.format("Round control time: %s", controlTime));
 
-		strikeData.setPassSuccessful(pass);
+		strikeData.setControlTime(controlTime);
 	}
 
 	private void parseReversal(HtmlElement roundItem, String roundPath, StrikeData strikeData, Integer fighterRow) {
 		Integer reversal;
 		DomText reversalHtml = roundItem
-				.getFirstByXPath(roundPath + String.format("/td[10]/p[%s]/text()", fighterRow + 1));
+				.getFirstByXPath(roundPath + String.format("/td[9]/p[%s]/text()", fighterRow + 1));
 		reversal = Integer.valueOf(reversalHtml.asText().trim());
 
 		if (reversal == null) {

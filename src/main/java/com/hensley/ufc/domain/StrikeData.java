@@ -39,8 +39,8 @@ public class StrikeData  extends BaseAuditEntity implements Serializable {
 	private Integer takedownSuccessful;
 	@Column(name = "SUBMISSION_ATTEMPTED", nullable = false)
 	private Integer submissionAttempted;	
-	@Column(name = "PASS_SUCCESSFUL", nullable = false)
-	private Integer passSuccessful;
+	@Column(name = "CONTROL_TIME", nullable = false)
+	private Integer controlTime;
 	@Column(name = "REVERSAL_SUCCESSFUL", nullable = false)
 	private Integer reversalSuccessful;	
 	@Column(name = "TKO_KO", nullable = false)
@@ -173,18 +173,19 @@ public class StrikeData  extends BaseAuditEntity implements Serializable {
 		this.submissionAttempted = submissionAttempted;
 	}
 
+
 	/**
-	 * @return the passSuccessful
+	 * @return the controlTime
 	 */
-	public Integer getPassSuccessful() {
-		return passSuccessful;
+	public Integer getControlTime() {
+		return controlTime;
 	}
 
 	/**
-	 * @param passSuccessful the passSuccessful to set
+	 * @param controlTime the controlTime to set
 	 */
-	public void setPassSuccessful(Integer passSuccessful) {
-		this.passSuccessful = passSuccessful;
+	public void setControlTime(Integer controlTime) {
+		this.controlTime = controlTime;
 	}
 
 	/**
@@ -333,10 +334,9 @@ public class StrikeData  extends BaseAuditEntity implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ Objects.hash(fighterBout, knockdowns, koScore, passSuccessful, reversalSuccessful, round, score,
-						sigStrikePosition, sigStrikeTarget, submissionAttempted, submissionScore, submissionSuccessful,
-						takedownAttempted, takedownSuccessful, tkoKo, totStrikeAttempted, totStrikeSuccessful);
+		result = prime * result + Objects.hash(controlTime, fighterBout, knockdowns, koScore, reversalSuccessful, round,
+				score, sigStrikePosition, sigStrikeTarget, submissionAttempted, submissionScore, submissionSuccessful,
+				takedownAttempted, takedownSuccessful, tkoKo, totStrikeAttempted, totStrikeSuccessful);
 		return result;
 	}
 
@@ -352,8 +352,8 @@ public class StrikeData  extends BaseAuditEntity implements Serializable {
 			return false;
 		}
 		StrikeData other = (StrikeData) obj;
-		return Objects.equals(fighterBout, other.fighterBout) && Objects.equals(knockdowns, other.knockdowns)
-				&& Objects.equals(koScore, other.koScore) && Objects.equals(passSuccessful, other.passSuccessful)
+		return Objects.equals(controlTime, other.controlTime) && Objects.equals(fighterBout, other.fighterBout)
+				&& Objects.equals(knockdowns, other.knockdowns) && Objects.equals(koScore, other.koScore)
 				&& Objects.equals(reversalSuccessful, other.reversalSuccessful) && Objects.equals(round, other.round)
 				&& Objects.equals(score, other.score) && Objects.equals(sigStrikePosition, other.sigStrikePosition)
 				&& Objects.equals(sigStrikeTarget, other.sigStrikeTarget)
